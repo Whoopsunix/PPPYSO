@@ -20,9 +20,9 @@ public @interface EnchantType {
 
     public static class Utils {
         public static String[] getAuthors(AnnotatedElement annotated) {
-            EnchantType authors = annotated.getAnnotation(EnchantType.class);
-            if (authors != null && authors.value() != null) {
-                return authors.value();
+            EnchantType enchantType = annotated.getAnnotation(EnchantType.class);
+            if (enchantType != null && enchantType.value() != null) {
+                return enchantType.value();
             } else {
                 return new String[0];
             }

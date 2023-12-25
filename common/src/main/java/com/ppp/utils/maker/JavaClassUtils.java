@@ -1,12 +1,12 @@
-package com.ppp.utils;
+package com.ppp.utils.maker;
 
-import javassist.CannotCompileException;
-import javassist.CtClass;
-import javassist.CtField;
-import javassist.NotFoundException;
+import javassist.*;
+import javassist.bytecode.AnnotationsAttribute;
+import javassist.bytecode.AttributeInfo;
 
 import java.io.FileOutputStream;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * @author Whoopsunix
@@ -132,4 +132,36 @@ public class JavaClassUtils {
         }
         return false;
     }
+
+    /**
+     * 清除所有注解
+     */
+    public static void clearAllAnnotations(CtClass ctClass) {
+        // 清除类的注解
+        List<AttributeInfo> attributes = ctClass.getClassFile().getAttributes();
+        clearAnnotations(attributes);
+
+        // 获取类的所有属性
+        CtField[] fields = ctClass.getDeclaredFields();
+        for (CtField field : fields) {
+            // 清除属性上的所有注解
+            clearAnnotations(field.getFieldInfo().getAttributes());
+        }
+
+        // 获取类的所有方法
+        CtMethod[] methods = ctClass.getDeclaredMethods();
+        for (CtMethod method : methods) {
+            // 清除方法上的所有注解
+            clearAnnotations(method.getMethodInfo().getAttributes());
+        }
+    }
+
+    private static void clearAnnotations(List<AttributeInfo> attributes) {
+        for (int i = 0; i < attributes.size(); i++) {
+            if (attributes.get(i) instanceof AnnotationsAttribute) {
+                attributes.set(i, new AnnotationsAttribute((attributes.get(i)).getConstPool(), AnnotationsAttribute.visibleTag));
+            }
+        }
+    }
+
 }

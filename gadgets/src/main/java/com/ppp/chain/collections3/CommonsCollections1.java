@@ -2,8 +2,8 @@ package com.ppp.chain.collections3;
 
 import com.ppp.KickOff;
 import com.ppp.ObjectPayload;
-import com.ppp.annatation.Authors;
-import com.ppp.annatation.Dependencies;
+import com.ppp.annotation.Authors;
+import com.ppp.annotation.Dependencies;
 import com.ppp.secmgr.PayloadRunner;
 import com.ppp.sinks.SinkScheduler;
 import com.ppp.sinks.SinksHelper;
@@ -32,7 +32,7 @@ public class CommonsCollections1 implements ObjectPayload<Object> {
 
     public Object getObject(SinksHelper sinksHelper) throws Exception {
         // sink
-        Object sinkObject = SinkScheduler.make(sinksHelper);
+        Object sinkObject = SinkScheduler.builder(sinksHelper);
 
         Object kickOffObject = getChain((Transformer[]) sinkObject);
 

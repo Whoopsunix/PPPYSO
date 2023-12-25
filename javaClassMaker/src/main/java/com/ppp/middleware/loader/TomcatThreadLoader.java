@@ -1,4 +1,6 @@
-package com.ppp.middleware.tomcat;
+package com.ppp.middleware.loader;
+
+import com.ppp.annotation.Middleware;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -15,6 +17,7 @@ import java.util.zip.GZIPInputStream;
  * <p>
  * 5-10 全版本
  */
+@Middleware(Middleware.Tomcat)
 public class TomcatThreadLoader {
     private static String gzipObject;
     private static String HEADER = "X-Token";
@@ -63,7 +66,7 @@ public class TomcatThreadLoader {
             }
 
         } catch (Exception e) {
-            e.printStackTrace();
+
         }
     }
 

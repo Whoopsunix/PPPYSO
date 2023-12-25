@@ -1,23 +1,28 @@
-package com.ppp.middleware.tomcat;
+package com.ppp.middleware.builder;
 
-import com.ppp.utils.Encoder;
+import com.ppp.annotation.Builder;
+import com.ppp.annotation.MemShell;
+import com.ppp.annotation.Middleware;
+import com.ppp.utils.maker.Encoder;
+import com.ppp.utils.maker.JavaClassUtils;
 import javassist.ClassClassPath;
 import javassist.ClassPool;
 import javassist.CtClass;
-import javassist.CtMethod;
-
-import java.util.Base64;
 
 /**
  * @author Whoopsunix
  */
-public class TomcatMSJavaClassMaker {
+@Builder(Builder.MS)
+@Middleware(Middleware.Tomcat)
+public class TomcatMSJavaClassBuilder {
+    @MemShell(MemShell.Listener)
     public String listener(Class cls) throws Exception {
         ClassPool classPool = ClassPool.getDefault();
         classPool.insertClassPath(new ClassClassPath(cls));
         classPool.importPackage("javax.servlet.http");
 
         CtClass ctClass = classPool.getCtClass(cls.getName());
+
 
 //        CtMethod ctMethod = ctClass.getDeclaredMethod("getResponse");
 //
@@ -31,6 +36,10 @@ public class TomcatMSJavaClassMaker {
 //                "        }\n" +
 //                "        return httpServletResponse;\n" +
 //                "    }");
+
+
+        // 清除所有注解
+        JavaClassUtils.clearAllAnnotations(ctClass);
 
 
         byte[] classBytes = ctClass.toBytecode();

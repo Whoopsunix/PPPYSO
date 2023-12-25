@@ -1,4 +1,4 @@
-package com.ppp.annatation;
+package com.ppp.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
