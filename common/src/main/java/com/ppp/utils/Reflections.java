@@ -2,12 +2,18 @@ package com.ppp.utils;
 
 import sun.reflect.ReflectionFactory;
 
+import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 
 @SuppressWarnings("restriction")
 public class Reflections {
+
+    public static void setAccessible(AccessibleObject member) {
+        member.setAccessible(true);
+    }
+
     public static Field getField(final Class<?> clazz, final String fieldName) {
         Field field = null;
         try {

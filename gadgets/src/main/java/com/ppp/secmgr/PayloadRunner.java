@@ -15,6 +15,10 @@ import java.util.concurrent.Callable;
  */
 public class PayloadRunner {
     public static void run(final Class<? extends ObjectPayload> clazz, final String[] args) throws Exception {
+        run(clazz, args, null);
+    }
+
+    public static void run(final Class<? extends ObjectPayload> clazz, final String[] args, final SinksHelper sinksHelper) throws Exception {
         byte[] serialized = new ExecCheckingSecurityManager().callWrapped(new Callable<byte[]>() {
             public byte[] call() throws Exception {
                 final String command = args.length > 0 && args[0] != null ? args[0] : getDefaultTestCmd();
@@ -23,12 +27,18 @@ public class PayloadRunner {
 
                 ObjectPayload<?> object = clazz.newInstance();
 
-                SinksHelper sinksHelper = new SinksHelper();
-                sinksHelper.setSink(clazz.getAnnotation(Sink.class).value()[0]);
-                sinksHelper.setEnchant(EnchantType.DEFAULT);
-                sinksHelper.setCommand(command);
+                SinksHelper helper;
+                if (sinksHelper == null) {
+                    SinksHelper sinksHelper = new SinksHelper();
+                    sinksHelper.setSink(clazz.getAnnotation(Sink.class).value()[0]);
+                    sinksHelper.setEnchant(EnchantType.DEFAULT);
+                    sinksHelper.setCommand(command);
+                    helper = sinksHelper;
+                } else {
+                    helper = sinksHelper;
+                }
 
-                final Object objBefore = object.getObject(sinksHelper);
+                final Object objBefore = object.getObject(helper);
 
                 System.out.println("serializing payload");
                 byte[] ser = null;
