@@ -12,7 +12,7 @@
     <modules>
         <module>gadgets</module>
         <module>common</module>
-        <module>javaClassMaker</module>
+        <module>javaClassBuilder</module>
         <module>cli</module>
     </modules>
 
