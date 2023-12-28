@@ -22,6 +22,9 @@ import javassist.CtField;
 public class TemplatesImpl {
     /**
      * 命令执行
+     * @param sinksHelper
+     * @return
+     * @throws Exception
      */
     @EnchantType({EnchantType.RUNTIME, EnchantType.DEFAULT})
     public Object runtime(SinksHelper sinksHelper) throws Exception {
@@ -54,10 +57,13 @@ public class TemplatesImpl {
     }
 
     /**
-     * 命令执行
+     * 内存马
+     * @param sinksHelper
+     * @return
+     * @throws Exception
      */
     @EnchantType({EnchantType.MEMSHELL})
-    public Object memshell(SinksHelper sinksHelper) throws Exception {
+    public Object memShell(SinksHelper sinksHelper) throws Exception {
         MemShellHelper memShellHelper = sinksHelper.getMemShellHelper();
 
         byte[] classBytes = MemShellScheduler.build(memShellHelper);
@@ -65,6 +71,7 @@ public class TemplatesImpl {
         Object templatesImpl = createTemplatesImpl(classBytes);
         return templatesImpl;
     }
+
 
 
 

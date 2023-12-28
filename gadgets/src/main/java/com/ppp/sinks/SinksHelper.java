@@ -16,7 +16,6 @@ public class SinksHelper {
      * 增强功能，对应 @EnchantType 注解
      */
     private String enchant;
-
     /**
      * 输出
      */
@@ -25,7 +24,11 @@ public class SinksHelper {
      * 是否保存为文件
      */
     private boolean save = false;
+    /**
+     * 文件路径
+     */
     private String savePath = "./result.bin";
+
 
     /**
      * 以下为增强功能的配置参数
@@ -34,7 +37,17 @@ public class SinksHelper {
      * 命令执行内容
      */
     private String command;
-
+    /**
+     * 操作系统
+     */
+    private String os;
+    /**
+     * Socket 探测域名
+     */
+    private String host;
+    /**
+     * 内存马信息
+     */
     private MemShellHelper memShellHelper;
 
     public String getSink() {
@@ -51,22 +64,6 @@ public class SinksHelper {
 
     public void setEnchant(String enchant) {
         this.enchant = enchant;
-    }
-
-    public String getCommand() {
-        return command;
-    }
-
-    public void setCommand(String command) {
-        this.command = command;
-    }
-
-    public MemShellHelper getMemShellHelper() {
-        return memShellHelper;
-    }
-
-    public void setMemShellHelper(MemShellHelper memShellHelper) {
-        this.memShellHelper = memShellHelper;
     }
 
     public String getOutput() {
@@ -91,5 +88,37 @@ public class SinksHelper {
 
     public void setSavePath(String savePath) {
         this.savePath = savePath;
+    }
+
+    public String getCommand() {
+        return command;
+    }
+
+    public void setCommand(String command) {
+        this.command = command;
+    }
+
+    public String getOs() {
+        return os;
+    }
+
+    public void setOs(String os) {
+        this.os = os;
+    }
+
+    public String getHost() {
+        return host;
+    }
+
+    public void setHost(String host) {
+        this.host = host;
+    }
+
+    public MemShellHelper getMemShellHelper() {
+        return memShellHelper;
+    }
+
+    public void setMemShellHelper(MemShellHelper memShellHelper) {
+        this.memShellHelper = memShellHelper;
     }
 }

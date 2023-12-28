@@ -96,6 +96,7 @@ public class Printer {
     public static void error(Object msg) {
         System.out.println(ANSI_RED + "! Error: " + msg + ANSI_RESET);
         System.out.flush();
+        System.exit(0);
     }
     /**
      * 调试

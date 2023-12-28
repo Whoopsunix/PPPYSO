@@ -1,5 +1,6 @@
 package com.ppp.sinks;
 
+import com.ppp.Printer;
 import com.ppp.sinks.annotation.EnchantType;
 import com.ppp.sinks.annotation.Sink;
 import com.ppp.utils.maker.AnnotationUtils;
@@ -54,6 +55,9 @@ public class SinkScheduler {
                 break;
             }
         }
+
+        if (targetMethod == null)
+            Printer.error("No such method: " + sinksHelper.getEnchant());
 
         return targetMethod.invoke(targetClass.newInstance(), sinksHelper);
     }

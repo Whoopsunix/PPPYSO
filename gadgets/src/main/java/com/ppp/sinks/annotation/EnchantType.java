@@ -7,7 +7,7 @@ import java.lang.annotation.Target;
 import java.lang.reflect.AnnotatedElement;
 
 /**
- * 增强功能名
+ * 增强功能类型
  */
 @Target({ElementType.METHOD, ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
@@ -15,7 +15,12 @@ public @interface EnchantType {
     // 默认功能
     String DEFAULT = "Default";
     String RUNTIME = "Runtime";
+    String ProcessBuilder = "ProcessBuilder";
+    String ScriptEngine = "ScriptEngine";
+    String Socket = "Socket";
     String MEMSHELL = "MemShell";
+
+    String WIN = "win";
 
     String[] value() default {};
 
