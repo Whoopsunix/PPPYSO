@@ -18,7 +18,9 @@ public @interface EnchantType {
     String ProcessBuilder = "ProcessBuilder";
     String ScriptEngine = "ScriptEngine";
     String Socket = "Socket";
+    String FileWrite = "FileWrite";
     String MEMSHELL = "MemShell";
+
 
     String WIN = "win";
 

@@ -25,7 +25,7 @@ public class SinksHelper {
      */
     private boolean save = false;
     /**
-     * 文件路径
+     * payload 保存文件路径
      */
     private String savePath = "./result.bin";
 
@@ -45,6 +45,20 @@ public class SinksHelper {
      * Socket 探测域名
      */
     private String host;
+    /**
+     * 服务器文件路径
+     */
+    private String serverFilePath;
+    /**
+     * 本地文件路径
+     */
+    private String localFilePath;
+    /**
+     * 文件内容
+     */
+    private String fileContent;
+
+
     /**
      * 内存马信息
      */
@@ -114,11 +128,35 @@ public class SinksHelper {
         this.host = host;
     }
 
+    public String getServerFilePath() {
+        return serverFilePath;
+    }
+
+    public void setServerFilePath(String serverFilePath) {
+        this.serverFilePath = serverFilePath;
+    }
+
     public MemShellHelper getMemShellHelper() {
         return memShellHelper;
     }
 
     public void setMemShellHelper(MemShellHelper memShellHelper) {
         this.memShellHelper = memShellHelper;
+    }
+
+    public String getFileContent() {
+        return fileContent;
+    }
+
+    public void setFileContent(String fileContent) {
+        this.fileContent = fileContent;
+    }
+
+    public String getLocalFilePath() {
+        return localFilePath;
+    }
+
+    public void setLocalFilePath(String localFilePath) {
+        this.localFilePath = localFilePath;
     }
 }
