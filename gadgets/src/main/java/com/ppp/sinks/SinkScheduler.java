@@ -15,6 +15,7 @@ public class SinkScheduler {
     private static String packageName = "com.ppp.sinks";
     public static void main(String[] args) throws Exception {
         SinksHelper sinksHelper = new SinksHelper();
+        // 通过
         sinksHelper.setSink(Sink.InvokerTransformer3);
         sinksHelper.setEnchant(EnchantType.RUNTIME);
 

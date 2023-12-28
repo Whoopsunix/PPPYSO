@@ -6,14 +6,12 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Java Class Loader 类型
+ * 内存马自定义信息
  */
 @Target({ElementType.METHOD, ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface Builder {
-    String Loader = "Loader";
-
-    String MS = "MS";
-
+public @interface MemShellModifiable {
+    String HEADER = "HEADER";
+    String PATH = "PATH";
     String value();
 }

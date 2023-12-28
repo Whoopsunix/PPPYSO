@@ -3,7 +3,6 @@ package com.ppp.middleware.builder;
 import com.ppp.annotation.Builder;
 import com.ppp.annotation.MemShell;
 import com.ppp.annotation.Middleware;
-import com.ppp.utils.maker.Encoder;
 import com.ppp.utils.maker.JavaClassUtils;
 import javassist.*;
 
@@ -14,7 +13,7 @@ import javassist.*;
 @Middleware(Middleware.Tomcat)
 public class TomcatLoaderBuilder {
     @MemShell(MemShell.Listener)
-    public String listener(Class cls, String MSGzipBase64) throws Exception {
+    public byte[] listener(Class cls, String MSGzipBase64) throws Exception {
         ClassPool classPool = ClassPool.getDefault();
         classPool.insertClassPath(new ClassClassPath(cls));
 //        classPool.importPackage("javax.servlet.http");
@@ -70,7 +69,8 @@ public class TomcatLoaderBuilder {
         JavaClassUtils.clearAllAnnotations(ctClass);
 
         byte[] classBytes = ctClass.toBytecode();
-        String b64 = Encoder.base64encoder(classBytes);
-        return b64;
+        return classBytes;
+//        String b64 = Encoder.base64encoder(classBytes);
+//        return b64;
     }
 }

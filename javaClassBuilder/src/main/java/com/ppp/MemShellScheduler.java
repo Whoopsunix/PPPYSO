@@ -5,6 +5,7 @@ import com.ppp.annotation.MemShell;
 import com.ppp.annotation.MemShellFunction;
 import com.ppp.annotation.Middleware;
 import com.ppp.utils.maker.ClassUtils;
+import com.ppp.utils.maker.Encoder;
 
 import java.lang.reflect.Method;
 import java.util.List;
@@ -23,10 +24,15 @@ public class MemShellScheduler {
         memShellHelper.setMiddleware(Middleware.Tomcat);
         memShellHelper.setMemShell(MemShell.Listener);
         memShellHelper.setMemShellFunction(MemShellFunction.Runtime);
+
+        // 内存马信息
+        memShellHelper.setHEADER("xxx");
+
+
         build(memShellHelper);
     }
 
-    public static String build(MemShellHelper memShellHelper) throws Exception {
+    public static byte[] build(MemShellHelper memShellHelper) throws Exception {
         String middleware = memShellHelper.getMiddleware();
         String memShell = memShellHelper.getMemShell();
         String memShellFunction = memShellHelper.getMemShellFunction();
@@ -45,25 +51,25 @@ public class MemShellScheduler {
             Middleware middlewareAnnotation = clazz.getAnnotation(Middleware.class);
             if (middlewareAnnotation == null) continue;
 
-            // 获取 Loader
+            // 获取 Loader Builder
             if (builder.value().equals(Builder.Loader) && middlewareAnnotation.value().equals(middleware)) {
                 loaderBuilderClass = clazz;
-                System.out.println("Loader builder Class: " + clazz.getName() + ", Annotation Value: " + builder.value());
+                Printer.blueInfo("Loader builder Class: " + clazz.getName() + ", Annotation Value: " + builder.value());
             }
-            // 获取内存马
+            // 获取 MemShell Builder
             if (builder.value().equals(Builder.MS) && middlewareAnnotation.value().equals(middleware)) {
                 msBuilderClass = clazz;
-                System.out.println("MemShell builder Class: " + clazz.getName() + ", Annotation Value: " + builder.value());
+                Printer.blueInfo("MemShell builder Class: " + clazz.getName() + ", Annotation Value: " + builder.value());
             }
         }
 
         // 组件类型不存在
         if (loaderBuilderClass == null) {
-            System.out.println("Loader builder Class Not Found");
+            Printer.error("Loader builder Class Not Found");
             return null;
         }
         if (msBuilderClass == null) {
-            System.out.println("MemShell builder Class Not Found");
+            Printer.error("MemShell builder Class Not Found");
             return null;
         }
 
@@ -81,7 +87,7 @@ public class MemShellScheduler {
 
             if (memShellAnnotation.value().equals(memShell)) {
                 msMethod = method;
-                System.out.println("MS builder Method: " + method.getName() + ", Annotation Value: " + memShellAnnotation.value());
+                Printer.blueInfo("MS builder Method: " + method.getName() + ", Annotation Value: " + memShellAnnotation.value());
                 break;
             }
         }
@@ -93,7 +99,7 @@ public class MemShellScheduler {
 
             if (memShellAnnotation.value().equals(memShell)) {
                 loaderMethod = method;
-                System.out.println("Loader builder Method: " + method.getName() + ", Annotation Value: " + memShellAnnotation.value());
+                Printer.blueInfo("Loader builder Method: " + method.getName() + ", Annotation Value: " + memShellAnnotation.value());
                 break;
             }
         }
@@ -110,7 +116,7 @@ public class MemShellScheduler {
             if (middlewareAnnotation == null) continue;
             if (middlewareAnnotation.value().equals(middleware)) {
                 loaderClass = clazz;
-                System.out.println("Loader Class: " + clazz.getName() + ", Annotation Value: " + middlewareAnnotation.value());
+                Printer.blueInfo("Loader Class: " + clazz.getName() + ", Annotation Value: " + middlewareAnnotation.value());
                 break;
             }
         }
@@ -125,17 +131,17 @@ public class MemShellScheduler {
 
             if (memShellAnnotation.value().equals(memShell) && memShellFunctionAnnotation.value().equals(memShellFunction)) {
                 msClass = clazz;
-                System.out.println("MemShell Class: " + clazz.getName() + ", Annotation Value: " + memShellAnnotation.value());
+                Printer.blueInfo("MemShell Class: " + clazz.getName() + ", Annotation Value: " + memShellAnnotation.value());
                 break;
             }
         }
 
         if (loaderClass == null) {
-            System.out.println("Loader Class Not Found");
+            Printer.error("Loader Class Not Found");
             return null;
         }
         if (msClass == null) {
-            System.out.println("MemShell Class Not Found");
+            Printer.error("MemShell Class Not Found");
             return null;
         }
 
@@ -146,15 +152,17 @@ public class MemShellScheduler {
         Object loaderBuilder = loaderBuilderClass.newInstance();
         Object msBuilder = msBuilderClass.newInstance();
 
-        String msJavaClass = (String) msMethod.invoke(msBuilder, msClass);
-        System.out.println("msJavaClass:");
-        System.out.println(msJavaClass);
+        byte[] msJavaClassBytes = (byte[]) msMethod.invoke(msBuilder, msClass, memShellHelper);
+        String msJavaClassBase64 = Encoder.base64encoder(msJavaClassBytes);
+        Printer.greenInfo("ms:");
+        Printer.greenInfo(msJavaClassBase64);
 
-        String msLoaderJavaClass = (String) loaderMethod.invoke(loaderBuilder, loaderClass, msJavaClass);
-        System.out.println("ms:");
-        System.out.println(msLoaderJavaClass);
+        byte[] msLoaderJavaClassBytes = (byte[]) loaderMethod.invoke(loaderBuilder, loaderClass, msJavaClassBase64);
+        String b64 = Encoder.base64encoder(msLoaderJavaClassBytes);
+        Printer.greenInfo("ms+loader:");
+        Printer.greenInfo(b64);
 
-        return msLoaderJavaClass;
+        return msLoaderJavaClassBytes;
 
     }
 

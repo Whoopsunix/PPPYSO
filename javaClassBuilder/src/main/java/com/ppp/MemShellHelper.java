@@ -11,6 +11,11 @@ public class MemShellHelper {
     // 内存马功能
     private String memShellFunction;
 
+    /**
+     * 以下为内存马可自定义信息
+     */
+    private String HEADER = "X-Token";
+
 
     public String getMiddleware() {
         return middleware;
@@ -34,5 +39,13 @@ public class MemShellHelper {
 
     public void setMemShellFunction(String memShellFunction) {
         this.memShellFunction = memShellFunction;
+    }
+
+    public String getHEADER() {
+        return HEADER;
+    }
+
+    public void setHEADER(String HEADER) {
+        this.HEADER = HEADER;
     }
 }

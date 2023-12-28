@@ -49,6 +49,18 @@ public class Serializer implements Callable<byte[]> {
         return base64str;
     }
 
+    public static void serializeGZip(Object obj, final OutputStream out) throws Exception {
+        ObjectOutputStream oos = new ObjectOutputStream(new GZIPOutputStream(out));
+        oos.writeObject(obj);
+        oos.close();
+    }
+
+    public static void serializeGZip(Object obj, String fileName) throws Exception {
+        ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(fileName));
+        oos.writeObject(obj);
+        oos.close();
+    }
+
     /**
      * Base64 GZip
      */

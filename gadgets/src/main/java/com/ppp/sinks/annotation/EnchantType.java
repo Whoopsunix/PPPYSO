@@ -15,6 +15,7 @@ public @interface EnchantType {
     // 默认功能
     String DEFAULT = "Default";
     String RUNTIME = "Runtime";
+    String MEMSHELL = "MemShell";
 
     String[] value() default {};
 
