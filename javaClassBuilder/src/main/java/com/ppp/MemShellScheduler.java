@@ -157,7 +157,7 @@ public class MemShellScheduler {
         Printer.greenInfo("ms:");
         Printer.greenInfo(msJavaClassBase64);
 
-        byte[] msLoaderJavaClassBytes = (byte[]) loaderMethod.invoke(loaderBuilder, loaderClass, msJavaClassBase64);
+        byte[] msLoaderJavaClassBytes = (byte[]) loaderMethod.invoke(loaderBuilder, loaderClass, msJavaClassBase64, memShellHelper);
         String b64 = Encoder.base64encoder(msLoaderJavaClassBytes);
         Printer.greenInfo("ms+loader:");
         Printer.greenInfo(b64);

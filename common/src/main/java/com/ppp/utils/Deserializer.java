@@ -23,7 +23,7 @@ public class Deserializer implements Callable<Object> {
         return deserialize(in);
     }
 
-    public static Object deserializeBase64(final String base64Str) throws IOException, ClassNotFoundException {
+    public static Object deserializeBase64(final String base64Str) throws Exception {
         final byte[] serialized = new sun.misc.BASE64Decoder().decodeBuffer(base64Str);
         final ByteArrayInputStream in = new ByteArrayInputStream(serialized);
         return deserialize(in);

@@ -57,6 +57,22 @@ public class SinksHelper {
      * 文件内容
      */
     private String fileContent;
+    /**
+     * 远程加载 url
+     */
+    private String url;
+    /**
+     * 远程加载类名
+     */
+    private String className;
+    /**
+     * 远程加载构造方法参数
+     */
+    private String constructor;
+    /**
+     * 本地加载方法
+     */
+    private String loadFunction;
 
 
     /**
@@ -136,12 +152,12 @@ public class SinksHelper {
         this.serverFilePath = serverFilePath;
     }
 
-    public MemShellHelper getMemShellHelper() {
-        return memShellHelper;
+    public String getLocalFilePath() {
+        return localFilePath;
     }
 
-    public void setMemShellHelper(MemShellHelper memShellHelper) {
-        this.memShellHelper = memShellHelper;
+    public void setLocalFilePath(String localFilePath) {
+        this.localFilePath = localFilePath;
     }
 
     public String getFileContent() {
@@ -152,11 +168,43 @@ public class SinksHelper {
         this.fileContent = fileContent;
     }
 
-    public String getLocalFilePath() {
-        return localFilePath;
+    public String getUrl() {
+        return url;
     }
 
-    public void setLocalFilePath(String localFilePath) {
-        this.localFilePath = localFilePath;
+    public void setUrl(String url) {
+        this.url = url;
+    }
+
+    public String getClassName() {
+        return className;
+    }
+
+    public void setClassName(String className) {
+        this.className = className;
+    }
+
+    public String getConstructor() {
+        return constructor;
+    }
+
+    public void setConstructor(String constructor) {
+        this.constructor = constructor;
+    }
+
+    public String getLoadFunction() {
+        return loadFunction;
+    }
+
+    public void setLoadFunction(String loadFunction) {
+        this.loadFunction = loadFunction;
+    }
+
+    public MemShellHelper getMemShellHelper() {
+        return memShellHelper;
+    }
+
+    public void setMemShellHelper(MemShellHelper memShellHelper) {
+        this.memShellHelper = memShellHelper;
     }
 }

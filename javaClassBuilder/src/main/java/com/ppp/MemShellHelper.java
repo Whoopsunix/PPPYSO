@@ -16,6 +16,11 @@ public class MemShellHelper {
      */
     private String HEADER = "X-Token";
 
+    /**
+     * JavaClass 信息
+     */
+    private String javaClassName;
+
 
     public String getMiddleware() {
         return middleware;
@@ -47,5 +52,13 @@ public class MemShellHelper {
 
     public void setHEADER(String HEADER) {
         this.HEADER = HEADER;
+    }
+
+    public String getJavaClassName() {
+        return javaClassName;
+    }
+
+    public void setJavaClassName(String javaClassName) {
+        this.javaClassName = javaClassName;
     }
 }
