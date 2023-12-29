@@ -1,6 +1,6 @@
 package com.ppp.middleware.builder;
 
-import com.ppp.MemShellHelper;
+import com.ppp.JavaClassHelper;
 import com.ppp.annotation.Builder;
 import com.ppp.annotation.MemShell;
 import com.ppp.annotation.Middleware;
@@ -17,7 +17,7 @@ import javassist.CtMethod;
 @Middleware(Middleware.Tomcat)
 public class TomcatMSJavaClassBuilder {
     @MemShell(MemShell.Listener)
-    public byte[] listener(Class cls, MemShellHelper memShellHelper) throws Exception {
+    public byte[] listener(Class cls, JavaClassHelper javaClassHelper) throws Exception {
         ClassPool classPool = ClassPool.getDefault();
         classPool.insertClassPath(new ClassClassPath(cls));
         classPool.importPackage("javax.servlet.http");
@@ -31,7 +31,7 @@ public class TomcatMSJavaClassBuilder {
                 "return httpServletResponse;}");
 
         // MemShell 信息修改
-        MemShellModifier.fieldChange(cls, ctClass, memShellHelper);
+        MemShellModifier.fieldChange(cls, ctClass, javaClassHelper);
 
         // 清除所有注解
         JavaClassUtils.clearAllAnnotations(ctClass);

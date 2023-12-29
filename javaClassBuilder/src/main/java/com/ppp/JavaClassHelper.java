@@ -3,7 +3,14 @@ package com.ppp;
 /**
  * @author Whoopsunix
  */
-public class MemShellHelper {
+public class JavaClassHelper {
+    /**
+     * JavaClassHelper 类型
+     */
+    private String JavaClassHelperType;
+    /**
+     * 内存马
+     */
     // 组件
     private String middleware;
     // 内存马类型
@@ -21,6 +28,13 @@ public class MemShellHelper {
      */
     private String javaClassName;
 
+    public String getJavaClassHelperType() {
+        return JavaClassHelperType;
+    }
+
+    public void setJavaClassHelperType(String javaClassHelperType) {
+        JavaClassHelperType = javaClassHelperType;
+    }
 
     public String getMiddleware() {
         return middleware;

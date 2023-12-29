@@ -1,6 +1,6 @@
 package com.ppp.middleware.builder;
 
-import com.ppp.MemShellHelper;
+import com.ppp.JavaClassHelper;
 import com.ppp.annotation.Builder;
 import com.ppp.annotation.MemShell;
 import com.ppp.annotation.Middleware;
@@ -14,7 +14,7 @@ import javassist.*;
 @Middleware(Middleware.Tomcat)
 public class TomcatLoaderBuilder {
     @MemShell(MemShell.Listener)
-    public byte[] listener(Class cls, String MSGzipBase64, MemShellHelper memShellHelper) throws Exception {
+    public byte[] listener(Class cls, String MSGzipBase64, JavaClassHelper javaClassHelper) throws Exception {
         ClassPool classPool = ClassPool.getDefault();
         classPool.insertClassPath(new ClassClassPath(cls));
 //        classPool.importPackage("javax.servlet.http");
@@ -70,7 +70,7 @@ public class TomcatLoaderBuilder {
         JavaClassUtils.clearAllAnnotations(ctClass);
 
         // 保存类信息
-        memShellHelper.setJavaClassName(ctClass.getName());
+        javaClassHelper.setJavaClassName(ctClass.getName());
 
 
         byte[] classBytes = ctClass.toBytecode();
