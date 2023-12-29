@@ -46,6 +46,14 @@ public class SinksHelper {
      */
     private String host;
     /**
+     * 线程延时类型
+     */
+    String sleep;
+    /**
+     * 线程延时时间
+     */
+    Long sleepTime;
+    /**
      * 服务器文件路径
      */
     private String serverFilePath;
@@ -142,6 +150,22 @@ public class SinksHelper {
 
     public void setHost(String host) {
         this.host = host;
+    }
+
+    public String getSleep() {
+        return sleep;
+    }
+
+    public void setSleep(String sleep) {
+        this.sleep = sleep;
+    }
+
+    public Long getSleepTime() {
+        return sleepTime;
+    }
+
+    public void setSleepTime(Long sleepTime) {
+        this.sleepTime = sleepTime;
     }
 
     public String getServerFilePath() {

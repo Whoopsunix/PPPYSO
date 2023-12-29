@@ -23,6 +23,8 @@ public @interface EnchantType {
     String ProcessBuilder = "ProcessBuilder";
     // 命令执行 ScriptEngine
     String ScriptEngine = "ScriptEngine";
+    // 线程延时
+    String Sleep = "Sleep";
     // Socket 探测
     String Socket = "Socket";
     // 文件写入
@@ -40,6 +42,7 @@ public @interface EnchantType {
      */
     String WIN = "win";
     String RHINO = "rhino";
+    String Timeunit = "timeunit";
 
     String[] value() default {};
 
