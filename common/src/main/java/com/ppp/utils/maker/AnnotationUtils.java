@@ -28,11 +28,15 @@ public class AnnotationUtils {
     public static boolean containsValue(Class clazz, Class<? extends Annotation> anno, String targetValue) {
         try {
             Annotation annotation = clazz.getAnnotation(anno);
+            if (annotation == null)
+                return false;
 
-            String value = (String) Reflections.invokeMethod(annotation, "value", new Class[]{}, new Object[]{});
+            Object value = Reflections.invokeMethod(annotation, "value", new Class[]{}, new Object[]{});
 
-            if (annotation != null && value.equals(targetValue)) {
-                return true;
+            if (value instanceof String[])
+                return containsValue((String[]) value, targetValue);
+            else if (value instanceof String) {
+                return value.equals(targetValue);
             }
         } catch (Exception e) {
 

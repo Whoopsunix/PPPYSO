@@ -16,21 +16,15 @@ public class ObjectPayloadBuilder {
         ObjectPayload payload = cls.newInstance();
         Object gadget = payload.getObject(sinksHelper);
 
-        // 保存
+        // 输出
         PrintStream out = System.out;
         String output = sinksHelper.getOutput();
         Object result = null;
 
         if (output == null) {
             Serializer.serialize(gadget, out);
-            if (sinksHelper.isSave()) {
-                Serializer.serialize(gadget, new PrintStream(sinksHelper.getSavePath()));
-            }
         } else if (output.equalsIgnoreCase(Save.GZIP)) {
             Serializer.serializeGZip(gadget, out);
-            if (sinksHelper.isSave()) {
-                Serializer.serializeGZip(gadget, new PrintStream(sinksHelper.getSavePath()));
-            }
         } else if (output.equalsIgnoreCase(Save.Base64)) {
             result = Serializer.serializeBase64(gadget);
         } else if (output.equalsIgnoreCase(Save.Base64gzip)) {
@@ -41,6 +35,15 @@ public class ObjectPayloadBuilder {
             result = Serializer.serializeHexAscii(gadget);
         }
         System.out.println(result);
+
+        // 保存文件
+        if (sinksHelper.isSave()) {
+            if (output == null || !output.equalsIgnoreCase(Save.GZIP)) {
+                Serializer.serialize(gadget, new PrintStream(sinksHelper.getSavePath()));
+            } else {
+                Serializer.serializeGZip(gadget, new PrintStream(sinksHelper.getSavePath()));
+            }
+        }
 
         return gadget;
     }

@@ -13,6 +13,7 @@ import java.lang.annotation.Target;
 public @interface Middleware {
     // 中间件
     String Tomcat = "Tomcat";
+    String Jetty = "Jetty";
 
     String value();
 }

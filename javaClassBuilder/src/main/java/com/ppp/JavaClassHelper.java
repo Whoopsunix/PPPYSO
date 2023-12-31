@@ -22,6 +22,7 @@ public class JavaClassHelper {
      * 以下为内存马可自定义信息
      */
     private String HEADER = "X-Token";
+    private String PARAM = "cmd";
 
     /**
      * JavaClass 信息
@@ -66,6 +67,14 @@ public class JavaClassHelper {
 
     public void setHEADER(String HEADER) {
         this.HEADER = HEADER;
+    }
+
+    public String getPARAM() {
+        return PARAM;
+    }
+
+    public void setPARAM(String PARAM) {
+        this.PARAM = PARAM;
     }
 
     public String getJavaClassName() {

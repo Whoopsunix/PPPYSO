@@ -12,6 +12,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface JavaClassModifiable {
     String HEADER = "HEADER";
+    String PARAM = "PARAM";
     String PATH = "PATH";
-    String value();
+    String[] value() default {};
 }
