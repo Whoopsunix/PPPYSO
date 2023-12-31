@@ -25,13 +25,17 @@ public class AnnotationUtils {
         return false;
     }
 
-    public static boolean containsValue(Class clazz, Class<? extends Annotation> anno, String targetValue) throws Exception{
-        Annotation annotation = clazz.getAnnotation(anno);
+    public static boolean containsValue(Class clazz, Class<? extends Annotation> anno, String targetValue) {
+        try {
+            Annotation annotation = clazz.getAnnotation(anno);
 
-        String value = (String) Reflections.invokeMethod(annotation, "value", new Class[]{}, new Object[]{});
+            String value = (String) Reflections.invokeMethod(annotation, "value", new Class[]{}, new Object[]{});
 
-        if (annotation != null && value.equals(targetValue)) {
-            return true;
+            if (annotation != null && value.equals(targetValue)) {
+                return true;
+            }
+        } catch (Exception e) {
+
         }
 
         return false;

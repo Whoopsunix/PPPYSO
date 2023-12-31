@@ -2,7 +2,7 @@ package com.ppp.middleware.memshell;
 
 import com.ppp.annotation.MemShell;
 import com.ppp.annotation.MemShellFunction;
-import com.ppp.annotation.MemShellModifiable;
+import com.ppp.annotation.JavaClassModifiable;
 
 import java.io.InputStream;
 import java.lang.reflect.Field;
@@ -14,7 +14,7 @@ import java.lang.reflect.Method;
  */
 @MemShell(MemShell.Listener)
 @MemShellFunction(MemShellFunction.Runtime)
-@MemShellModifiable(MemShellModifiable.HEADER)
+@JavaClassModifiable(JavaClassModifiable.HEADER)
 public class ListenerExec implements InvocationHandler {
     private static String HEADER;
 

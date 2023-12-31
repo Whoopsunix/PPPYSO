@@ -33,8 +33,9 @@ public @interface EnchantType {
     String RemoteLoad = "RemoteLoad";
     // 本地类加载
     String LocalLoad = "LocalLoad";
-    // 内存马
-    String MEMSHELL = "MemShell";
+
+    // JavaClass
+    String JavaClass = "JavaClass";
 
 
     /**

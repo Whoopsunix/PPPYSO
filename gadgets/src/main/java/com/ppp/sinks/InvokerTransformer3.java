@@ -1,8 +1,7 @@
 package com.ppp.sinks;
 
+import com.ppp.JavaClassBuilder;
 import com.ppp.JavaClassHelper;
-import com.ppp.JavaClassScheduler;
-import com.ppp.scheduler.MemShellScheduler;
 import com.ppp.Printer;
 import com.ppp.sinks.annotation.EnchantType;
 import com.ppp.sinks.annotation.Sink;
@@ -273,7 +272,7 @@ public class InvokerTransformer3 {
         JavaClassHelper javaClassHelper = sinksHelper.getJavaClassHelper();
 
         if (javaClassHelper != null) {
-            classBytes = JavaClassScheduler.build(javaClassHelper);
+            classBytes = JavaClassBuilder.build(javaClassHelper);
             javaClassName = javaClassHelper.getJavaClassName();
         }
 

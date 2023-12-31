@@ -16,7 +16,6 @@ import org.apache.commons.collections.map.LazyMap;
 
 import javax.management.BadAttributeValueExpException;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 
 /**

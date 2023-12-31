@@ -14,10 +14,8 @@ import org.apache.commons.collections.Transformer;
 import org.apache.commons.collections.functors.ChainedTransformer;
 import org.apache.commons.collections.functors.ConstantTransformer;
 import org.apache.commons.collections.functors.InstantiateTransformer;
-import org.apache.commons.collections.keyvalue.TiedMapEntry;
 import org.apache.commons.collections.map.LazyMap;
 
-import javax.management.BadAttributeValueExpException;
 import javax.xml.transform.Templates;
 import java.lang.reflect.InvocationHandler;
 import java.util.HashMap;

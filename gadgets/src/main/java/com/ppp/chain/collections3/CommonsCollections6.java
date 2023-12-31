@@ -10,7 +10,6 @@ import com.ppp.sinks.annotation.Sink;
 import com.ppp.utils.Reflections;
 import org.apache.commons.collections.Transformer;
 import org.apache.commons.collections.functors.ChainedTransformer;
-import org.apache.commons.collections.functors.ConstantTransformer;
 import org.apache.commons.collections.keyvalue.TiedMapEntry;
 import org.apache.commons.collections.map.LazyMap;
 

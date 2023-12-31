@@ -8,6 +8,7 @@
     <packaging>pom</packaging>
 
     <name>PPPYso</name>
+    <description>Whoopsunix</description>
 
     <modules>
         <module>gadgets</module>

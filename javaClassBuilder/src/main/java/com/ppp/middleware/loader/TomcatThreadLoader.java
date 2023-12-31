@@ -24,7 +24,6 @@ public class TomcatThreadLoader {
     private static List applicationEventListeners;
     private static Boolean flag = false;
 
-
     public TomcatThreadLoader() {
     }
 

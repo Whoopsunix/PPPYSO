@@ -8,6 +8,7 @@
     <packaging>jar</packaging>
 
     <name>javaClassBuilder</name>
+    <description>Whoopsunix</description>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
