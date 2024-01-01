@@ -64,7 +64,7 @@ public class TomcatLoaderBuilder {
                 "} else {\n" +
                 "    invokeMethod($1, \"addApplicationEventListener\", new Class[]{Object.class}, new Object[]{$2});\n" +
                 "}\n" +
-                "flag = true;}");
+                "flag = new Boolean(true);}");
 
         // 清除所有注解
         JavaClassUtils.clearAllAnnotations(ctClass);
