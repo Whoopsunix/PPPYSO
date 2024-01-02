@@ -24,7 +24,7 @@ public @interface EnchantType {
     // 命令执行 ScriptEngine
     String ScriptEngine = "ScriptEngine";
     // 线程延时
-    String Sleep = "Sleep";
+    String Delay = "Delay";
     // Socket 探测
     String Socket = "Socket";
     // 文件写入
@@ -39,7 +39,7 @@ public @interface EnchantType {
 
 
     /**
-     * 固定参数
+     * 附加参数固定可选类型
      */
     String WIN = "win";
     String RHINO = "rhino";

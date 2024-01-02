@@ -1,6 +1,5 @@
 package com.ppp.middleware.memshell;
 
-import com.ppp.annotation.JavaClassModifiable;
 import com.ppp.annotation.MemShell;
 import com.ppp.annotation.MemShellFunction;
 

@@ -109,8 +109,8 @@ public class InvokerTransformer3 {
      * @param sinksHelper
      * @return
      */
-    @EnchantType({EnchantType.Sleep})
-    public Transformer[] sleep(SinksHelper sinksHelper) {
+    @EnchantType({EnchantType.Delay})
+    public Transformer[] delay(SinksHelper sinksHelper) {
         String sleep = sinksHelper.getSleep();
         Long sleepTime = sinksHelper.getSleepTime();
 

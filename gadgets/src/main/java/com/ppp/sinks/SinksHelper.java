@@ -49,11 +49,11 @@ public class SinksHelper {
     /**
      * 线程延时类型
      */
-    String sleep;
+    private String sleep;
     /**
      * 线程延时时间
      */
-    Long sleepTime;
+    private Long sleepTime;
     /**
      * 服务器文件路径
      */
@@ -239,5 +239,30 @@ public class SinksHelper {
 
     public void setJavaClassHelper(JavaClassHelper javaClassHelper) {
         this.javaClassHelper = javaClassHelper;
+    }
+
+    @Override
+    public String toString() {
+        return "SinksHelper{" +
+                "sink='" + sink + '\'' +
+                ", enchant='" + enchant + '\'' +
+                ", output='" + output + '\'' +
+                ", save=" + save +
+                ", savePath='" + savePath + '\'' +
+                ", extendsAbstractTranslet=" + extendsAbstractTranslet +
+                ", command='" + command + '\'' +
+                ", os='" + os + '\'' +
+                ", host='" + host + '\'' +
+                ", sleep='" + sleep + '\'' +
+                ", sleepTime=" + sleepTime +
+                ", serverFilePath='" + serverFilePath + '\'' +
+                ", localFilePath='" + localFilePath + '\'' +
+                ", fileContent='" + fileContent + '\'' +
+                ", url='" + url + '\'' +
+                ", remoteClassName='" + remoteClassName + '\'' +
+                ", constructor='" + constructor + '\'' +
+                ", loadFunction='" + loadFunction + '\'' +
+                ", javaClassHelper=" + javaClassHelper +
+                '}';
     }
 }

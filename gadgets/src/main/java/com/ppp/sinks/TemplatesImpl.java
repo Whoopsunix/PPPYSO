@@ -62,9 +62,9 @@ public class TemplatesImpl {
      * @return
      * @throws Exception
      */
-    @EnchantType({EnchantType.Sleep})
-    public Object sleep(SinksHelper sinksHelper) throws Exception {
-        String className = "SleepD";
+    @EnchantType({EnchantType.Delay})
+    public Object delay(SinksHelper sinksHelper) throws Exception {
+        String className = "DelayD";
 
         Long sleepTime = sinksHelper.getSleepTime();
         String sleep = sinksHelper.getSleep();
