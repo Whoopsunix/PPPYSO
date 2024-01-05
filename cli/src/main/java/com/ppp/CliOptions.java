@@ -1,50 +1,68 @@
 package com.ppp;
 
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-
 /**
- * Java Class Loader 类型
+ * @author Whoopsunix
  */
-@Retention(RetentionPolicy.RUNTIME)
-public @interface CliOptions {
-    String Help = "help";
+public enum CliOptions {
+    Help("h", "help", "Print this usage information"),
     // 基本参数
-    String Gadget = "gadget";
-    String Output = "output";
-    String SavePath = "savePath";
+    Gadget("g", "gadget", "Gadget class name"),
+    Output("o", "output", "Gadget output type"),
+    SavePath("save", "savePath", "Save payload to file"),
     // 增强类型
-    String Enchant = "enchant";
-    String ExtendsAbstractTranslet = "extendsAbstractTranslet";
-
+    Enchant("e", "enchant", "Enchant type"),
+    ExtendsAbstractTranslet("ext", "extendsAbstractTranslet", "Extends AbstractTranslet"),
     // 命令执行内容
-    String Command = "command";
+    Command("cmd", "command", "Command"),
     // 操作系统
-    String OS = "os";
+    OS("os", "os", "OS"),
     // Socket 探测域名
-    String Host = "host";
+    Host("host", "host", "Host"),
     // 线程延时类型
-    String Delay = "delay";
+    Delay("d", "delay", "Delay function, default is Thread.sleep"),
     // 线程延时时间
-    String DelayTime = "delayTime";
+    DelayTime("dt", "delayTime", "Delay time (in seconds)"),
     // 服务器文件路径
-    String ServerFilePath = "serverFilePath";
+    ServerFilePath("sfp", "serverFilePath", "Server file path"),
     // 本地文件路径
-    String LocalFilePath = "localFilePath";
+    LocalFilePath("lfp", "localFilePath", "Local file path"),
     // 文件内容
-    String FileContent = "fileContent";
+    FileContent("fc", "fileContent", "File content"),
     // 远程加载 url
-    String URL = "url";
+    URL("u", "url", "URL"),
     // 远程加载类名
-    String RemoteClassName = "remoteClassName";
+    RemoteClassName("rcn", "remoteClassName", "Remote Load Class Name"),
     // 远程加载构造方法参数
-    String Constructor = "constructor";
+    Constructor("ctor", "constructor", "Constructor param"),
+    // 本地加载
+    LocalLoad("ll", "localLoad", "Enable local Load"),
     // 本地加载方法
-    String LoadFunction = "loadFunction";
-    String JavaClassHelperType = "javaClassHelperType";
-    String Middleware = "middleware";
-    String MemShell = "memShell";
-    String MemShellFunction = "memShellFunction";
+    LoadFunction("lf", "loadFunction", "Load function"),
+    // JavaClass
+    JavaClassHelperType("jht", "javaClassHelperType", "Java Class Type"),
+    Middleware("mw", "middleware", "Middleware"),
+    MemShellType("mst", "memShellType", "MemShell Type"),
+    MemShellFunction("msf", "memShellFunction", "MemShell Function");
 
-    String value();
+    private final String opt;
+    private final String longOpt;
+    private final String description;
+
+    CliOptions(String opt, String longOpt, String description) {
+        this.opt = opt;
+        this.longOpt = longOpt;
+        this.description = description;
+    }
+
+    public String getOpt() {
+        return opt;
+    }
+
+    public String getLongOpt() {
+        return longOpt;
+    }
+
+    public String getDescription() {
+        return description;
+    }
 }

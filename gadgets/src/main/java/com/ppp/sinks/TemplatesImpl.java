@@ -153,9 +153,9 @@ public class TemplatesImpl {
             JavaClassUtils.fieldChangeIfExist(ctClass, "url", String.format("private static String url = \"%s\";", url));
             JavaClassUtils.fieldChangeIfExist(ctClass, "className", String.format("private static String className = \"%s\";", remoteClassName));
 
-            if (constructorType.equals(Integer.class)) {
-                JavaClassUtils.fieldChangeIfExist(ctClass, "param", "private static Object param = new Integer(123);");
-            } else if (constructorType.equals(String.class)) {
+            if (constructor instanceof Integer) {
+                JavaClassUtils.fieldChangeIfExist(ctClass, "param", String.format("private static Object param = new Integer(%s);", constructor));
+            } else if (constructor instanceof String) {
                 JavaClassUtils.fieldChangeIfExist(ctClass, "param", String.format("private static Object param = \"%s\";", constructor));
             }
 

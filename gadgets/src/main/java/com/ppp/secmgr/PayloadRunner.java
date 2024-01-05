@@ -1,8 +1,8 @@
 package com.ppp.secmgr;
 
 import com.ppp.ObjectPayload;
-import com.ppp.sinks.SinksHelper;
 import com.ppp.sinks.annotation.EnchantType;
+import com.ppp.sinks.SinksHelper;
 import com.ppp.sinks.annotation.Sink;
 import com.ppp.utils.Deserializer;
 import com.ppp.utils.Serializer;

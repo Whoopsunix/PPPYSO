@@ -1,9 +1,11 @@
 package com.ppp;
 
-import com.ppp.annotation.Save;
+
+import com.ppp.enums.Save;
 import com.ppp.sinks.SinksHelper;
 import com.ppp.utils.Serializer;
 
+import java.io.FileOutputStream;
 import java.io.PrintStream;
 
 /**
@@ -23,22 +25,30 @@ public class ObjectPayloadBuilder {
 
         if (output == null) {
             Serializer.serialize(gadget, out);
-        } else if (output.equalsIgnoreCase(Save.GZIP)) {
+        } else if (output.equalsIgnoreCase(String.valueOf(Save.GZIP))) {
             Serializer.serializeGZip(gadget, out);
-        } else if (output.equalsIgnoreCase(Save.Base64)) {
+        } else if (output.equalsIgnoreCase(String.valueOf(Save.Base64))) {
             result = Serializer.serializeBase64(gadget);
-        } else if (output.equalsIgnoreCase(Save.Base64gzip)) {
+        } else if (output.equalsIgnoreCase(String.valueOf(Save.Base64gzip))) {
             result = Serializer.serializeBase64GZip(gadget);
-        } else if (output.equalsIgnoreCase(Save.XStream)) {
+        } else if (output.equalsIgnoreCase(String.valueOf(Save.XStream))) {
             result = Serializer.serializeXStream(gadget);
-        } else if (output.equalsIgnoreCase(Save.hexAscii)) {
+        } else if (output.equalsIgnoreCase(String.valueOf(Save.hexAscii))) {
             result = Serializer.serializeHexAscii(gadget);
+        } else {
+            Printer.warn("No corresponding output type found, check the output [-o] parameter");
+            Serializer.serialize(gadget, out);
         }
         System.out.println(result);
 
         // 保存文件
         if (sinksHelper.isSave()) {
-            if (output == null || !output.equalsIgnoreCase(Save.GZIP)) {
+            if (result != null) {
+                // 保存
+                FileOutputStream fos = new FileOutputStream(sinksHelper.getSavePath());
+                fos.write(result.toString().getBytes());
+                fos.close();
+            }else if (output == null || !output.equalsIgnoreCase(String.valueOf(Save.GZIP))) {
                 Serializer.serialize(gadget, new PrintStream(sinksHelper.getSavePath()));
             } else {
                 Serializer.serializeGZip(gadget, new PrintStream(sinksHelper.getSavePath()));

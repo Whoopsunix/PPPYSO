@@ -14,6 +14,7 @@ import java.util.List;
  */
 public class SinkScheduler {
     private static String packageName = "com.ppp.sinks";
+
     public static void main(String[] args) throws Exception {
         SinksHelper sinksHelper = new SinksHelper();
         // 通过
@@ -57,7 +58,7 @@ public class SinkScheduler {
         }
 
         if (targetMethod == null)
-            Printer.error("No such method: " + sinksHelper.getEnchant());
+            Printer.error(String.format("%s no such enchant function: %s", sink, sinksHelper.getEnchant()));
 
         return targetMethod.invoke(targetClass.newInstance(), sinksHelper);
     }
