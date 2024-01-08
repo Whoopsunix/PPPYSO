@@ -23,7 +23,7 @@ public class RceEchoScheduler {
         /**
          * 获取 Builder
          */
-        Class recEchoClass = null;
+        Class rceEchoClass = null;
 
         List<Class<?>> builderClasses = ClassUtils.getClasses(builderPackageName);
         for (Class<?> clazz : builderClasses) {
@@ -34,8 +34,8 @@ public class RceEchoScheduler {
             if (middlewareAnnotation == null) continue;
 
             // 获取 RceEcho Builder
-            if (builder.value().equals(Builder.RceEcho) && middlewareAnnotation.value().equals(middleware)) {
-                recEchoClass = clazz;
+            if (builder.value().equalsIgnoreCase(Builder.RceEcho) && middlewareAnnotation.value().equalsIgnoreCase(middleware)) {
+                rceEchoClass = clazz;
                 Printer.blueInfo("RceEcho builder Class: " + clazz.getName() + ", Annotation Value: " + builder.value());
             }
         }
@@ -44,9 +44,8 @@ public class RceEchoScheduler {
         /**
          * 生成 Builder
          */
-        if (recEchoClass == null) {
-            Printer.error("RecEcho Class Not Found");
-            return null;
+        if (rceEchoClass == null) {
+            Printer.error(String.format("The %s RceEcho is not supported", middleware));
         }
 
         Class recEchoJavaClass = null;
@@ -55,13 +54,13 @@ public class RceEchoScheduler {
             Middleware middlewareAnnotation = clazz.getAnnotation(Middleware.class);
             if (middlewareAnnotation == null) continue;
 
-            if (middlewareAnnotation.value().equals(middleware)) {
+            if (middlewareAnnotation.value().equalsIgnoreCase(middleware)) {
                 recEchoJavaClass = clazz;
                 Printer.blueInfo("RceEcho Class: " + clazz.getName() + ", Annotation Value: " + middlewareAnnotation.value());
             }
         }
 
-        byte[] recEchoJavaClassBytes = (byte[]) Reflections.invokeMethod(recEchoClass.newInstance(), "build", new Class[]{Class.class, JavaClassHelper.class}, new Object[]{recEchoJavaClass, javaClassHelper});
+        byte[] recEchoJavaClassBytes = (byte[]) Reflections.invokeMethod(rceEchoClass.newInstance(), "build", new Class[]{Class.class, JavaClassHelper.class}, new Object[]{recEchoJavaClass, javaClassHelper});
         String b64 = Encoder.base64encoder(recEchoJavaClassBytes);
         Printer.greenInfo("rce echo:");
         Printer.greenInfo(b64);

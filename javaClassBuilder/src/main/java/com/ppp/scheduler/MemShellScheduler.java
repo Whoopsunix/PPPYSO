@@ -38,6 +38,8 @@ public class MemShellScheduler {
         String memShell = javaClassHelper.getMemShell();
         String memShellFunction = javaClassHelper.getMemShellFunction();
 
+        // 用于打印信息
+
         /**
          * 获取 Builder
          */
@@ -53,25 +55,24 @@ public class MemShellScheduler {
             if (middlewareAnnotation == null) continue;
 
             // 获取 Loader Builder
-            if (builder.value().equals(Builder.Loader) && middlewareAnnotation.value().equals(middleware)) {
+            if (builder.value().equalsIgnoreCase(Builder.Loader) && middlewareAnnotation.value().equalsIgnoreCase(middleware)) {
                 loaderBuilderClass = clazz;
                 Printer.blueInfo("Loader builder Class: " + clazz.getName() + ", Annotation Value: " + builder.value());
             }
             // 获取 MemShell Builder
-            if (builder.value().equals(Builder.MS) && middlewareAnnotation.value().equals(middleware)) {
+            if (builder.value().equalsIgnoreCase(Builder.MS) && middlewareAnnotation.value().equalsIgnoreCase(middleware)) {
                 msBuilderClass = clazz;
                 Printer.blueInfo("MemShell builder Class: " + clazz.getName() + ", Annotation Value: " + builder.value());
             }
         }
 
-        // 组件类型不存在
+        // 组件不支持
         if (loaderBuilderClass == null) {
-            Printer.error("Loader builder Class Not Found");
-            return null;
+            Printer.error(String.format("Loader builder Class Not Found, Middleware %s is not supported", middleware));
         }
+        // 内存马 Builder 未找到
         if (msBuilderClass == null) {
             Printer.error("MemShell builder Class Not Found");
-            return null;
         }
 
         /**
@@ -86,7 +87,7 @@ public class MemShellScheduler {
             MemShell memShellAnnotation = method.getAnnotation(MemShell.class);
             if (memShellAnnotation == null) continue;
 
-            if (memShellAnnotation.value().equals(memShell)) {
+            if (memShellAnnotation.value().equalsIgnoreCase(memShell)) {
                 msMethod = method;
                 Printer.blueInfo("MS builder Method: " + method.getName() + ", Annotation Value: " + memShellAnnotation.value());
                 break;
@@ -98,7 +99,7 @@ public class MemShellScheduler {
             MemShell memShellAnnotation = method.getAnnotation(MemShell.class);
             if (memShellAnnotation == null) continue;
 
-            if (memShellAnnotation.value().equals(memShell)) {
+            if (memShellAnnotation.value().equalsIgnoreCase(memShell)) {
                 loaderMethod = method;
                 Printer.blueInfo("Loader builder Method: " + method.getName() + ", Annotation Value: " + memShellAnnotation.value());
                 break;
@@ -115,7 +116,7 @@ public class MemShellScheduler {
         for (Class<?> clazz : loaderClasses) {
             Middleware middlewareAnnotation = clazz.getAnnotation(Middleware.class);
             if (middlewareAnnotation == null) continue;
-            if (middlewareAnnotation.value().equals(middleware)) {
+            if (middlewareAnnotation.value().equalsIgnoreCase(middleware)) {
                 loaderClass = clazz;
                 Printer.blueInfo("Loader Class: " + clazz.getName() + ", Annotation Value: " + middlewareAnnotation.value());
                 break;
@@ -130,7 +131,7 @@ public class MemShellScheduler {
             MemShellFunction memShellFunctionAnnotation = clazz.getAnnotation(MemShellFunction.class);
             if (memShellFunctionAnnotation == null) continue;
 
-            if (memShellAnnotation.value().equals(memShell) && memShellFunctionAnnotation.value().equals(memShellFunction)) {
+            if (memShellAnnotation.value().equalsIgnoreCase(memShell) && memShellFunctionAnnotation.value().equalsIgnoreCase(memShellFunction)) {
                 msClass = clazz;
                 Printer.blueInfo("MemShell Class: " + clazz.getName() + ", Annotation Value: " + memShellAnnotation.value());
                 break;
@@ -139,11 +140,10 @@ public class MemShellScheduler {
 
         if (loaderClass == null) {
             Printer.error("Loader Class Not Found");
-            return null;
         }
+        // 内存马种类不支持
         if (msClass == null) {
-            Printer.error("MemShell Class Not Found");
-            return null;
+            Printer.error(String.format("The MemShell %s is not supported", memShell));
         }
 
 

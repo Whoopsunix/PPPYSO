@@ -35,7 +35,6 @@ public class CliScheduler {
         put(CliOptions.URL.getLongOpt(), null);
         put(CliOptions.RemoteClassName.getLongOpt(), null);
         put(CliOptions.Constructor.getLongOpt(), null);
-        put(CliOptions.LocalLoad.getLongOpt(), false);
         put(CliOptions.LoadFunction.getLongOpt(), null);
 
         // JavaClass 参数
@@ -62,6 +61,7 @@ public class CliScheduler {
         // 附加参数
         options.addOption("cmd", CliOptions.Command.getLongOpt(), true, CliOptions.Command.getDescription());
         options.addOption("os", CliOptions.OS.getLongOpt(), true, CliOptions.OS.getDescription());
+        options.addOption("code", CliOptions.Code.getLongOpt(), true, CliOptions.Code.getDescription());
         options.addOption("host", CliOptions.Host.getLongOpt(), true, CliOptions.Host.getDescription());
         options.addOption("d", CliOptions.Delay.getLongOpt(), true, CliOptions.Delay.getDescription());
         options.addOption("dt", CliOptions.DelayTime.getLongOpt(), true, CliOptions.DelayTime.getDescription());
@@ -71,7 +71,6 @@ public class CliScheduler {
         options.addOption("u", CliOptions.URL.getLongOpt(), true, CliOptions.URL.getDescription());
         options.addOption("rcn", CliOptions.RemoteClassName.getLongOpt(), true, CliOptions.RemoteClassName.getDescription());
         options.addOption("ctor", CliOptions.Constructor.getLongOpt(), true, CliOptions.Constructor.getDescription());
-        options.addOption("ll", CliOptions.LocalLoad.getLongOpt(), false, CliOptions.LocalLoad.getDescription());
         options.addOption("lf", CliOptions.LoadFunction.getLongOpt(), true, CliOptions.LoadFunction.getDescription());
 
         // javaClass
@@ -79,6 +78,8 @@ public class CliScheduler {
         options.addOption("mw", CliOptions.Middleware.getLongOpt(), true, CliOptions.Middleware.getDescription());
         options.addOption("mst", CliOptions.MemShellType.getLongOpt(), true, CliOptions.MemShellType.getDescription());
         options.addOption("msf", CliOptions.MemShellFunction.getLongOpt(), true, CliOptions.MemShellFunction.getDescription());
+
+
 
 
         CommandLineParser parser = new DefaultParser();
@@ -146,9 +147,10 @@ public class CliScheduler {
             sinksHelper.setExtendsAbstractTranslet((Boolean) payloadOptions.get(CliOptions.ExtendsAbstractTranslet.getLongOpt()));
         }
 
-        String Enchant = "";
+        String[] enchants = new String[]{};
         if (payloadOptions.get(CliOptions.Enchant.getLongOpt()) != null) {
-            Enchant = payloadOptions.get(CliOptions.Enchant.getLongOpt()).toString();
+            String enchant = payloadOptions.get(CliOptions.Enchant.getLongOpt()).toString();
+            enchants = enchant.split(",");
         }
 
         /**
@@ -157,10 +159,10 @@ public class CliScheduler {
         Boolean isCmd = false;
         // 默认无增强 使用 DEFAULT Runtime
         if (payloadOptions.get(CliOptions.Enchant.getLongOpt()) == null
-                || Enchant.equalsIgnoreCase(EnchantType.RUNTIME)) {
-            sinksHelper.setEnchant(EnchantType.DEFAULT);
+                || isEnchant(enchants, EnchantType.RUNTIME)) {
+            sinksHelper.setEnchant(EnchantType.RUNTIME);
             isCmd = true;
-        } else if (Enchant.equalsIgnoreCase(EnchantType.ProcessBuilder)) {
+        } else if (isEnchant(enchants, EnchantType.ProcessBuilder)) {
             sinksHelper.setEnchant(EnchantType.ProcessBuilder);
             if (payloadOptions.get(CliOptions.OS.getLongOpt()) != null) {
                 if (payloadOptions.get(CliOptions.OS.getLongOpt()).toString().equalsIgnoreCase(EnchantType.WIN))
@@ -169,10 +171,21 @@ public class CliScheduler {
                 Printer.warn("Not supported OS, use [-os] to set");
             }
             isCmd = true;
-        } else if (Enchant.equalsIgnoreCase(EnchantType.ScriptEngine)) {
-            sinksHelper.setEnchant(EnchantType.ScriptEngine);
-            isCmd = true;
         }
+
+        /**
+         * 代码执行
+         */
+        if (isEnchant(enchants, EnchantType.ScriptEngine)) {
+            sinksHelper.setEnchant(EnchantType.ScriptEngine);
+            Object code = payloadOptions.get(CliOptions.Code.getLongOpt());
+            if (code != null) {
+                sinksHelper.setCode(code.toString());
+            } else {
+                isCmd = true;
+            }
+        }
+
         // 参数检查
         if (isCmd) {
             if (payloadOptions.get(CliOptions.Command.getLongOpt()) != null) {
@@ -190,7 +203,7 @@ public class CliScheduler {
         /**
          * 延时
          */
-        if (Enchant.equalsIgnoreCase(EnchantType.Delay)) {
+        if (isEnchant(enchants, EnchantType.Delay)) {
             sinksHelper.setEnchant(EnchantType.Delay);
             Object Delay = payloadOptions.get(CliOptions.Delay.getLongOpt());
             if (Delay != null && Delay.toString().equalsIgnoreCase(EnchantType.Timeunit)) {
@@ -206,7 +219,7 @@ public class CliScheduler {
         /**
          * Socket 探测
          */
-        if (Enchant.equalsIgnoreCase(EnchantType.Socket)) {
+        if (isEnchant(enchants, EnchantType.Socket)) {
             sinksHelper.setEnchant(EnchantType.Socket);
             if (payloadOptions.get(CliOptions.Host.getLongOpt()) != null) {
                 sinksHelper.setHost(payloadOptions.get(CliOptions.Host.getLongOpt()).toString());
@@ -218,7 +231,7 @@ public class CliScheduler {
         /**
          * 文件写入
          */
-        if (Enchant.equalsIgnoreCase(EnchantType.FileWrite)) {
+        if (isEnchant(enchants, EnchantType.FileWrite)) {
             sinksHelper.setEnchant(EnchantType.FileWrite);
             if (payloadOptions.get(CliOptions.ServerFilePath.getLongOpt()) != null) {
                 sinksHelper.setServerFilePath(payloadOptions.get(CliOptions.ServerFilePath.getLongOpt()).toString());
@@ -237,7 +250,7 @@ public class CliScheduler {
         /**
          * 远程加载
          */
-        if (Enchant.equalsIgnoreCase(EnchantType.RemoteLoad)) {
+        if (isEnchant(enchants, EnchantType.RemoteLoad)) {
             sinksHelper.setEnchant(EnchantType.RemoteLoad);
             if (payloadOptions.get(CliOptions.URL.getLongOpt()) != null) {
                 sinksHelper.setUrl(payloadOptions.get(CliOptions.URL.getLongOpt()).toString());
@@ -259,7 +272,7 @@ public class CliScheduler {
          */
         Boolean isJavaClass = false;
         JavaClassHelper javaClassHelper = new JavaClassHelper();
-        if (Enchant.equalsIgnoreCase(EnchantType.JavaClass)) {
+        if (isEnchant(enchants, EnchantType.JavaClass)) {
             sinksHelper.setEnchant(EnchantType.JavaClass);
             // 组件
             if (payloadOptions.get(CliOptions.Middleware.getLongOpt()) != null) {
@@ -319,7 +332,7 @@ public class CliScheduler {
         /**
          * 本地字节码加载
          */
-        if ((Boolean) payloadOptions.get(CliOptions.LocalLoad.getLongOpt())) {
+        if (isEnchant(enchants, EnchantType.LocalLoad)) {
             sinksHelper.setEnchant(EnchantType.LocalLoad);
             sinksHelper.setJavaClassHelper(javaClassHelper);
             if (!isJavaClass) {
@@ -334,6 +347,15 @@ public class CliScheduler {
 
 
         return sinksHelper;
+    }
+
+    public static Boolean isEnchant(String[] enchants, String enchant) {
+        for (String e : enchants) {
+            if (e.equalsIgnoreCase(enchant)) {
+                return true;
+            }
+        }
+        return false;
     }
 
 
@@ -361,6 +383,9 @@ public class CliScheduler {
         if (commandLine.hasOption(CliOptions.OS.getLongOpt())) {
             payloadOptions.put(CliOptions.OS.getLongOpt(), commandLine.getOptionValue(CliOptions.OS.getLongOpt()));
         }
+        if (commandLine.hasOption(CliOptions.Code.getLongOpt())) {
+            payloadOptions.put(CliOptions.Code.getLongOpt(), commandLine.getOptionValue(CliOptions.Code.getLongOpt()));
+        }
         if (commandLine.hasOption(CliOptions.Host.getLongOpt())) {
             payloadOptions.put(CliOptions.Host.getLongOpt(), commandLine.getOptionValue(CliOptions.Host.getLongOpt()));
         }
@@ -387,9 +412,6 @@ public class CliScheduler {
         }
         if (commandLine.hasOption(CliOptions.Constructor.getLongOpt())) {
             payloadOptions.put(CliOptions.Constructor.getLongOpt(), commandLine.getOptionValue(CliOptions.Constructor.getLongOpt()));
-        }
-        if (commandLine.hasOption(CliOptions.LocalLoad.getLongOpt())) {
-            payloadOptions.put(CliOptions.LocalLoad.getLongOpt(), true);
         }
         if (commandLine.hasOption(CliOptions.LoadFunction.getLongOpt())) {
             payloadOptions.put(CliOptions.LoadFunction.getLongOpt(), commandLine.getOptionValue(CliOptions.LoadFunction.getLongOpt()));

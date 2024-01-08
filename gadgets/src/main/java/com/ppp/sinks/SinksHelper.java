@@ -29,6 +29,9 @@ public class SinksHelper {
      */
     private String savePath = "./result.bin";
 
+    /**
+     * 继承 AbstractTranslet
+     */
     private boolean extendsAbstractTranslet = false;
 
     /**
@@ -42,6 +45,14 @@ public class SinksHelper {
      * 操作系统
      */
     private String os;
+    /**
+     * 代码执行内容
+     */
+    private String code;
+    /**
+     * 代码执行内容 文件中读取
+     */
+    private String codeFile;
     /**
      * Socket 探测域名
      */
@@ -153,6 +164,22 @@ public class SinksHelper {
         this.os = os;
     }
 
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
+
+    public String getCodeFile() {
+        return codeFile;
+    }
+
+    public void setCodeFile(String codeFile) {
+        this.codeFile = codeFile;
+    }
+
     public String getHost() {
         return host;
     }
@@ -252,6 +279,7 @@ public class SinksHelper {
                 ", extendsAbstractTranslet=" + extendsAbstractTranslet +
                 ", command='" + command + '\'' +
                 ", os='" + os + '\'' +
+                ", code='" + code + '\'' +
                 ", host='" + host + '\'' +
                 ", sleep='" + sleep + '\'' +
                 ", sleepTime=" + sleepTime +

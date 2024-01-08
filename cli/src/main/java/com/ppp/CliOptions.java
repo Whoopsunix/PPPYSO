@@ -16,6 +16,8 @@ public enum CliOptions {
     Command("cmd", "command", "Command"),
     // 操作系统
     OS("os", "os", "OS"),
+    Code("code", "code", "Code execution content"),
+    CodeFile("cf", "codeFile", "Read Code execution content from file"),
     // Socket 探测域名
     Host("host", "host", "Host"),
     // 线程延时类型
@@ -34,8 +36,6 @@ public enum CliOptions {
     RemoteClassName("rcn", "remoteClassName", "Remote Load Class Name"),
     // 远程加载构造方法参数
     Constructor("ctor", "constructor", "Constructor param"),
-    // 本地加载
-    LocalLoad("ll", "localLoad", "Enable local Load"),
     // 本地加载方法
     LoadFunction("lf", "loadFunction", "Load function"),
     // JavaClass
@@ -43,6 +43,8 @@ public enum CliOptions {
     Middleware("mw", "middleware", "Middleware"),
     MemShellType("mst", "memShellType", "MemShell Type"),
     MemShellFunction("msf", "memShellFunction", "MemShell Function");
+    // JavaClass 增强
+
 
     private final String opt;
     private final String longOpt;

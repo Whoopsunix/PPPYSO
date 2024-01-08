@@ -58,7 +58,7 @@ public class Printer {
         System.out.flush();
     }
     /**
-     * payload 醒目配置 绿色，使用该 payload 需要用到的信息
+     * payload 醒目配置 绿色，针对该 Payload 的配置项
      * @param msg
      */
     public static void greenInfo(Object msg) {
