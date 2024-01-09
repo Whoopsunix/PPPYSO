@@ -5,6 +5,11 @@ package com.ppp;
  */
 public class JavaClassHelper {
     /**
+     * 继承 AbstractTranslet
+     */
+    private boolean extendsAbstractTranslet = false;
+
+    /**
      * JavaClassHelper 类型
      */
     private String JavaClassHelperType;
@@ -28,6 +33,16 @@ public class JavaClassHelper {
      * JavaClass 信息
      */
     private String javaClassName;
+    private boolean randomJavaClassName = true;
+    private String javaClassPackageHost;
+
+    public boolean isExtendsAbstractTranslet() {
+        return extendsAbstractTranslet;
+    }
+
+    public void setExtendsAbstractTranslet(boolean extendsAbstractTranslet) {
+        this.extendsAbstractTranslet = extendsAbstractTranslet;
+    }
 
     public String getJavaClassHelperType() {
         return JavaClassHelperType;
@@ -83,5 +98,21 @@ public class JavaClassHelper {
 
     public void setJavaClassName(String javaClassName) {
         this.javaClassName = javaClassName;
+    }
+
+    public boolean isRandomJavaClassName() {
+        return randomJavaClassName;
+    }
+
+    public void setRandomJavaClassName(boolean randomJavaClassName) {
+        this.randomJavaClassName = randomJavaClassName;
+    }
+
+    public String getJavaClassPackageHost() {
+        return javaClassPackageHost;
+    }
+
+    public void setJavaClassPackageHost(String javaClassPackageHost) {
+        this.javaClassPackageHost = javaClassPackageHost;
     }
 }

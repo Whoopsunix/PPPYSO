@@ -66,15 +66,11 @@ public class TomcatLoaderBuilder {
                 "}\n" +
                 "flag = new Boolean(true);}");
 
-        // 清除所有注解
-        JavaClassUtils.clearAllAnnotations(ctClass);
-
-        // 保存类信息
-        javaClassHelper.setJavaClassName(ctClass.getName());
+        return JavaClassModifier.ctClassBuilder(ctClass, javaClassHelper);
 
 
-        byte[] classBytes = ctClass.toBytecode();
-        return classBytes;
+//        byte[] classBytes = ctClass.toBytecode();
+//        return classBytes;
 //        String b64 = Encoder.base64encoder(classBytes);
 //        return b64;
     }

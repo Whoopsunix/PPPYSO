@@ -99,6 +99,10 @@ public class SinksHelper {
     private JavaClassHelper javaClassHelper;
 
 
+    public SinksHelper() {
+        this.javaClassHelper = new JavaClassHelper();
+    }
+
     //
     public String getSink() {
         return sink;

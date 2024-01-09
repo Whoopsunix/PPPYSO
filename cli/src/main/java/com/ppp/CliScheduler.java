@@ -52,35 +52,33 @@ public class CliScheduler {
         Options options = new Options();
         options.addOption(CliOptions.Help.getOpt(), CliOptions.Help.getLongOpt(), false, CliOptions.Help.getDescription());
 
-        options.addOption("g", CliOptions.Gadget.getLongOpt(), true, CliOptions.Gadget.getDescription());
-        options.addOption("o", CliOptions.Output.getLongOpt(), true, CliOptions.Output.getDescription());
-        options.addOption("save", CliOptions.SavePath.getLongOpt(), true, CliOptions.SavePath.getDescription());
+        options.addOption(CliOptions.Gadget.getOpt(), CliOptions.Gadget.getLongOpt(), true, CliOptions.Gadget.getDescription());
+        options.addOption(CliOptions.Output.getOpt(), CliOptions.Output.getLongOpt(), true, CliOptions.Output.getDescription());
+        options.addOption(CliOptions.SavePath.getOpt(), CliOptions.SavePath.getLongOpt(), true, CliOptions.SavePath.getDescription());
 
-        options.addOption("e", CliOptions.Enchant.getLongOpt(), true, CliOptions.Enchant.getDescription());
-        options.addOption("ext", CliOptions.ExtendsAbstractTranslet.getLongOpt(), false, CliOptions.ExtendsAbstractTranslet.getDescription());
+        options.addOption(CliOptions.Enchant.getOpt(), CliOptions.Enchant.getLongOpt(), true, CliOptions.Enchant.getDescription());
+        options.addOption(CliOptions.ExtendsAbstractTranslet.getOpt(), CliOptions.ExtendsAbstractTranslet.getLongOpt(), false, CliOptions.ExtendsAbstractTranslet.getDescription());
         // 附加参数
-        options.addOption("cmd", CliOptions.Command.getLongOpt(), true, CliOptions.Command.getDescription());
-        options.addOption("os", CliOptions.OS.getLongOpt(), true, CliOptions.OS.getDescription());
-        options.addOption("code", CliOptions.Code.getLongOpt(), true, CliOptions.Code.getDescription());
-        options.addOption("host", CliOptions.Host.getLongOpt(), true, CliOptions.Host.getDescription());
-        options.addOption("d", CliOptions.Delay.getLongOpt(), true, CliOptions.Delay.getDescription());
-        options.addOption("dt", CliOptions.DelayTime.getLongOpt(), true, CliOptions.DelayTime.getDescription());
-        options.addOption("sfp", CliOptions.ServerFilePath.getLongOpt(), true, CliOptions.ServerFilePath.getDescription());
-        options.addOption("lfp", CliOptions.LocalFilePath.getLongOpt(), true, CliOptions.LocalFilePath.getDescription());
-        options.addOption("fc", CliOptions.FileContent.getLongOpt(), true, CliOptions.FileContent.getDescription());
-        options.addOption("u", CliOptions.URL.getLongOpt(), true, CliOptions.URL.getDescription());
-        options.addOption("rcn", CliOptions.RemoteClassName.getLongOpt(), true, CliOptions.RemoteClassName.getDescription());
-        options.addOption("ctor", CliOptions.Constructor.getLongOpt(), true, CliOptions.Constructor.getDescription());
-        options.addOption("lf", CliOptions.LoadFunction.getLongOpt(), true, CliOptions.LoadFunction.getDescription());
+        options.addOption(CliOptions.Command.getOpt(), CliOptions.Command.getLongOpt(), true, CliOptions.Command.getDescription());
+        options.addOption(CliOptions.OS.getOpt(), CliOptions.OS.getLongOpt(), true, CliOptions.OS.getDescription());
+        options.addOption(CliOptions.Code.getOpt(), CliOptions.Code.getLongOpt(), true, CliOptions.Code.getDescription());
+        options.addOption(CliOptions.Host.getOpt(), CliOptions.Host.getLongOpt(), true, CliOptions.Host.getDescription());
+        options.addOption(CliOptions.Delay.getOpt(), CliOptions.Delay.getLongOpt(), true, CliOptions.Delay.getDescription());
+        options.addOption(CliOptions.DelayTime.getOpt(), CliOptions.DelayTime.getLongOpt(), true, CliOptions.DelayTime.getDescription());
+        options.addOption(CliOptions.ServerFilePath.getOpt(), CliOptions.ServerFilePath.getLongOpt(), true, CliOptions.ServerFilePath.getDescription());
+        options.addOption(CliOptions.LocalFilePath.getOpt(), CliOptions.LocalFilePath.getLongOpt(), true, CliOptions.LocalFilePath.getDescription());
+        options.addOption(CliOptions.FileContent.getOpt(), CliOptions.FileContent.getLongOpt(), true, CliOptions.FileContent.getDescription());
+        options.addOption(CliOptions.URL.getOpt(), CliOptions.URL.getLongOpt(), true, CliOptions.URL.getDescription());
+        options.addOption(CliOptions.RemoteClassName.getOpt(), CliOptions.RemoteClassName.getLongOpt(), true, CliOptions.RemoteClassName.getDescription());
+        options.addOption(CliOptions.Constructor.getOpt(), CliOptions.Constructor.getLongOpt(), true, CliOptions.Constructor.getDescription());
+        options.addOption(CliOptions.LoadFunction.getOpt(), CliOptions.LoadFunction.getLongOpt(), true, CliOptions.LoadFunction.getDescription());
 
         // javaClass
-        options.addOption("jht", CliOptions.JavaClassHelperType.getLongOpt(), true, CliOptions.JavaClassHelperType.getDescription());
-        options.addOption("mw", CliOptions.Middleware.getLongOpt(), true, CliOptions.Middleware.getDescription());
-        options.addOption("mst", CliOptions.MemShellType.getLongOpt(), true, CliOptions.MemShellType.getDescription());
-        options.addOption("msf", CliOptions.MemShellFunction.getLongOpt(), true, CliOptions.MemShellFunction.getDescription());
-
-
-
+        options.addOption(CliOptions.JavaClassHelperType.getOpt(), CliOptions.JavaClassHelperType.getLongOpt(), true, CliOptions.JavaClassHelperType.getDescription());
+        options.addOption(CliOptions.Middleware.getOpt(), CliOptions.Middleware.getLongOpt(), true, CliOptions.Middleware.getDescription());
+        options.addOption(CliOptions.MemShellType.getOpt(), CliOptions.MemShellType.getLongOpt(), true, CliOptions.MemShellType.getDescription());
+        options.addOption(CliOptions.MemShellFunction.getOpt(), CliOptions.MemShellFunction.getLongOpt(), true, CliOptions.MemShellFunction.getDescription());
+        options.addOption(CliOptions.JavaClassPackageHost.getOpt(), CliOptions.JavaClassPackageHost.getLongOpt(), true, CliOptions.JavaClassPackageHost.getDescription());
 
         CommandLineParser parser = new DefaultParser();
         CommandLine commandLine = parser.parse(options, args);
@@ -124,6 +122,7 @@ public class CliScheduler {
         SinksHelper sinksHelper = new SinksHelper();
         String[] sinks = (String[]) Reflections.invokeMethod(gadgetClass.getAnnotation(Sink.class), "value", new Class[]{}, new Object[]{});
         sinksHelper.setSink(sinks[0]);
+        JavaClassHelper javaClassHelper = new JavaClassHelper();
 
         /**
          * 输出
@@ -140,17 +139,23 @@ public class CliScheduler {
             sinksHelper.setSavePath(payloadOptions.get(CliOptions.SavePath.getLongOpt()).toString());
         }
 
-        /**
-         * 是否继承 AbstractTranslet
-         */
-        if ((Boolean) payloadOptions.get(CliOptions.ExtendsAbstractTranslet.getLongOpt())) {
-            sinksHelper.setExtendsAbstractTranslet((Boolean) payloadOptions.get(CliOptions.ExtendsAbstractTranslet.getLongOpt()));
-        }
-
         String[] enchants = new String[]{};
         if (payloadOptions.get(CliOptions.Enchant.getLongOpt()) != null) {
             String enchant = payloadOptions.get(CliOptions.Enchant.getLongOpt()).toString();
             enchants = enchant.split(",");
+        }
+
+        /**
+         * 是否继承 AbstractTranslet
+         */
+        if ((Boolean) payloadOptions.get(CliOptions.ExtendsAbstractTranslet.getLongOpt())) {
+            javaClassHelper.setExtendsAbstractTranslet((Boolean) payloadOptions.get(CliOptions.ExtendsAbstractTranslet.getLongOpt()));
+        }
+        /**
+         * 是否修改 package host
+         */
+        if (payloadOptions.get(CliOptions.JavaClassPackageHost.getLongOpt()) != null) {
+            javaClassHelper.setJavaClassPackageHost(payloadOptions.get(CliOptions.JavaClassPackageHost.getLongOpt()).toString());
         }
 
         /**
@@ -196,9 +201,9 @@ public class CliScheduler {
         }
 
 
-        if (payloadOptions.get(CliOptions.Enchant.getLongOpt()) == null) {
-            return sinksHelper;
-        }
+//        if (payloadOptions.get(CliOptions.Enchant.getLongOpt()) == null) {
+//            return sinksHelper;
+//        }
 
         /**
          * 延时
@@ -271,7 +276,6 @@ public class CliScheduler {
          * JavaClass
          */
         Boolean isJavaClass = false;
-        JavaClassHelper javaClassHelper = new JavaClassHelper();
         if (isEnchant(enchants, EnchantType.JavaClass)) {
             sinksHelper.setEnchant(EnchantType.JavaClass);
             // 组件
@@ -322,7 +326,6 @@ public class CliScheduler {
                 } else {
                     Printer.error("The JavaClassHelperType is not supported");
                 }
-                sinksHelper.setJavaClassHelper(javaClassHelper);
             } else {
                 Printer.error("Missing JavaClassHelperType, use [-jht | -javaClassHelperType] to set");
             }
@@ -344,12 +347,16 @@ public class CliScheduler {
                 }
             }
         }
+        sinksHelper.setJavaClassHelper(javaClassHelper);
 
 
         return sinksHelper;
     }
 
     public static Boolean isEnchant(String[] enchants, String enchant) {
+        if (enchants == null) {
+            return false;
+        }
         for (String e : enchants) {
             if (e.equalsIgnoreCase(enchant)) {
                 return true;
@@ -428,6 +435,9 @@ public class CliScheduler {
         }
         if (commandLine.hasOption(CliOptions.MemShellFunction.getLongOpt())) {
             payloadOptions.put(CliOptions.MemShellFunction.getLongOpt(), commandLine.getOptionValue(CliOptions.MemShellFunction.getLongOpt()));
+        }
+        if (commandLine.hasOption(CliOptions.JavaClassPackageHost.getLongOpt())) {
+            payloadOptions.put(CliOptions.JavaClassPackageHost.getLongOpt(), commandLine.getOptionValue(CliOptions.JavaClassPackageHost.getLongOpt()));
         }
 
     }

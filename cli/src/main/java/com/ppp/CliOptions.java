@@ -11,7 +11,6 @@ public enum CliOptions {
     SavePath("save", "savePath", "Save payload to file"),
     // 增强类型
     Enchant("e", "enchant", "Enchant type"),
-    ExtendsAbstractTranslet("ext", "extendsAbstractTranslet", "Extends AbstractTranslet"),
     // 命令执行内容
     Command("cmd", "command", "Command"),
     // 操作系统
@@ -38,13 +37,19 @@ public enum CliOptions {
     Constructor("ctor", "constructor", "Constructor param"),
     // 本地加载方法
     LoadFunction("lf", "loadFunction", "Load function"),
+
     // JavaClass
     JavaClassHelperType("jht", "javaClassHelperType", "Java Class Type"),
     Middleware("mw", "middleware", "Middleware"),
     MemShellType("mst", "memShellType", "MemShell Type"),
-    MemShellFunction("msf", "memShellFunction", "MemShell Function");
-    // JavaClass 增强
+    MemShellFunction("msf", "memShellFunction", "MemShell Function"),
 
+    // JavaClass 增强
+    // 是否继承 AbstractTranslet
+    ExtendsAbstractTranslet("ext", "extendsAbstractTranslet", "Extends AbstractTranslet"),
+    // 随机类名的包名
+    JavaClassPackageHost("jph", "javaClassPackageHost", "Java Class Package Host");
+//    RandomClassName("random", "randomClassName", "Random build class name");
 
     private final String opt;
     private final String longOpt;

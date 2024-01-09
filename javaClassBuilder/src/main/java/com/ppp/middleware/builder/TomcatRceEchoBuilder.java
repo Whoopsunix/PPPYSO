@@ -24,17 +24,9 @@ public class TomcatRceEchoBuilder {
 
         CtClass ctClass = classPool.getCtClass(cls.getName());
 
+        return JavaClassModifier.ctClassBuilderExt(ctClass, javaClassHelper);
 
-        // JavaClass 信息修改
-        JavaClassModifier.fieldChange(cls, ctClass, javaClassHelper);
-
-        // 清除所有注解
-        JavaClassUtils.clearAllAnnotations(ctClass);
-
-        // 保存类信息
-        javaClassHelper.setJavaClassName(ctClass.getName());
-
-        byte[] classBytes = ctClass.toBytecode();
-        return classBytes;
+//        byte[] classBytes = ctClass.toBytecode();
+//        return classBytes;
     }
 }

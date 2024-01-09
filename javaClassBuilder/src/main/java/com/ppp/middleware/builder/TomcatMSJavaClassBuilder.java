@@ -30,14 +30,13 @@ public class TomcatMSJavaClassBuilder {
                 "Object httpServletResponse = getFieldValue(request, \"response\");\n" +
                 "return httpServletResponse;}");
 
-        // JavaClass 信息修改
+        // JavaClass 字段信息修改
         JavaClassModifier.fieldChange(cls, ctClass, javaClassHelper);
 
-        // 清除所有注解
-        JavaClassUtils.clearAllAnnotations(ctClass);
+        return JavaClassModifier.ctClassBuilder(ctClass, javaClassHelper);
 
-        byte[] classBytes = ctClass.toBytecode();
-        return classBytes;
+//        byte[] classBytes = ctClass.toBytecode();
+//        return classBytes;
 //        String b64 = Encoder.base64encoder(classBytes);
 //        return b64;
     }
