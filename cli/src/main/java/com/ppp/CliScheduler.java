@@ -223,10 +223,10 @@ public class CliScheduler {
             sinksHelper.setEnchant(EnchantType.Delay);
             if (payloadOptions.containsKey(CliOptions.Delay.getLongOpt()) &&
                     payloadOptions.get(CliOptions.Delay.getLongOpt()).toString().equalsIgnoreCase(EnchantType.Timeunit)) {
-                sinksHelper.setSleep(EnchantType.Timeunit);
+                sinksHelper.setDelay(EnchantType.Timeunit);
             }
             if (payloadOptions.containsKey(CliOptions.DelayTime.getLongOpt())) {
-                sinksHelper.setSleepTime((Long) payloadOptions.get(CliOptions.DelayTime.getLongOpt()));
+                sinksHelper.setDelayTime((Long) payloadOptions.get(CliOptions.DelayTime.getLongOpt()));
             } else {
                 Printer.error("Missing DelayTime, use [-dt | -delayTime] to set");
             }

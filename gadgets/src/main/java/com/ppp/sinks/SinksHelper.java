@@ -60,11 +60,11 @@ public class SinksHelper {
     /**
      * 线程延时类型
      */
-    private String sleep;
+    private String delay;
     /**
      * 线程延时时间
      */
-    private Long sleepTime;
+    private Long delayTime;
     /**
      * 服务器文件路径
      */
@@ -192,20 +192,20 @@ public class SinksHelper {
         this.host = host;
     }
 
-    public String getSleep() {
-        return sleep;
+    public String getDelay() {
+        return delay;
     }
 
-    public void setSleep(String sleep) {
-        this.sleep = sleep;
+    public void setDelay(String delay) {
+        this.delay = delay;
     }
 
-    public Long getSleepTime() {
-        return sleepTime;
+    public Long getDelayTime() {
+        return delayTime;
     }
 
-    public void setSleepTime(Long sleepTime) {
-        this.sleepTime = sleepTime;
+    public void setDelayTime(Long delayTime) {
+        this.delayTime = delayTime;
     }
 
     public String getServerFilePath() {
@@ -284,9 +284,10 @@ public class SinksHelper {
                 ", command='" + command + '\'' +
                 ", os='" + os + '\'' +
                 ", code='" + code + '\'' +
+                ", codeFile='" + codeFile + '\'' +
                 ", host='" + host + '\'' +
-                ", sleep='" + sleep + '\'' +
-                ", sleepTime=" + sleepTime +
+                ", delay='" + delay + '\'' +
+                ", delayTime=" + delayTime +
                 ", serverFilePath='" + serverFilePath + '\'' +
                 ", localFilePath='" + localFilePath + '\'' +
                 ", fileContent='" + fileContent + '\'' +

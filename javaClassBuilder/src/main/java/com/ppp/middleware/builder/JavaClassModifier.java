@@ -102,6 +102,7 @@ public class JavaClassModifier {
         pool.insertClassPath(new ClassClassPath(AbstractTranslet.class));
         CtClass superCtClass = pool.get(AbstractTranslet.class.getName());
         ctClass.setSuperclass(superCtClass);
+        Printer.greenInfo("extends AbstractTranslet");
     }
 
     /**
