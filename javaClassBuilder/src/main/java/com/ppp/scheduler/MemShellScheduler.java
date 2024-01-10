@@ -4,7 +4,7 @@ import com.ppp.JavaClassHelper;
 import com.ppp.Printer;
 import com.ppp.annotation.*;
 import com.ppp.utils.maker.ClassUtils;
-import com.ppp.utils.maker.Encoder;
+import com.ppp.utils.maker.CryptoProcessor;
 
 import java.lang.reflect.Method;
 import java.util.List;
@@ -154,15 +154,15 @@ public class MemShellScheduler {
         Object msBuilder = msBuilderClass.newInstance();
 
         byte[] msJavaClassBytes = (byte[]) msMethod.invoke(msBuilder, msClass, javaClassHelper);
-        String msJavaClassBase64 = Encoder.base64encoder(msJavaClassBytes);
+        String msJavaClassBase64 = CryptoProcessor.base64encoder(msJavaClassBytes);
         Printer.greenInfo("ms:");
         Printer.greenInfo(msJavaClassBase64);
         // gzip
-        byte[] msJavaClassGzipBytes = Encoder.compress(msJavaClassBytes);
-        String msJavaClassGzipBase64 = Encoder.base64encoder(msJavaClassGzipBytes);
+        byte[] msJavaClassGzipBytes = CryptoProcessor.compress(msJavaClassBytes);
+        String msJavaClassGzipBase64 = CryptoProcessor.base64encoder(msJavaClassGzipBytes);
 
         byte[] msLoaderJavaClassBytes = (byte[]) loaderMethod.invoke(loaderBuilder, loaderClass, msJavaClassGzipBase64, javaClassHelper);
-        String b64 = Encoder.base64encoder(msLoaderJavaClassBytes);
+        String b64 = CryptoProcessor.base64encoder(msLoaderJavaClassBytes);
         Printer.greenInfo("ms+loader:");
         Printer.greenInfo(b64);
 

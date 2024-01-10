@@ -15,11 +15,19 @@ public class Printer {
     public static final String ANSI_CYAN = "\u001B[36m";
     public static final String ANSI_WHITE = "\u001B[37m";
 
+    public static final String PRINT_ENABLED_PROPERTY = "pppyso.printer.printEnabled";
+
+    private static boolean isPrintEnabled() {
+        return Boolean.parseBoolean(System.getProperty(PRINT_ENABLED_PROPERTY, "true"));
+    }
+
     /**
      * 原始输出
      * @param msg
      */
     public static void print(Object msg) {
+        if (!isPrintEnabled())
+            return;
         System.out.println(msg);
         System.out.flush();
     }
@@ -29,6 +37,8 @@ public class Printer {
      * @param msg
      */
     public static void title(Object msg) {
+        if (!isPrintEnabled())
+            return;
         int totalLength = 50;
         int paddingLength = totalLength - String.valueOf(msg).length();
         int leftPadding = paddingLength / 2;
@@ -54,6 +64,8 @@ public class Printer {
      * @param msg
      */
     public static void info(Object msg) {
+        if (!isPrintEnabled())
+            return;
         System.out.println("# " + msg);
         System.out.flush();
     }
@@ -62,6 +74,8 @@ public class Printer {
      * @param msg
      */
     public static void greenInfo(Object msg) {
+        if (!isPrintEnabled())
+            return;
         System.out.println(ANSI_GREEN + "# " + msg + ANSI_RESET);
         System.out.flush();
     }
@@ -70,6 +84,8 @@ public class Printer {
      * @param msg
      */
     public static void blueInfo(Object msg) {
+        if (!isPrintEnabled())
+            return;
         System.out.println(ANSI_BLUE + "# " + msg + ANSI_RESET);
         System.out.flush();
     }
@@ -78,6 +94,8 @@ public class Printer {
      * @param msg
      */
     public static void log(Object msg) {
+        if (!isPrintEnabled())
+            return;
         System.out.println("* " + msg);
         System.out.flush();
     }
@@ -86,6 +104,8 @@ public class Printer {
      * @param msg
      */
     public static void warn(Object msg) {
+        if (!isPrintEnabled())
+            return;
         System.out.println(ANSI_ORANGE + "! Warning: " + msg + ANSI_RESET);
         System.out.flush();
     }
@@ -94,6 +114,8 @@ public class Printer {
      * @param msg
      */
     public static void error(Object msg) {
+        if (!isPrintEnabled())
+            return;
         System.out.println(ANSI_RED + "! Error: " + msg + ANSI_RESET);
         System.out.flush();
         System.exit(0);
@@ -103,6 +125,8 @@ public class Printer {
      * @param msg
      */
     public static void debug(Object msg) {
+        if (!isPrintEnabled())
+            return;
         System.out.println("# Debug: " + msg);
         System.out.flush();
     }

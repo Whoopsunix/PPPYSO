@@ -13,6 +13,8 @@ import java.lang.annotation.Target;
 public @interface JavaClassHelperType {
     String MemShell = "MemShell";
     String RceEcho = "RceEcho";
+    // 自定义
+    String Custom = "Custom";
 
     String value();
 }

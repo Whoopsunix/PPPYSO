@@ -9,6 +9,7 @@ public enum CliOptions {
     Gadget("g", "gadget", "Gadget class name"),
     Output("o", "output", "Gadget output type"),
     SavePath("save", "savePath", "Save payload to file"),
+    ClosePrinter("close", "closePrinter", "Turn off all runtime output and keep only the results"),
     // 增强类型
     Enchant("e", "enchant", "Enchant type"),
     // 命令执行内容
@@ -16,7 +17,7 @@ public enum CliOptions {
     // 操作系统
     OS("os", "os", "OS"),
     Code("code", "code", "Code execution content"),
-    CodeFile("cf", "codeFile", "Read Code execution content from file"),
+    CodeFile("cf", "codeFile", "Read code execution content from local file"),
     // Socket 探测域名
     Host("host", "host", "Host"),
     // 线程延时类型
@@ -48,7 +49,9 @@ public enum CliOptions {
     // 是否继承 AbstractTranslet
     ExtendsAbstractTranslet("ext", "extendsAbstractTranslet", "Extends AbstractTranslet"),
     // 随机类名的包名
-    JavaClassPackageHost("jph", "javaClassPackageHost", "Java Class Package Host");
+    JavaClassPackageHost("jph", "javaClassPackageHost", "Java Class Package Host"),
+    // 自定义 JavaClass 路径
+    JavaClassFilePath("jfp", "javaClassFilePath", "Local Java Class File Path");
 //    RandomClassName("random", "randomClassName", "Random build class name");
 
     private final String opt;

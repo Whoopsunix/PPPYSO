@@ -94,7 +94,7 @@ public class SinksHelper {
      */
     private String loadFunction;
     /**
-     * 内存马信息
+     * JavaClass 信息
      */
     private JavaClassHelper javaClassHelper;
 

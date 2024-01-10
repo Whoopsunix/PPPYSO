@@ -3,15 +3,14 @@ package com.ppp.middleware.builder;
 import com.ppp.JavaClassHelper;
 import com.ppp.Printer;
 import com.ppp.annotation.JavaClassModifiable;
-import com.ppp.utils.Reflections;
 import com.ppp.utils.maker.AnnotationUtils;
+import com.ppp.utils.maker.CryptoProcessor;
 import com.ppp.utils.maker.JavaClassUtils;
 import com.sun.org.apache.xalan.internal.xsltc.runtime.AbstractTranslet;
 import javassist.ClassClassPath;
 import javassist.ClassPool;
 import javassist.CtClass;
 
-import java.net.JarURLConnection;
 import java.net.URL;
 import java.util.*;
 import java.util.jar.JarEntry;
@@ -81,6 +80,8 @@ public class JavaClassModifier {
 //        byte[] classBytes = ctClass.toBytecode();
         // jdk 6
         classBytes[7] = 49;
+
+        Printer.blueInfo("JavaClass: " + CryptoProcessor.base64encoder(classBytes));
 
         return classBytes;
     }
@@ -169,7 +170,7 @@ public class JavaClassModifier {
             javaClassName.append(part);
         }
 
-        Printer.blueInfo("javaClass Name: " + javaClassName);
+        Printer.blueInfo("JavaClass Name: " + javaClassName);
         javaClassHelper.setJavaClassName(javaClassName.toString());
     }
 

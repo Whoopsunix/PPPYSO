@@ -24,6 +24,9 @@ public class TomcatRceEchoBuilder {
 
         CtClass ctClass = classPool.getCtClass(cls.getName());
 
+        // 字段信息修改
+        JavaClassModifier.fieldChange(cls, ctClass, javaClassHelper);
+
         return JavaClassModifier.ctClassBuilderExt(ctClass, javaClassHelper);
 
 //        byte[] classBytes = ctClass.toBytecode();

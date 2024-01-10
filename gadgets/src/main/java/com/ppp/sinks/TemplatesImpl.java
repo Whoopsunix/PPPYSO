@@ -10,7 +10,7 @@ import com.ppp.utils.ClassFiles;
 import com.ppp.utils.Gadgets;
 import com.ppp.utils.Reflections;
 import com.ppp.utils.RemoteLoadD;
-import com.ppp.utils.maker.Encoder;
+import com.ppp.utils.maker.CryptoProcessor;
 import com.ppp.utils.maker.JavaClassUtils;
 import com.sun.org.apache.xalan.internal.xsltc.runtime.AbstractTranslet;
 import com.sun.org.apache.xalan.internal.xsltc.trax.TransformerFactoryImpl;
@@ -205,7 +205,7 @@ public class TemplatesImpl {
             contentBytes = fileContent.getBytes();
         }
 
-        String b64 = Encoder.base64encoder(contentBytes);
+        String b64 = CryptoProcessor.base64encoder(contentBytes);
 
 
         ClassPool pool = ClassPool.getDefault();

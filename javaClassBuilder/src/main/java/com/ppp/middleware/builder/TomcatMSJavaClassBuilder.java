@@ -30,7 +30,7 @@ public class TomcatMSJavaClassBuilder {
                 "Object httpServletResponse = getFieldValue(request, \"response\");\n" +
                 "return httpServletResponse;}");
 
-        // JavaClass 字段信息修改
+        // 字段信息修改
         JavaClassModifier.fieldChange(cls, ctClass, javaClassHelper);
 
         return JavaClassModifier.ctClassBuilder(ctClass, javaClassHelper);

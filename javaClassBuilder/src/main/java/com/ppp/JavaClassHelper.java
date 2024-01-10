@@ -8,6 +8,10 @@ public class JavaClassHelper {
      * 继承 AbstractTranslet
      */
     private boolean extendsAbstractTranslet = false;
+    /**
+     * 本地 JavaClass 文件
+     */
+    private String javaClassFilePath;
 
     /**
      * JavaClassHelper 类型
@@ -42,6 +46,14 @@ public class JavaClassHelper {
 
     public void setExtendsAbstractTranslet(boolean extendsAbstractTranslet) {
         this.extendsAbstractTranslet = extendsAbstractTranslet;
+    }
+
+    public String getJavaClassFilePath() {
+        return javaClassFilePath;
+    }
+
+    public void setJavaClassFilePath(String javaClassFilePath) {
+        this.javaClassFilePath = javaClassFilePath;
     }
 
     public String getJavaClassHelperType() {
