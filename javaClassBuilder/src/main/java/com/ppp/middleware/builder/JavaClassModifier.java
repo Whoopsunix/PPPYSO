@@ -54,13 +54,13 @@ public class JavaClassModifier {
             javaClassHelper.setJavaClassName(ctClass.getName());
         }
 
-        // 随机类名
-        if (javaClassHelper.isRandomJavaClassName()) {
-            randomJavaClassName(javaClassHelper);
-        }
-
-        // 修改类名
-        ctClass.setName(javaClassHelper.getJavaClassName());
+//        // 随机类名
+//        if (javaClassHelper.isRandomJavaClassName()) {
+//            randomJavaClassName(javaClassHelper);
+//        }
+//
+//        // 修改类名
+//        ctClass.setName(javaClassHelper.getJavaClassName());
 
 //        // 移除类文件部分属性
 //        ClassFile classFile = ctClass.getClassFile();

