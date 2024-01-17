@@ -2,6 +2,7 @@ package com.ppp;
 
 import com.ppp.annotation.*;
 import com.ppp.sinks.SinksHelper;
+import com.ppp.sinks.annotation.EnchantEnums;
 import com.ppp.sinks.annotation.EnchantType;
 import com.ppp.sinks.annotation.Sink;
 import com.ppp.utils.Reflections;
@@ -61,6 +62,7 @@ public class CliScheduler {
 
         options.addOption(CliOptions.Enchant.getOpt(), CliOptions.Enchant.getLongOpt(), true, CliOptions.Enchant.getDescription());
         options.addOption(CliOptions.ExtendsAbstractTranslet.getOpt(), CliOptions.ExtendsAbstractTranslet.getLongOpt(), false, CliOptions.ExtendsAbstractTranslet.getDescription());
+        options.addOption(CliOptions.WrapSerialization.getOpt(), CliOptions.WrapSerialization.getLongOpt(), false, CliOptions.WrapSerialization.getDescription());
         // 附加参数
         options.addOption(CliOptions.Command.getOpt(), CliOptions.Command.getLongOpt(), true, CliOptions.Command.getDescription());
         options.addOption(CliOptions.OS.getOpt(), CliOptions.OS.getLongOpt(), true, CliOptions.OS.getDescription());
@@ -161,6 +163,12 @@ public class CliScheduler {
             javaClassHelper.setExtendsAbstractTranslet((Boolean) payloadOptions.get(CliOptions.ExtendsAbstractTranslet.getLongOpt()));
         }
         /**
+         * 是否二次反序列化
+         */
+        if (payloadOptions.containsKey(CliOptions.WrapSerialization.getLongOpt()) && (Boolean) payloadOptions.get(CliOptions.WrapSerialization.getLongOpt())) {
+            sinksHelper.setWrapSerialization(EnchantEnums.SignedObject);
+        }
+        /**
          * 是否修改 package host
          */
         if (payloadOptions.containsKey(CliOptions.JavaClassPackageHost.getLongOpt())) {
@@ -179,8 +187,8 @@ public class CliScheduler {
         } else if (isEnchant(enchants, EnchantType.ProcessBuilder)) {
             sinksHelper.setEnchant(EnchantType.ProcessBuilder);
             if (payloadOptions.containsKey(CliOptions.OS.getLongOpt())) {
-                if (payloadOptions.get(CliOptions.OS.getLongOpt()).toString().equalsIgnoreCase(EnchantType.WIN))
-                    sinksHelper.setOs(EnchantType.WIN);
+                if (payloadOptions.get(CliOptions.OS.getLongOpt()).toString().equalsIgnoreCase(EnchantEnums.WIN.toString()))
+                    sinksHelper.setOs(EnchantEnums.WIN);
             } else {
                 Printer.warn("Not supported OS, use [-os] to set");
             }
@@ -222,8 +230,8 @@ public class CliScheduler {
         if (isEnchant(enchants, EnchantType.Delay)) {
             sinksHelper.setEnchant(EnchantType.Delay);
             if (payloadOptions.containsKey(CliOptions.Delay.getLongOpt()) &&
-                    payloadOptions.get(CliOptions.Delay.getLongOpt()).toString().equalsIgnoreCase(EnchantType.Timeunit)) {
-                sinksHelper.setDelay(EnchantType.Timeunit);
+                    payloadOptions.get(CliOptions.Delay.getLongOpt()).toString().equals(EnchantEnums.Timeunit.toString())) {
+                sinksHelper.setDelay(EnchantEnums.Timeunit);
             }
             if (payloadOptions.containsKey(CliOptions.DelayTime.getLongOpt())) {
                 sinksHelper.setDelayTime((Long) payloadOptions.get(CliOptions.DelayTime.getLongOpt()));
@@ -365,8 +373,8 @@ public class CliScheduler {
             }
 //            if (payloadOptions.get(CliOptions.LoadFunction.getLongOpt()) != null) {
             if (payloadOptions.containsKey(CliOptions.LoadFunction.getLongOpt())) {
-                if (payloadOptions.get(CliOptions.LoadFunction.getLongOpt()).toString().equalsIgnoreCase(EnchantType.RHINO)) {
-                    sinksHelper.setLoadFunction(EnchantType.RHINO);
+                if (payloadOptions.get(CliOptions.LoadFunction.getLongOpt()).toString().equalsIgnoreCase(EnchantEnums.RHINO.toString())) {
+                    sinksHelper.setLoadFunction(EnchantEnums.RHINO);
                 }
             }
         }
@@ -408,6 +416,9 @@ public class CliScheduler {
         }
         if (commandLine.hasOption(CliOptions.ExtendsAbstractTranslet.getLongOpt())) {
             payloadOptions.put(CliOptions.ExtendsAbstractTranslet.getLongOpt(), true);
+        }
+        if (commandLine.hasOption(CliOptions.WrapSerialization.getLongOpt())) {
+            payloadOptions.put(CliOptions.WrapSerialization.getLongOpt(), true);
         }
 
         if (commandLine.hasOption(CliOptions.Command.getLongOpt())) {

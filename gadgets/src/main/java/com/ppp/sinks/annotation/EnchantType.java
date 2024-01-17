@@ -7,7 +7,7 @@ import java.lang.annotation.Target;
 import java.lang.reflect.AnnotatedElement;
 
 /**
- * 增强功能类型
+ * 功能增强类型
  */
 @Target({ElementType.METHOD, ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
@@ -33,17 +33,8 @@ public @interface EnchantType {
     String RemoteLoad = "RemoteLoad";
     // 本地类加载
     String LocalLoad = "LocalLoad";
-
     // JavaClass
     String JavaClass = "JavaClass";
-
-
-    /**
-     * 附加参数固定可选类型
-     */
-    String WIN = "win";
-    String RHINO = "rhino";
-    String Timeunit = "timeunit";
 
     String[] value() default {};
 

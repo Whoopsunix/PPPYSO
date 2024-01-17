@@ -5,7 +5,7 @@ import com.ppp.Printer;
 import com.ppp.annotation.*;
 import com.ppp.utils.Reflections;
 import com.ppp.utils.maker.ClassUtils;
-import com.ppp.utils.maker.CryptoProcessor;
+import com.ppp.utils.maker.CryptoUtils;
 
 import java.util.List;
 
@@ -61,7 +61,7 @@ public class RceEchoScheduler {
         }
 
         byte[] recEchoJavaClassBytes = (byte[]) Reflections.invokeMethod(rceEchoClass.newInstance(), "build", new Class[]{Class.class, JavaClassHelper.class}, new Object[]{recEchoJavaClass, javaClassHelper});
-        String b64 = CryptoProcessor.base64encoder(recEchoJavaClassBytes);
+        String b64 = CryptoUtils.base64encoder(recEchoJavaClassBytes);
         Printer.greenInfo("Rce echo:");
         Printer.greenInfo(b64);
 

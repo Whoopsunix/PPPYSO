@@ -1,6 +1,7 @@
 package com.ppp.sinks;
 
 import com.ppp.JavaClassHelper;
+import com.ppp.sinks.annotation.EnchantEnums;
 
 /**
  * @author Whoopsunix
@@ -33,6 +34,10 @@ public class SinksHelper {
      * 继承 AbstractTranslet
      */
     private boolean extendsAbstractTranslet = false;
+    /**
+     * 二次反序列化
+     */
+    private EnchantEnums wrapSerialization;
 
     /**
      * 以下为增强功能的配置参数
@@ -44,7 +49,7 @@ public class SinksHelper {
     /**
      * 操作系统
      */
-    private String os;
+    private EnchantEnums os;
     /**
      * 代码执行内容
      */
@@ -60,7 +65,7 @@ public class SinksHelper {
     /**
      * 线程延时类型
      */
-    private String delay;
+    private EnchantEnums delay;
     /**
      * 线程延时时间
      */
@@ -92,18 +97,13 @@ public class SinksHelper {
     /**
      * 本地加载方法
      */
-    private String loadFunction;
+    private EnchantEnums loadFunction;
     /**
      * JavaClass 信息
      */
     private JavaClassHelper javaClassHelper;
 
 
-    public SinksHelper() {
-        this.javaClassHelper = new JavaClassHelper();
-    }
-
-    //
     public String getSink() {
         return sink;
     }
@@ -152,6 +152,14 @@ public class SinksHelper {
         this.extendsAbstractTranslet = extendsAbstractTranslet;
     }
 
+    public EnchantEnums getWrapSerialization() {
+        return wrapSerialization;
+    }
+
+    public void setWrapSerialization(EnchantEnums wrapSerialization) {
+        this.wrapSerialization = wrapSerialization;
+    }
+
     public String getCommand() {
         return command;
     }
@@ -160,11 +168,11 @@ public class SinksHelper {
         this.command = command;
     }
 
-    public String getOs() {
+    public EnchantEnums getOs() {
         return os;
     }
 
-    public void setOs(String os) {
+    public void setOs(EnchantEnums os) {
         this.os = os;
     }
 
@@ -192,11 +200,11 @@ public class SinksHelper {
         this.host = host;
     }
 
-    public String getDelay() {
+    public EnchantEnums getDelay() {
         return delay;
     }
 
-    public void setDelay(String delay) {
+    public void setDelay(EnchantEnums delay) {
         this.delay = delay;
     }
 
@@ -256,11 +264,11 @@ public class SinksHelper {
         this.constructor = constructor;
     }
 
-    public String getLoadFunction() {
+    public EnchantEnums getLoadFunction() {
         return loadFunction;
     }
 
-    public void setLoadFunction(String loadFunction) {
+    public void setLoadFunction(EnchantEnums loadFunction) {
         this.loadFunction = loadFunction;
     }
 
@@ -281,12 +289,13 @@ public class SinksHelper {
                 ", save=" + save +
                 ", savePath='" + savePath + '\'' +
                 ", extendsAbstractTranslet=" + extendsAbstractTranslet +
+                ", wrapSerialization=" + wrapSerialization +
                 ", command='" + command + '\'' +
-                ", os='" + os + '\'' +
+                ", os=" + os +
                 ", code='" + code + '\'' +
                 ", codeFile='" + codeFile + '\'' +
                 ", host='" + host + '\'' +
-                ", delay='" + delay + '\'' +
+                ", delay=" + delay +
                 ", delayTime=" + delayTime +
                 ", serverFilePath='" + serverFilePath + '\'' +
                 ", localFilePath='" + localFilePath + '\'' +
@@ -294,7 +303,7 @@ public class SinksHelper {
                 ", url='" + url + '\'' +
                 ", remoteClassName='" + remoteClassName + '\'' +
                 ", constructor='" + constructor + '\'' +
-                ", loadFunction='" + loadFunction + '\'' +
+                ", loadFunction=" + loadFunction +
                 ", javaClassHelper=" + javaClassHelper +
                 '}';
     }

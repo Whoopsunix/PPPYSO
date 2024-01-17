@@ -1,5 +1,6 @@
 package com.ppp.secmgr;
 
+import java.beans.PropertyVetoException;
 import java.security.Permission;
 import java.util.Collections;
 import java.util.LinkedList;

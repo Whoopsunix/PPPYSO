@@ -4,13 +4,14 @@ import com.ppp.JavaClassBuilder;
 import com.ppp.JavaClassHelper;
 import com.ppp.Printer;
 import com.ppp.middleware.builder.JavaClassModifier;
+import com.ppp.sinks.annotation.EnchantEnums;
 import com.ppp.sinks.annotation.EnchantType;
 import com.ppp.sinks.annotation.Sink;
 import com.ppp.utils.ClassFiles;
 import com.ppp.utils.Gadgets;
 import com.ppp.utils.Reflections;
 import com.ppp.utils.RemoteLoadD;
-import com.ppp.utils.maker.CryptoProcessor;
+import com.ppp.utils.maker.CryptoUtils;
 import com.ppp.utils.maker.JavaClassUtils;
 import com.sun.org.apache.xalan.internal.xsltc.runtime.AbstractTranslet;
 import com.sun.org.apache.xalan.internal.xsltc.trax.TransformerFactoryImpl;
@@ -67,12 +68,12 @@ public class TemplatesImpl {
         String className = "DelayD";
 
         Long delayTime = sinksHelper.getDelayTime();
-        String delay = sinksHelper.getDelay();
+        EnchantEnums delay = sinksHelper.getDelay();
         Printer.greenInfo(String.format("System will delay response for %s seconds", delayTime));
 
         String code;
         ClassPool pool = ClassPool.getDefault();
-        if (delay != null && delay.equalsIgnoreCase("timeunit")) {
+        if (delay != null && delay.equals(EnchantEnums.Timeunit)) {
             delayTime *= 1000L;
             code = "java.lang.Thread.sleep((long)" + delayTime + ");";
         } else {
@@ -213,7 +214,7 @@ public class TemplatesImpl {
             contentBytes = fileContent.getBytes();
         }
 
-        String b64 = CryptoProcessor.base64encoder(contentBytes);
+        String b64 = CryptoUtils.base64encoder(contentBytes);
 
         ClassPool pool = ClassPool.getDefault();
 

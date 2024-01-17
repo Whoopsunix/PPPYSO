@@ -48,6 +48,7 @@ public enum CliOptions {
     // JavaClass 增强
     // 是否继承 AbstractTranslet
     ExtendsAbstractTranslet("ext", "extendsAbstractTranslet", "Extends AbstractTranslet"),
+    WrapSerialization("wrap", "WrapSerialization", "Wrap Serialization"),
     // 随机类名的包名
     JavaClassPackageHost("jph", "javaClassPackageHost", "Java Class Package Host"),
     // 自定义 JavaClass 路径

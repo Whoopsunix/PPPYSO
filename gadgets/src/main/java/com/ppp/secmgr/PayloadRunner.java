@@ -1,5 +1,6 @@
 package com.ppp.secmgr;
 
+import com.ppp.JavaClassHelper;
 import com.ppp.ObjectPayload;
 import com.ppp.sinks.annotation.EnchantType;
 import com.ppp.sinks.SinksHelper;
@@ -37,6 +38,11 @@ public class PayloadRunner {
                 } else {
                     helper = sinksHelper;
                 }
+                if (helper.getJavaClassHelper() == null) {
+                    JavaClassHelper javaClassHelper = new JavaClassHelper();
+                    helper.setJavaClassHelper(javaClassHelper);
+                }
+
 
                 final Object objBefore = object.getObject(helper);
 

@@ -32,12 +32,12 @@ public class CommonsCollections6E implements ObjectPayload<Object> {
         // sink
         Object sinkObject = SinkScheduler.builder(sinksHelper);
 
-        Object kickOffObject = getChain((Transformer[]) sinkObject);
+        Object kickOffObject = getChain((sinkObject));
 
         return kickOffObject;
     }
 
-    public Object getChain(Transformer[] transformers) throws Exception {
+    public Object getChain(Object transformers) throws Exception {
         final Transformer transformerChain = new ChainedTransformer(
                 new Transformer[]{new ConstantTransformer(1)});
 

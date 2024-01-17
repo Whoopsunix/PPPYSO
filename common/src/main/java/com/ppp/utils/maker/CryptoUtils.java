@@ -8,7 +8,7 @@ import java.util.zip.GZIPOutputStream;
  * @author Whoopsunix
  * 加解密
  */
-public class CryptoProcessor {
+public class CryptoUtils {
     public static String base64encoder(byte[] bytes) throws Exception {
         String base64str = new sun.misc.BASE64Encoder().encode(bytes);
         base64str = base64str.replaceAll("\n|\r", "");

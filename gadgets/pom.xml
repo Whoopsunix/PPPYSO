@@ -36,6 +36,24 @@
             <version>3.2.1</version>
             <!--            <version>3.2.2</version>-->
         </dependency>
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>fastjson</artifactId>
+            <!--            <version>1.2.29</version>-->
+            <!--            <version>1.2.24</version>-->
+            <!--            <version>1.2.47</version>-->
+            <version>1.2.83</version>
+        </dependency>
+        <dependency>
+            <groupId>rome</groupId>
+            <artifactId>rome</artifactId>
+            <version>1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.mchange</groupId>
+            <artifactId>c3p0</artifactId>
+            <version>0.9.5.2</version>
+        </dependency>
 
         <dependency>
             <groupId>org.apache.commons</groupId>

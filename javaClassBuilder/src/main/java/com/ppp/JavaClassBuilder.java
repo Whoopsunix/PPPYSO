@@ -3,7 +3,7 @@ package com.ppp;
 import com.ppp.annotation.*;
 import com.ppp.utils.Reflections;
 import com.ppp.utils.maker.ClassUtils;
-import com.ppp.utils.maker.CryptoProcessor;
+import com.ppp.utils.maker.CryptoUtils;
 
 import java.io.FileInputStream;
 import java.util.Arrays;
@@ -35,7 +35,7 @@ public class JavaClassBuilder {
                 Printer.greenInfo("Custom JavaClass: " + new String(bytes));
                 byte[] expectedPrefix = {121, 118, 54, 54};
                 if (Arrays.equals(Arrays.copyOfRange(bytes, 0, expectedPrefix.length), expectedPrefix)) {
-                    bytes = CryptoProcessor.base64decoder(new String(bytes));
+                    bytes = CryptoUtils.base64decoder(new String(bytes));
                 }
 
             } catch (Exception e) {

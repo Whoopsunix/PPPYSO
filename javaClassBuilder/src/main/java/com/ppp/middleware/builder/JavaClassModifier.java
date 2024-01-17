@@ -4,7 +4,7 @@ import com.ppp.JavaClassHelper;
 import com.ppp.Printer;
 import com.ppp.annotation.JavaClassModifiable;
 import com.ppp.utils.maker.AnnotationUtils;
-import com.ppp.utils.maker.CryptoProcessor;
+import com.ppp.utils.maker.CryptoUtils;
 import com.ppp.utils.maker.JavaClassUtils;
 import com.sun.org.apache.xalan.internal.xsltc.runtime.AbstractTranslet;
 import javassist.ClassClassPath;
@@ -54,10 +54,10 @@ public class JavaClassModifier {
             javaClassHelper.setJavaClassName(ctClass.getName());
         }
 
-//        // 随机类名
-//        if (javaClassHelper.isRandomJavaClassName()) {
-//            randomJavaClassName(javaClassHelper);
-//        }
+        // 随机类名
+        if (javaClassHelper.isRandomJavaClassName()) {
+            randomJavaClassName(javaClassHelper);
+        }
 //
 //        // 修改类名
 //        ctClass.setName(javaClassHelper.getJavaClassName());
@@ -81,7 +81,7 @@ public class JavaClassModifier {
         // jdk 6
         classBytes[7] = 49;
 
-        Printer.blueInfo("JavaClass: " + CryptoProcessor.base64encoder(classBytes));
+        Printer.blueInfo("JavaClass: " + CryptoUtils.base64encoder(classBytes));
 
         return classBytes;
     }
