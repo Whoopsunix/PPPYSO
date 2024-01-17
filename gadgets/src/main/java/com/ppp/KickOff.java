@@ -1,6 +1,5 @@
 package com.ppp;
 
-import com.ppp.utils.Gadgets;
 import com.ppp.utils.Reflections;
 
 import java.lang.reflect.*;
@@ -37,7 +36,7 @@ public class KickOff {
         if (ifaces.length > 0) {
             System.arraycopy(ifaces, 0, allIfaces, 1, ifaces.length);
         }
-        return iface.cast(Proxy.newProxyInstance(Gadgets.class.getClassLoader(), allIfaces, ih));
+        return iface.cast(Proxy.newProxyInstance(KickOff.class.getClassLoader(), allIfaces, ih));
     }
 
     /**

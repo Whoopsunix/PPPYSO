@@ -8,7 +8,6 @@ import com.ppp.secmgr.PayloadRunner;
 import com.ppp.sinks.SinkScheduler;
 import com.ppp.sinks.SinksHelper;
 import com.ppp.sinks.annotation.Sink;
-import com.ppp.utils.Gadgets;
 import com.ppp.utils.Reflections;
 import com.sun.org.apache.xalan.internal.xsltc.trax.TrAXFilter;
 import org.apache.commons.collections.Transformer;

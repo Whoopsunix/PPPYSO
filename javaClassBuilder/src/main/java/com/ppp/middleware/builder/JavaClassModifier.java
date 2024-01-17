@@ -58,9 +58,9 @@ public class JavaClassModifier {
         if (javaClassHelper.isRandomJavaClassName()) {
             randomJavaClassName(javaClassHelper);
         }
-//
-//        // 修改类名
-//        ctClass.setName(javaClassHelper.getJavaClassName());
+
+        // 修改类名
+        ctClass.setName(javaClassHelper.getJavaClassName());
 
 //        // 移除类文件部分属性
 //        ClassFile classFile = ctClass.getClassFile();

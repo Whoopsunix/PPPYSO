@@ -4,7 +4,7 @@
 
     <groupId>com.ppp</groupId>
     <artifactId>cli</artifactId>
-    <version>1.0</version>
+    <version>1.0.3</version>
     <packaging>jar</packaging>
 
     <name>cli</name>
@@ -75,6 +75,7 @@
                             <mainClass>com.ppp.CliScheduler</mainClass>
                         </manifest>
                     </archive>
+                    <finalName>${project.build.finalName}-${version}</finalName>
                 </configuration>
                 <executions>
                     <execution>

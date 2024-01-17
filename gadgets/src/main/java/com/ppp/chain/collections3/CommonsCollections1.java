@@ -1,14 +1,13 @@
 package com.ppp.chain.collections3;
 
-import com.ppp.ObjectPayload;
 import com.ppp.KickOff;
+import com.ppp.ObjectPayload;
 import com.ppp.annotation.Authors;
 import com.ppp.annotation.Dependencies;
 import com.ppp.secmgr.PayloadRunner;
 import com.ppp.sinks.SinkScheduler;
 import com.ppp.sinks.SinksHelper;
 import com.ppp.sinks.annotation.Sink;
-import com.ppp.utils.Gadgets;
 import com.ppp.utils.Reflections;
 import org.apache.commons.collections.Transformer;
 import org.apache.commons.collections.functors.ChainedTransformer;

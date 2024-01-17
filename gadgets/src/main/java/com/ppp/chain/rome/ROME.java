@@ -13,7 +13,6 @@ import com.sun.syndication.feed.impl.ObjectBean;
 
 import javax.xml.transform.Templates;
 import java.security.SignedObject;
-import java.util.HashMap;
 
 /**
  * @author Whoopsunix

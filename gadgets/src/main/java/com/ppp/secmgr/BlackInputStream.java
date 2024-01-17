@@ -20,6 +20,7 @@ public class BlackInputStream extends ObjectInputStream {
 
 
     protected Class resolveClass(ObjectStreamClass cls) throws IOException, ClassNotFoundException {
+        System.out.println(cls);
         if (blackList.contains(cls.getName())) {
             throw new InvalidClassException("Unexpected serialized class", cls.getName());
         } else {

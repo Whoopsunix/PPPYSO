@@ -29,11 +29,6 @@ public class SinksHelper {
      * payload 保存文件路径
      */
     private String savePath = "./result.bin";
-
-    /**
-     * 继承 AbstractTranslet
-     */
-    private boolean extendsAbstractTranslet = false;
     /**
      * 二次反序列化
      */
@@ -103,6 +98,9 @@ public class SinksHelper {
      */
     private JavaClassHelper javaClassHelper;
 
+    public SinksHelper() {
+        this.javaClassHelper = new JavaClassHelper();
+    }
 
     public String getSink() {
         return sink;
@@ -142,14 +140,6 @@ public class SinksHelper {
 
     public void setSavePath(String savePath) {
         this.savePath = savePath;
-    }
-
-    public boolean isExtendsAbstractTranslet() {
-        return extendsAbstractTranslet;
-    }
-
-    public void setExtendsAbstractTranslet(boolean extendsAbstractTranslet) {
-        this.extendsAbstractTranslet = extendsAbstractTranslet;
     }
 
     public EnchantEnums getWrapSerialization() {
@@ -288,7 +278,6 @@ public class SinksHelper {
                 ", output='" + output + '\'' +
                 ", save=" + save +
                 ", savePath='" + savePath + '\'' +
-                ", extendsAbstractTranslet=" + extendsAbstractTranslet +
                 ", wrapSerialization=" + wrapSerialization +
                 ", command='" + command + '\'' +
                 ", os=" + os +
