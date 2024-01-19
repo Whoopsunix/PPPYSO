@@ -78,8 +78,13 @@ public class JavaClassModifier {
         // jdk5
 //        ctClass.getClassFile().setVersionToJava5();
 //        byte[] classBytes = ctClass.toBytecode();
-        // jdk 6
-        classBytes[7] = 49;
+        // jdk 5
+//        classBytes[7] = 49;
+//
+//        // jdk1.6
+//        ctClass.defrost();
+//        ctClass.getClassFile().setMajorVersion(50);
+        classBytes[7] = 50;
 
         Printer.blueInfo("JavaClass: " + CryptoUtils.base64encoder(classBytes));
 
@@ -124,6 +129,12 @@ public class JavaClassModifier {
 
         if (AnnotationUtils.containsValue(cls, JavaClassModifiable.class, JavaClassModifiable.PARAM)) {
             JavaClassUtils.fieldChangeIfExist(ctClass, JavaClassModifiable.PARAM, String.format("private static String %s = \"%s\";", JavaClassModifiable.PARAM, javaClassHelper.getPARAM()));
+        }
+        if (AnnotationUtils.containsValue(cls, JavaClassModifiable.class, JavaClassModifiable.pass)) {
+            JavaClassUtils.fieldChangeIfExist(ctClass, JavaClassModifiable.pass, String.format("private static String %s = \"%s\";", JavaClassModifiable.pass, javaClassHelper.getPass()));
+        }
+        if (AnnotationUtils.containsValue(cls, JavaClassModifiable.class, JavaClassModifiable.key)) {
+            JavaClassUtils.fieldChangeIfExist(ctClass, JavaClassModifiable.key, String.format("private static String %s = \"%s\";", JavaClassModifiable.key, javaClassHelper.getKey()));
         }
     }
 
@@ -177,6 +188,7 @@ public class JavaClassModifier {
 
     /**
      * 获取真实类名
+     *
      * @param classLoader
      * @param packageName
      * @return

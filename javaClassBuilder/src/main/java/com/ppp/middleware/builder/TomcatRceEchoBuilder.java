@@ -28,8 +28,5 @@ public class TomcatRceEchoBuilder {
         JavaClassModifier.fieldChange(cls, ctClass, javaClassHelper);
 
         return JavaClassModifier.ctClassBuilderExt(ctClass, javaClassHelper);
-
-//        byte[] classBytes = ctClass.toBytecode();
-//        return classBytes;
     }
 }

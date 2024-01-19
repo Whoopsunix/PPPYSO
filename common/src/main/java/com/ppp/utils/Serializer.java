@@ -75,7 +75,7 @@ public class Serializer implements Callable<byte[]> {
     }
 
     /**
-     * Base64 JavaClass
+     * Base64 javaClass
      */
     public static String serializeClassFilesBase64(Class<?> clazz) {
         String base64str = new sun.misc.BASE64Encoder().encode(ClassFiles.classAsBytes(clazz));

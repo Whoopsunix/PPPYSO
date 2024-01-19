@@ -14,5 +14,7 @@ public @interface JavaClassModifiable {
     String HEADER = "HEADER";
     String PARAM = "PARAM";
     String PATH = "PATH";
+    String key = "key";
+    String pass = "pass";
     String[] value() default {};
 }

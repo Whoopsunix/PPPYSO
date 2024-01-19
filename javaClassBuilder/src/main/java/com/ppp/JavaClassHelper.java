@@ -32,6 +32,9 @@ public class JavaClassHelper {
      */
     private String HEADER = "X-Token";
     private String PARAM = "cmd";
+    // Godzilla
+    private String key = "3c6e0b8a9c15224a";
+    public String pass = "pass";
 
     /**
      * JavaClass 信息
@@ -102,6 +105,22 @@ public class JavaClassHelper {
 
     public void setPARAM(String PARAM) {
         this.PARAM = PARAM;
+    }
+
+    public String getKey() {
+        return key;
+    }
+
+    public void setKey(String key) {
+        this.key = key;
+    }
+
+    public String getPass() {
+        return pass;
+    }
+
+    public void setPass(String pass) {
+        this.pass = pass;
     }
 
     public String getJavaClassName() {

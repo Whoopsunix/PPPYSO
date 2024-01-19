@@ -55,7 +55,14 @@ public enum CliOptions {
     JavaClassPackageHost("jph", "javaClassPackageHost", "Java Class Package Host"),
     // 自定义 JavaClass 路径
     JavaClassFilePath("jfp", "javaClassFilePath", "Local Java Class File Path"),
-//    RandomClassName("random", "randomClassName", "Random build class name");
+    // RandomClassName("random", "randomClassName", "Random build class name");
+
+    // JavaClass Field 修改
+    FiledHeader("fheader", "filedHeader", "Modify the header field"),
+    FiledParam("fparam", "filedParam", "Modify the param field"),
+    FiledKey("fkey", "filedKey", "Modify the key field"),
+    FiledPass("fpass", "filedPass", "Modify the pass field"),
+
 
     // 二次反序列化
     WrapSerialization("wrap", "WrapSerialization", "Wrap Serialization"),

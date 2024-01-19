@@ -67,11 +67,5 @@ public class TomcatLoaderBuilder {
                 "flag = new Boolean(true);}");
 
         return JavaClassModifier.ctClassBuilder(ctClass, javaClassHelper);
-
-
-//        byte[] classBytes = ctClass.toBytecode();
-//        return classBytes;
-//        String b64 = Encoder.base64encoder(classBytes);
-//        return b64;
     }
 }

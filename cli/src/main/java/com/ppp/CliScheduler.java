@@ -54,13 +54,19 @@ public class CliScheduler {
         options.addOption(CliOptions.Constructor.getOpt(), CliOptions.Constructor.getLongOpt(), true, CliOptions.Constructor.getDescription());
         options.addOption(CliOptions.LoadFunction.getOpt(), CliOptions.LoadFunction.getLongOpt(), true, CliOptions.LoadFunction.getDescription());
 
-        // javaClass
+        // JavaClass
         options.addOption(CliOptions.JavaClassHelperType.getOpt(), CliOptions.JavaClassHelperType.getLongOpt(), true, CliOptions.JavaClassHelperType.getDescription());
         options.addOption(CliOptions.Middleware.getOpt(), CliOptions.Middleware.getLongOpt(), true, CliOptions.Middleware.getDescription());
         options.addOption(CliOptions.MemShellType.getOpt(), CliOptions.MemShellType.getLongOpt(), true, CliOptions.MemShellType.getDescription());
         options.addOption(CliOptions.MemShellFunction.getOpt(), CliOptions.MemShellFunction.getLongOpt(), true, CliOptions.MemShellFunction.getDescription());
         options.addOption(CliOptions.JavaClassPackageHost.getOpt(), CliOptions.JavaClassPackageHost.getLongOpt(), true, CliOptions.JavaClassPackageHost.getDescription());
         options.addOption(CliOptions.JavaClassFilePath.getOpt(), CliOptions.JavaClassFilePath.getLongOpt(), true, CliOptions.JavaClassFilePath.getDescription());
+        // JavaClass 自定义字段
+        options.addOption(CliOptions.FiledHeader.getOpt(), CliOptions.FiledHeader.getLongOpt(), true, CliOptions.FiledHeader.getDescription());
+        options.addOption(CliOptions.FiledParam.getOpt(), CliOptions.FiledParam.getLongOpt(), true, CliOptions.FiledParam.getDescription());
+        options.addOption(CliOptions.FiledKey.getOpt(), CliOptions.FiledKey.getLongOpt(), true, CliOptions.FiledKey.getDescription());
+        options.addOption(CliOptions.FiledPass.getOpt(), CliOptions.FiledPass.getLongOpt(), true, CliOptions.FiledPass.getDescription());
+
 
         // DNSLOG
         options.addOption(CliOptions.DNSHost.getOpt(), CliOptions.DNSHost.getLongOpt(), true, CliOptions.DNSHost.getDescription());
@@ -328,8 +334,10 @@ public class CliScheduler {
                         if (payloadOptions.containsKey(CliOptions.MemShellFunction.getLongOpt())) {
                             if (payloadOptions.get(CliOptions.MemShellFunction.getLongOpt()).toString().equalsIgnoreCase(MemShellFunction.Godzilla)) {
                                 javaClassHelper.setMemShellFunction(MemShellFunction.Godzilla);
-                            } else if (payloadOptions.get(CliOptions.MemShellFunction.getLongOpt()).toString().equalsIgnoreCase(MemShellFunction.Runtime)) {
-                                javaClassHelper.setMemShellFunction(MemShellFunction.Runtime);
+                            } else if (payloadOptions.get(CliOptions.MemShellFunction.getLongOpt()).toString().equalsIgnoreCase(MemShellFunction.Exec)) {
+                                javaClassHelper.setMemShellFunction(MemShellFunction.Exec);
+                            } else {
+                                Printer.error(String.format("The MemShellFunction %s is not supported", payloadOptions.get(CliOptions.MemShellFunction.getLongOpt()).toString()));
                             }
                         } else {
                             Printer.error("Missing MemShellFunction, use [-msf | -memShellFunction] to set");
@@ -346,6 +354,24 @@ public class CliScheduler {
                 }
             }
             isJavaClass = true;
+        }
+
+        /**
+         * JavaClass Filed
+         */
+        if (isJavaClass) {
+            if (payloadOptions.containsKey(CliOptions.FiledHeader.getLongOpt())) {
+                javaClassHelper.setHEADER(payloadOptions.get(CliOptions.FiledHeader.getLongOpt()).toString());
+            }
+            if (payloadOptions.containsKey(CliOptions.FiledParam.getLongOpt())) {
+                javaClassHelper.setPARAM(payloadOptions.get(CliOptions.FiledParam.getLongOpt()).toString());
+            }
+            if (payloadOptions.containsKey(CliOptions.FiledKey.getLongOpt())) {
+                javaClassHelper.setKey(payloadOptions.get(CliOptions.FiledKey.getLongOpt()).toString());
+            }
+            if (payloadOptions.containsKey(CliOptions.FiledPass.getLongOpt())) {
+                javaClassHelper.setPass(payloadOptions.get(CliOptions.FiledPass.getLongOpt()).toString());
+            }
         }
 
         /**
@@ -489,6 +515,22 @@ public class CliScheduler {
         }
         if (commandLine.hasOption(CliOptions.JavaClassFilePath.getLongOpt())) {
             payloadOptions.put(CliOptions.JavaClassFilePath.getLongOpt(), commandLine.getOptionValue(CliOptions.JavaClassFilePath.getLongOpt()));
+        }
+
+        /**
+         * JavaClass Filed
+         */
+        if (commandLine.hasOption(CliOptions.FiledHeader.getLongOpt())) {
+            payloadOptions.put(CliOptions.FiledHeader.getLongOpt(), commandLine.getOptionValue(CliOptions.FiledHeader.getLongOpt()));
+        }
+        if (commandLine.hasOption(CliOptions.FiledParam.getLongOpt())) {
+            payloadOptions.put(CliOptions.FiledParam.getLongOpt(), commandLine.getOptionValue(CliOptions.FiledParam.getLongOpt()));
+        }
+        if (commandLine.hasOption(CliOptions.FiledKey.getLongOpt())) {
+            payloadOptions.put(CliOptions.FiledKey.getLongOpt(), commandLine.getOptionValue(CliOptions.FiledKey.getLongOpt()));
+        }
+        if (commandLine.hasOption(CliOptions.FiledPass.getLongOpt())) {
+            payloadOptions.put(CliOptions.FiledPass.getLongOpt(), commandLine.getOptionValue(CliOptions.FiledPass.getLongOpt()));
         }
 
         /**
