@@ -66,6 +66,18 @@ public enum Subdomain {
     private final String subdomain;
     private final String className;
 
+    public String getProduct() {
+        return product;
+    }
+
+    public String getSubdomain() {
+        return subdomain;
+    }
+
+    public String getClassName() {
+        return className;
+    }
+
     Subdomain(String product, String subdomain, String className) {
         this.product = product;
         this.subdomain = subdomain;

@@ -10,6 +10,7 @@ public enum CliOptions {
     Output("o", "output", "Gadget output type"),
     SavePath("save", "savePath", "Save payload to file"),
     ClosePrinter("close", "closePrinter", "Turn off all runtime output and keep only the results"),
+
     // 增强类型
     Enchant("e", "enchant", "Enchant type"),
     // 命令执行内容
@@ -39,7 +40,9 @@ public enum CliOptions {
     // 本地加载方法
     LoadFunction("lf", "loadFunction", "Load function"),
 
-    // JavaClass
+    /**
+     * JavaClass
+     */
     JavaClassHelperType("jht", "javaClassHelperType", "Java Class Type"),
     Middleware("mw", "middleware", "Middleware"),
     MemShellType("mst", "memShellType", "MemShell Type"),
@@ -48,12 +51,24 @@ public enum CliOptions {
     // JavaClass 增强
     // 是否继承 AbstractTranslet
     ExtendsAbstractTranslet("ext", "extendsAbstractTranslet", "Extends AbstractTranslet"),
-    WrapSerialization("wrap", "WrapSerialization", "Wrap Serialization"),
     // 随机类名的包名
     JavaClassPackageHost("jph", "javaClassPackageHost", "Java Class Package Host"),
     // 自定义 JavaClass 路径
-    JavaClassFilePath("jfp", "javaClassFilePath", "Local Java Class File Path");
+    JavaClassFilePath("jfp", "javaClassFilePath", "Local Java Class File Path"),
 //    RandomClassName("random", "randomClassName", "Random build class name");
+
+    // 二次反序列化
+    WrapSerialization("wrap", "WrapSerialization", "Wrap Serialization"),
+
+    /**
+     * DNS
+     */
+    DNSHost("dh", "dnsHost", "dns log host"),
+    DNSProducts("dp", "dnsProducts", "choose the products detected by dns"),
+    DNSClassName("dcn", "dnsClassName", "the full class name detected by dns"),
+    DNSSubdomain("ds", "dnsSubdomain", "the dns subdomain bound with the class name"),
+    ;
+
 
     private final String opt;
     private final String longOpt;

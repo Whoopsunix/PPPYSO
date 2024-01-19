@@ -102,7 +102,7 @@ public class JavaClassModifier {
         pool.insertClassPath(new ClassClassPath(AbstractTranslet.class));
         CtClass superCtClass = pool.get(AbstractTranslet.class.getName());
         ctClass.setSuperclass(superCtClass);
-        Printer.greenInfo("extends AbstractTranslet");
+        Printer.yellowInfo("extends AbstractTranslet");
     }
 
     /**
@@ -152,7 +152,7 @@ public class JavaClassModifier {
 
         StringBuilder javaClassName = new StringBuilder();
         if (javaClassPackageHost != null) {
-            Printer.greenInfo("javaClass Package Host: " + javaClassPackageHost);
+            Printer.yellowInfo("javaClass Package Host: " + javaClassPackageHost);
             javaClassName.append(javaClassPackageHost);
         } else {
             javaClassName.append(realPackageName);

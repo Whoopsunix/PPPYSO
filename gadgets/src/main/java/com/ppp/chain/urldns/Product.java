@@ -40,12 +40,12 @@ public enum Product {
         return longProduct;
     }
 
-    public static boolean isProduct(String product) {
+    public static Product getProduct(String product) {
         for (Product p : Product.values()) {
             if (p.getProduct().equalsIgnoreCase(product) || p.getLongProduct().equalsIgnoreCase(product)) {
-                return true;
+                return p;
             }
         }
-        return false;
+        return null;
     }
 }

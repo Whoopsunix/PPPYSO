@@ -26,7 +26,7 @@ public class Printer {
      * @param msg
      */
     public static void print(Object msg) {
-        if (!isPrintEnabled())
+        if (!isPrintEnabled() || msg == null)
             return;
         System.out.println(msg);
         System.out.flush();
@@ -70,17 +70,17 @@ public class Printer {
         System.out.flush();
     }
     /**
-     * payload 醒目配置 绿色，针对该 Payload 的配置项
+     * payload 醒目配置，针对该 Payload 的配置项
      * @param msg
      */
-    public static void greenInfo(Object msg) {
+    public static void yellowInfo(Object msg) {
         if (!isPrintEnabled())
             return;
-        System.out.println(ANSI_GREEN + "# " + msg + ANSI_RESET);
+        System.out.println(ANSI_YELLOW + "# " + msg + ANSI_RESET);
         System.out.flush();
     }
     /**
-     * payload 醒目配置 蓝色，根据输入动态生成的重要信息，用于提示
+     * payload 醒目配置，根据输入动态生成的重要信息，用于提示
      * @param msg
      */
     public static void blueInfo(Object msg) {

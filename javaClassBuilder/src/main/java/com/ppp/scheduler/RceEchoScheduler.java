@@ -62,8 +62,8 @@ public class RceEchoScheduler {
 
         byte[] recEchoJavaClassBytes = (byte[]) Reflections.invokeMethod(rceEchoClass.newInstance(), "build", new Class[]{Class.class, JavaClassHelper.class}, new Object[]{recEchoJavaClass, javaClassHelper});
         String b64 = CryptoUtils.base64encoder(recEchoJavaClassBytes);
-        Printer.greenInfo("Rce echo:");
-        Printer.greenInfo(b64);
+        Printer.yellowInfo("Rce echo:");
+        Printer.yellowInfo(b64);
 
 
         return recEchoJavaClassBytes;

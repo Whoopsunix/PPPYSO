@@ -32,7 +32,7 @@ public class WrapSerialization {
         Object result = null;
         if (wrapSerialization.equals(EnchantEnums.SignedObject)) {
             result = signedObject(object);
-            Printer.greenInfo("Wrap Serialization by SignedObject");
+            Printer.yellowInfo("Wrap Serialization by SignedObject");
         } else if (wrapSerialization.equals(EnchantEnums.RMIConnector)) {
             result = rmiConnector(object);
         }

@@ -39,6 +39,8 @@ public class ObjectPayloadBuilder {
             Printer.warn("No corresponding output type found, check the output [-o] parameter");
             Serializer.serialize(gadget, out);
         }
+
+        Printer.blueInfo("byte length: " + Serializer.serialize(gadget).length);
         System.out.println(result);
 
         // 保存文件

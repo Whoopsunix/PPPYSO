@@ -155,16 +155,16 @@ public class MemShellScheduler {
 
         byte[] msJavaClassBytes = (byte[]) msMethod.invoke(msBuilder, msClass, javaClassHelper);
         String msJavaClassBase64 = CryptoUtils.base64encoder(msJavaClassBytes);
-        Printer.greenInfo("ms:");
-        Printer.greenInfo(msJavaClassBase64);
+        Printer.yellowInfo("ms:");
+        Printer.yellowInfo(msJavaClassBase64);
         // gzip
         byte[] msJavaClassGzipBytes = CryptoUtils.compress(msJavaClassBytes);
         String msJavaClassGzipBase64 = CryptoUtils.base64encoder(msJavaClassGzipBytes);
 
         byte[] msLoaderJavaClassBytes = (byte[]) loaderMethod.invoke(loaderBuilder, loaderClass, msJavaClassGzipBase64, javaClassHelper);
         String b64 = CryptoUtils.base64encoder(msLoaderJavaClassBytes);
-        Printer.greenInfo("ms+loader:");
-        Printer.greenInfo(b64);
+        Printer.yellowInfo("ms+loader:");
+        Printer.yellowInfo(b64);
 
         return msLoaderJavaClassBytes;
 

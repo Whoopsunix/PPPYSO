@@ -1,6 +1,7 @@
 package com.ppp.sinks;
 
 import com.ppp.JavaClassHelper;
+import com.ppp.chain.urldns.DNSHelper;
 import com.ppp.sinks.annotation.EnchantEnums;
 
 /**
@@ -97,6 +98,11 @@ public class SinksHelper {
      * JavaClass 信息
      */
     private JavaClassHelper javaClassHelper;
+
+    /**
+     * URLDNS
+     */
+    private DNSHelper dnsHelper;
 
     public SinksHelper() {
         this.javaClassHelper = new JavaClassHelper();
@@ -270,6 +276,14 @@ public class SinksHelper {
         this.javaClassHelper = javaClassHelper;
     }
 
+    public DNSHelper getDnsHelper() {
+        return dnsHelper;
+    }
+
+    public void setDnsHelper(DNSHelper dnsHelper) {
+        this.dnsHelper = dnsHelper;
+    }
+
     @Override
     public String toString() {
         return "SinksHelper{" +
@@ -294,6 +308,7 @@ public class SinksHelper {
                 ", constructor='" + constructor + '\'' +
                 ", loadFunction=" + loadFunction +
                 ", javaClassHelper=" + javaClassHelper +
+                ", dnsHelper=" + dnsHelper +
                 '}';
     }
 }

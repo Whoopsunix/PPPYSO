@@ -1,6 +1,7 @@
 package com.ppp;
 
 import com.ppp.annotation.*;
+import com.ppp.chain.urldns.DNSHelper;
 import com.ppp.sinks.SinksHelper;
 import com.ppp.sinks.annotation.EnchantEnums;
 import com.ppp.sinks.annotation.EnchantType;
@@ -9,6 +10,8 @@ import com.ppp.utils.Reflections;
 import com.ppp.utils.maker.ClassUtils;
 import org.apache.commons.cli.*;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -17,35 +20,7 @@ import java.util.List;
  */
 public class CliScheduler {
     private static String gadgetPackageName = "com.ppp.chain";
-    public static HashMap<String, Object> payloadOptions = new HashMap<String, Object>() {{
-//        put(CliOptions.Gadget.getLongOpt(), null);
-//        put(CliOptions.Output.getLongOpt(), null);
-//        put(CliOptions.SavePath.getLongOpt(), null);
-//
-//        put(CliOptions.Enchant.getLongOpt(), null);
-//        put(CliOptions.ExtendsAbstractTranslet.getLongOpt(), false);
-//
-//        put(CliOptions.Command.getLongOpt(), null);
-//        put(CliOptions.OS.getLongOpt(), null);
-//        put(CliOptions.Host.getLongOpt(), null);
-//        put(CliOptions.Delay.getLongOpt(), null);
-//        put(CliOptions.DelayTime.getLongOpt(), null);
-//        put(CliOptions.ServerFilePath.getLongOpt(), null);
-//        put(CliOptions.LocalFilePath.getLongOpt(), null);
-//        put(CliOptions.FileContent.getLongOpt(), null);
-//        put(CliOptions.URL.getLongOpt(), null);
-//        put(CliOptions.RemoteClassName.getLongOpt(), null);
-//        put(CliOptions.Constructor.getLongOpt(), null);
-//        put(CliOptions.LoadFunction.getLongOpt(), null);
-//
-//        // JavaClass 参数
-//        put(CliOptions.JavaClassHelperType.getLongOpt(), null);
-//        put(CliOptions.Middleware.getLongOpt(), null);
-//        put(CliOptions.MemShellType.getLongOpt(), null);
-//        put(CliOptions.MemShellFunction.getLongOpt(), null);
-//        put(CliOptions.JavaClassPackageHost.getLongOpt(), null);
-//        put(CliOptions.JavaClassFilePath.getLongOpt(), null);
-    }};
+    public static HashMap<String, Object> payloadOptions = new HashMap<String, Object>();
 
     public static void main(String[] args) throws Exception {
         run(args);
@@ -86,6 +61,12 @@ public class CliScheduler {
         options.addOption(CliOptions.MemShellFunction.getOpt(), CliOptions.MemShellFunction.getLongOpt(), true, CliOptions.MemShellFunction.getDescription());
         options.addOption(CliOptions.JavaClassPackageHost.getOpt(), CliOptions.JavaClassPackageHost.getLongOpt(), true, CliOptions.JavaClassPackageHost.getDescription());
         options.addOption(CliOptions.JavaClassFilePath.getOpt(), CliOptions.JavaClassFilePath.getLongOpt(), true, CliOptions.JavaClassFilePath.getDescription());
+
+        // DNSLOG
+        options.addOption(CliOptions.DNSHost.getOpt(), CliOptions.DNSHost.getLongOpt(), true, CliOptions.DNSHost.getDescription());
+        options.addOption(CliOptions.DNSProducts.getOpt(), CliOptions.DNSProducts.getLongOpt(), true, CliOptions.DNSProducts.getDescription());
+        options.addOption(CliOptions.DNSClassName.getOpt(), CliOptions.DNSClassName.getLongOpt(), true, CliOptions.DNSClassName.getDescription());
+        options.addOption(CliOptions.DNSSubdomain.getOpt(), CliOptions.DNSSubdomain.getLongOpt(), true, CliOptions.DNSSubdomain.getDescription());
 
         CommandLineParser parser = new DefaultParser();
         CommandLine commandLine = parser.parse(options, args);
@@ -180,8 +161,13 @@ public class CliScheduler {
          */
         Boolean isCmd = false;
         // 默认无增强 使用 DEFAULT Runtime
-        if (!payloadOptions.containsKey(CliOptions.Enchant.getLongOpt())
-                || isEnchant(enchants, EnchantType.RUNTIME)) {
+        // URLDNS 不进入该分支
+        if (
+                (!payloadOptions.containsKey(CliOptions.Enchant.getLongOpt())
+                        && !payloadOptions.containsKey(CliOptions.DNSHost.getLongOpt())
+                )
+                        || isEnchant(enchants, EnchantType.RUNTIME)
+        ) {
             sinksHelper.setEnchant(EnchantType.RUNTIME);
             isCmd = true;
         } else if (isEnchant(enchants, EnchantType.ProcessBuilder)) {
@@ -378,8 +364,27 @@ public class CliScheduler {
                 }
             }
         }
-        sinksHelper.setJavaClassHelper(javaClassHelper);
 
+        /**
+         * URLDNS
+         */
+        DNSHelper dnsHelper = new DNSHelper();
+        if (payloadOptions.containsKey(CliOptions.DNSHost.getLongOpt())) {
+            dnsHelper.setHost(payloadOptions.get(CliOptions.DNSHost.getLongOpt()).toString());
+            if (payloadOptions.containsKey(CliOptions.DNSProducts.getLongOpt())) {
+                String products = payloadOptions.get(CliOptions.DNSProducts.getLongOpt()).toString();
+                ArrayList<String> productArrayList = new ArrayList<String>(Arrays.asList(products.split(",")));
+                dnsHelper.setProducts(productArrayList);
+            } else if (payloadOptions.containsKey(CliOptions.DNSClassName.getLongOpt()) && payloadOptions.containsKey(CliOptions.DNSSubdomain.getLongOpt())) {
+                dnsHelper.setSubdomain(payloadOptions.get(CliOptions.DNSSubdomain.getLongOpt()).toString());
+                dnsHelper.setClassName(payloadOptions.get(CliOptions.DNSClassName.getLongOpt()).toString());
+            } else {
+                Printer.error("Missing DNSProducts or (DNSClassName and DNSSubdomain), use [-dp | -dnsProducts] or ([-dcn | -dnsClassName] and [-ds | -dnsSubdomain]) to set");
+            }
+        }
+        sinksHelper.setDnsHelper(dnsHelper);
+
+        sinksHelper.setJavaClassHelper(javaClassHelper);
 
         return sinksHelper;
     }
@@ -411,14 +416,14 @@ public class CliScheduler {
             payloadOptions.put(CliOptions.ClosePrinter.getLongOpt(), commandLine.getOptionValue(CliOptions.ClosePrinter.getLongOpt()));
         }
 
+        if (commandLine.hasOption(CliOptions.WrapSerialization.getLongOpt())) {
+            payloadOptions.put(CliOptions.WrapSerialization.getLongOpt(), true);
+        }
         if (commandLine.hasOption(CliOptions.Enchant.getLongOpt())) {
             payloadOptions.put(CliOptions.Enchant.getLongOpt(), commandLine.getOptionValue(CliOptions.Enchant.getLongOpt()));
         }
         if (commandLine.hasOption(CliOptions.ExtendsAbstractTranslet.getLongOpt())) {
             payloadOptions.put(CliOptions.ExtendsAbstractTranslet.getLongOpt(), true);
-        }
-        if (commandLine.hasOption(CliOptions.WrapSerialization.getLongOpt())) {
-            payloadOptions.put(CliOptions.WrapSerialization.getLongOpt(), true);
         }
 
         if (commandLine.hasOption(CliOptions.Command.getLongOpt())) {
@@ -464,6 +469,9 @@ public class CliScheduler {
             payloadOptions.put(CliOptions.LoadFunction.getLongOpt(), commandLine.getOptionValue(CliOptions.LoadFunction.getLongOpt()));
         }
 
+        /**
+         * JavaClass
+         */
         if (commandLine.hasOption(CliOptions.JavaClassHelperType.getLongOpt())) {
             payloadOptions.put(CliOptions.JavaClassHelperType.getLongOpt(), commandLine.getOptionValue(CliOptions.JavaClassHelperType.getLongOpt()));
         }
@@ -483,5 +491,20 @@ public class CliScheduler {
             payloadOptions.put(CliOptions.JavaClassFilePath.getLongOpt(), commandLine.getOptionValue(CliOptions.JavaClassFilePath.getLongOpt()));
         }
 
+        /**
+         * DNS
+         */
+        if (commandLine.hasOption(CliOptions.DNSHost.getLongOpt())) {
+            payloadOptions.put(CliOptions.DNSHost.getLongOpt(), commandLine.getOptionValue(CliOptions.DNSHost.getLongOpt()));
+        }
+        if (commandLine.hasOption(CliOptions.DNSProducts.getLongOpt())) {
+            payloadOptions.put(CliOptions.DNSProducts.getLongOpt(), commandLine.getOptionValue(CliOptions.DNSProducts.getLongOpt()));
+        }
+        if (commandLine.hasOption(CliOptions.DNSClassName.getLongOpt())) {
+            payloadOptions.put(CliOptions.DNSClassName.getLongOpt(), commandLine.getOptionValue(CliOptions.DNSClassName.getLongOpt()));
+        }
+        if (commandLine.hasOption(CliOptions.DNSSubdomain.getLongOpt())) {
+            payloadOptions.put(CliOptions.DNSSubdomain.getLongOpt(), commandLine.getOptionValue(CliOptions.DNSSubdomain.getLongOpt()));
+        }
     }
 }

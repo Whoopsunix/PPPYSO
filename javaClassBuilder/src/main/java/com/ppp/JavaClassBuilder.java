@@ -27,12 +27,12 @@ public class JavaClassBuilder {
                 if (javaClassFilePath == null) {
                     Printer.error("Please specify the JavaClass file path");
                 }
-                Printer.greenInfo("load JavaClass from file: " + javaClassFilePath);
+                Printer.yellowInfo("load JavaClass from file: " + javaClassFilePath);
                 FileInputStream fileInputStream = new FileInputStream(javaClassFilePath);
                 bytes = new byte[fileInputStream.available()];
                 fileInputStream.read(bytes);
                 fileInputStream.close();
-                Printer.greenInfo("Custom JavaClass: " + new String(bytes));
+                Printer.yellowInfo("Custom JavaClass: " + new String(bytes));
                 byte[] expectedPrefix = {121, 118, 54, 54};
                 if (Arrays.equals(Arrays.copyOfRange(bytes, 0, expectedPrefix.length), expectedPrefix)) {
                     bytes = CryptoUtils.base64decoder(new String(bytes));
