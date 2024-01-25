@@ -11,6 +11,7 @@ import java.lang.annotation.Target;
 @Target({ElementType.METHOD, ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface JavaClassModifiable {
+    String CLASSNAME = "CLASSNAME";
     String HEADER = "HEADER";
     String PARAM = "PARAM";
     String PATH = "PATH";

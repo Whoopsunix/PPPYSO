@@ -300,13 +300,11 @@ public class CliScheduler {
                  * 内置
                  */
                 if (payloadOptions.containsKey(CliOptions.Middleware.getLongOpt())) {
-                    // 组件
-                    if (payloadOptions.get(CliOptions.Middleware.getLongOpt()).toString().equalsIgnoreCase(Middleware.Tomcat)) {
-                        javaClassHelper.setMiddleware(Middleware.Tomcat);
-                    } else if (payloadOptions.get(CliOptions.Middleware.getLongOpt()).toString().equalsIgnoreCase(Middleware.Jetty)) {
-                        javaClassHelper.setMiddleware(Middleware.Jetty);
-                    } else {
+                    String targetMiddleware = Middleware.Utils.getTargetMiddleware(payloadOptions.get(CliOptions.Middleware.getLongOpt()).toString());
+                    if (targetMiddleware == null) {
                         Printer.error("The Middleware is not supported");
+                    } else {
+                        javaClassHelper.setMiddleware(targetMiddleware);
                     }
                 } else {
                     Printer.error("Missing Middleware, use [-mw | -middleware] to set");
@@ -319,12 +317,11 @@ public class CliScheduler {
                         javaClassHelper.setJavaClassHelperType(JavaClassHelperType.MemShell);
                         // 内存马类型
                         if (payloadOptions.containsKey(CliOptions.MemShellType.getLongOpt())) {
-                            if (payloadOptions.get(CliOptions.MemShellType.getLongOpt()).toString().equalsIgnoreCase(MemShell.Listener)) {
-                                javaClassHelper.setMemShell(MemShell.Listener);
-                            } else if (payloadOptions.get(CliOptions.MemShellType.getLongOpt()).toString().equalsIgnoreCase(MemShell.Servlet)) {
-                                javaClassHelper.setMemShell(MemShell.Servlet);
-                            } else {
+                            String targetMemShell = MemShell.Utils.getTargetMemShell(payloadOptions.get(CliOptions.MemShellType.getLongOpt()).toString());
+                            if (targetMemShell == null) {
                                 Printer.error("The MemShell is not supported");
+                            } else {
+                                javaClassHelper.setMemShell(targetMemShell);
                             }
                         } else {
                             Printer.error("Missing MemShell, use [-mst | -memShellType] to set");
@@ -332,12 +329,11 @@ public class CliScheduler {
 
                         // 内存马功能
                         if (payloadOptions.containsKey(CliOptions.MemShellFunction.getLongOpt())) {
-                            if (payloadOptions.get(CliOptions.MemShellFunction.getLongOpt()).toString().equalsIgnoreCase(MemShellFunction.Godzilla)) {
-                                javaClassHelper.setMemShellFunction(MemShellFunction.Godzilla);
-                            } else if (payloadOptions.get(CliOptions.MemShellFunction.getLongOpt()).toString().equalsIgnoreCase(MemShellFunction.Exec)) {
-                                javaClassHelper.setMemShellFunction(MemShellFunction.Exec);
-                            } else {
+                            String targetMemShellFunction = MemShellFunction.Utils.getTargetMemShellFunction(payloadOptions.get(CliOptions.MemShellFunction.getLongOpt()).toString());
+                            if (targetMemShellFunction == null) {
                                 Printer.error(String.format("The MemShellFunction %s is not supported", payloadOptions.get(CliOptions.MemShellFunction.getLongOpt()).toString()));
+                            } else {
+                                javaClassHelper.setMemShellFunction(targetMemShellFunction);
                             }
                         } else {
                             Printer.error("Missing MemShellFunction, use [-msf | -memShellFunction] to set");

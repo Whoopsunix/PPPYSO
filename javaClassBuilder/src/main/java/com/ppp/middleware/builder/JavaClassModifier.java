@@ -49,18 +49,23 @@ public class JavaClassModifier {
         // 清除所有注解
         JavaClassUtils.clearAllAnnotations(ctClass);
 
+        if (javaClassHelper.getCLASSNAME() != null) {
+            // 用于需要类名来生成的内存马
+            ctClass.setName(javaClassHelper.getCLASSNAME());
+            Printer.blueInfo("JavaClass Name (Also MS ClassName): " + javaClassHelper.getCLASSNAME());
+        } else if (javaClassHelper.isRandomJavaClassName()) {
+            // 随机类名
+            String javaClassName = randomJavaClassName(javaClassHelper);
+            // 修改类名
+            ctClass.setName(javaClassName);
+            Printer.blueInfo("JavaClass Name: " + javaClassName);
+        }
+
+        // 目前唯一用处 用于本地文件加载时必要的类名
         if (javaClassHelper.getJavaClassName() == null) {
             // 保证该字段不为空 直接构建的 CtClass 也是有类名的 所以不存在报错
             javaClassHelper.setJavaClassName(ctClass.getName());
         }
-
-        // 随机类名
-        if (javaClassHelper.isRandomJavaClassName()) {
-            randomJavaClassName(javaClassHelper);
-        }
-
-        // 修改类名
-        ctClass.setName(javaClassHelper.getJavaClassName());
 
 //        // 移除类文件部分属性
 //        ClassFile classFile = ctClass.getClassFile();
@@ -90,7 +95,6 @@ public class JavaClassModifier {
 
         return classBytes;
     }
-
 
     /**
      * 是否继承 AbstractTranslet
@@ -123,13 +127,20 @@ public class JavaClassModifier {
         if (javaClassHelper == null)
             return;
 
+        // 内存马类名
+        if (AnnotationUtils.containsValue(cls, JavaClassModifiable.class, JavaClassModifiable.CLASSNAME)) {
+            JavaClassUtils.fieldChangeIfExist(ctClass, JavaClassModifiable.CLASSNAME, String.format("private static String %s = \"%s\";", JavaClassModifiable.CLASSNAME, javaClassHelper.getCLASSNAME()));
+        }
+
+
+        // 固定
         if (AnnotationUtils.containsValue(cls, JavaClassModifiable.class, JavaClassModifiable.HEADER)) {
             JavaClassUtils.fieldChangeIfExist(ctClass, JavaClassModifiable.HEADER, String.format("private static String %s = \"%s\";", JavaClassModifiable.HEADER, javaClassHelper.getHEADER()));
         }
-
         if (AnnotationUtils.containsValue(cls, JavaClassModifiable.class, JavaClassModifiable.PARAM)) {
             JavaClassUtils.fieldChangeIfExist(ctClass, JavaClassModifiable.PARAM, String.format("private static String %s = \"%s\";", JavaClassModifiable.PARAM, javaClassHelper.getPARAM()));
         }
+
         if (AnnotationUtils.containsValue(cls, JavaClassModifiable.class, JavaClassModifiable.pass)) {
             JavaClassUtils.fieldChangeIfExist(ctClass, JavaClassModifiable.pass, String.format("private static String %s = \"%s\";", JavaClassModifiable.pass, javaClassHelper.getPass()));
         }
@@ -144,7 +155,7 @@ public class JavaClassModifier {
      *
      * @return
      */
-    public static void randomJavaClassName(JavaClassHelper javaClassHelper) {
+    public static String randomJavaClassName(JavaClassHelper javaClassHelper) {
         // 真实包名
         String realPackageName = "org.apache";
         String javaClassPackageHost = javaClassHelper.getJavaClassPackageHost();
@@ -182,8 +193,7 @@ public class JavaClassModifier {
             javaClassName.append(part);
         }
 
-        Printer.blueInfo("JavaClass Name: " + javaClassName);
-        javaClassHelper.setJavaClassName(javaClassName.toString());
+        return javaClassName.toString();
     }
 
     /**

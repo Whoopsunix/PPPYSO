@@ -39,9 +39,14 @@ public class JavaClassHelper {
     /**
      * JavaClass 信息
      */
+    // javaClassName 是最外层的类名
     private String javaClassName;
     private boolean randomJavaClassName = true;
     private String javaClassPackageHost;
+
+    // 内存马全限定类名
+    // 这个目前的场景是 需要指定注入类名的时候，所以会将随机类名、自定义步骤提前
+    private String CLASSNAME;
 
     public boolean isExtendsAbstractTranslet() {
         return extendsAbstractTranslet;
@@ -145,5 +150,13 @@ public class JavaClassHelper {
 
     public void setJavaClassPackageHost(String javaClassPackageHost) {
         this.javaClassPackageHost = javaClassPackageHost;
+    }
+
+    public String getCLASSNAME() {
+        return CLASSNAME;
+    }
+
+    public void setCLASSNAME(String CLASSNAME) {
+        this.CLASSNAME = CLASSNAME;
     }
 }

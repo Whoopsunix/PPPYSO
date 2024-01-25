@@ -25,6 +25,22 @@ public class AnnotationUtils {
         return false;
     }
 
+    /**
+     * 获取指定注解
+     *
+     * @param values
+     * @param targetValue
+     * @return
+     */
+    public static String getValue(String[] values, String targetValue) {
+        for (String value : values) {
+            if (value.equals(targetValue)) {
+                return value;
+            }
+        }
+        return null;
+    }
+
     public static boolean containsValue(Class clazz, Class<? extends Annotation> anno, String targetValue) {
         try {
             Annotation annotation = clazz.getAnnotation(anno);

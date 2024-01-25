@@ -16,4 +16,16 @@ public @interface Middleware {
     String Jetty = "Jetty";
 
     String value();
+
+    public static class Utils {
+        public static String getTargetMiddleware(String middleware) {
+            if (middleware.equalsIgnoreCase(Middleware.Tomcat)) {
+                return Middleware.Tomcat;
+            } else if (middleware.equalsIgnoreCase(Middleware.Jetty)) {
+                return Middleware.Jetty;
+            } else {
+                return null;
+            }
+        }
+    }
 }

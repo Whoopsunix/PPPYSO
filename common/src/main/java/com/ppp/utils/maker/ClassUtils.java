@@ -113,7 +113,10 @@ public class ClassUtils {
                 classes.addAll(findClasses(file, packageName + "." + file.getName()));
             } else if (file.getName().endsWith(".class")) {
                 String className = packageName + '.' + file.getName().substring(0, file.getName().length() - 6);
-                Class<?> clazz = Class.forName(className);
+//                Class<?> clazz = Class.forName(className);
+//                classes.add(clazz);
+                // 换成 ClassLoader.loadClass() 不会触发 static 代码块
+                Class<?> clazz = Thread.currentThread().getContextClassLoader().loadClass(className);
                 classes.add(clazz);
             }
         }

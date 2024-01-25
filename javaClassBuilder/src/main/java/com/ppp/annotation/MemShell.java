@@ -4,7 +4,6 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-import java.lang.reflect.AnnotatedElement;
 
 /**
  * 内存马类型
@@ -14,6 +13,23 @@ import java.lang.reflect.AnnotatedElement;
 public @interface MemShell {
     String Listener = "Listener";
     String Servlet = "Servlet";
+    String Executor = "Executor";
 
-    String value();
+    String[] value() default {};
+
+    public static class Utils {
+        public static String getTargetMemShell(String ms) {
+            if (ms.equalsIgnoreCase(MemShell.Listener)) {
+                return MemShell.Listener;
+            } else if (ms.equalsIgnoreCase(MemShell.Servlet)) {
+                return MemShell.Servlet;
+            } else if (ms.equalsIgnoreCase(MemShell.Executor)) {
+                return MemShell.Executor;
+            } else {
+                return null;
+            }
+        }
+    }
+
+
 }

@@ -15,4 +15,16 @@ public @interface MemShellFunction {
     String Godzilla = "Godzilla";
 
     String value();
+
+    public static class Utils {
+        public static String getTargetMemShellFunction(String msf) {
+            if (msf.equalsIgnoreCase(MemShellFunction.Exec)) {
+                return MemShellFunction.Exec;
+            } else if (msf.equalsIgnoreCase(MemShellFunction.Godzilla)) {
+                return MemShellFunction.Godzilla;
+            } else {
+                return null;
+            }
+        }
+    }
 }
