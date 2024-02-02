@@ -126,10 +126,16 @@ public class JavaClassUtils {
             memShellCtClass.addField(CtField.make(fieldCode, memShellCtClass));
             return true;
         } catch (NotFoundException e) {
+            try {
+                memShellCtClass.addField(CtField.make(fieldCode, memShellCtClass));
+                return true;
+            } catch (Exception ee) {
 
+            }
         } catch (CannotCompileException e) {
 
         }
+
         return false;
     }
 

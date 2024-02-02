@@ -49,6 +49,12 @@
             <artifactId>rome</artifactId>
             <version>1.0</version>
         </dependency>
+        <!--        <dependency>-->
+        <!--            <groupId>com.rometools</groupId>-->
+        <!--            <artifactId>rome</artifactId>-->
+        <!--            <version>1.7.0</version>-->
+        <!--        </dependency>-->
+
         <dependency>
             <groupId>com.mchange</groupId>
             <artifactId>c3p0</artifactId>

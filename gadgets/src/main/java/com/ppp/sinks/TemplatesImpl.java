@@ -254,32 +254,6 @@ public class TemplatesImpl {
         return createTemplatesImpl(classBytes);
     }
 
-
-//    public static void ctClassScheduler(CtClass ctClass, SinksHelper sinksHelper) throws Exception{
-//        // 是否继承 AbstractTranslet
-//        extendsAbstractTranslet(ctClass, sinksHelper);
-//
-//        //
-//    }
-//
-//    /**
-//     * 是否继承 AbstractTranslet
-//     *
-//     * @param ctClass
-//     * @param sinksHelper
-//     * @throws Exception
-//     */
-//    public static void extendsAbstractTranslet(CtClass ctClass, SinksHelper sinksHelper) throws Exception {
-//        if (!sinksHelper.isExtendsAbstractTranslet()) {
-//            return;
-//        }
-//        ClassPool pool = ClassPool.getDefault();
-//        pool.insertClassPath(new ClassClassPath(AbstractTranslet.class));
-//        CtClass superCtClass = pool.get(AbstractTranslet.class.getName());
-//        ctClass.setSuperclass(superCtClass);
-//    }
-
-
     public static Object createTemplatesImpl(final byte[] classBytes) throws Exception {
         if (Boolean.parseBoolean(System.getProperty("properXalan", "false"))) {
             return createTemplatesImpl(
@@ -310,6 +284,7 @@ public class TemplatesImpl {
         Reflections.setFieldValue(templates, "_name", "anyStr");
         // 满足条件 1. classCount也就是_bytecodes的数量大于1   2. _transletIndex >= 0  可去掉 AbstractTranslet
         Reflections.setFieldValue(templates, "_transletIndex", 0);
+        // 可去掉
         Reflections.setFieldValue(templates, "_tfactory", transFactory.newInstance());
         return templates;
     }

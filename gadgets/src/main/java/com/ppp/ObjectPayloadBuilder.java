@@ -33,7 +33,7 @@ public class ObjectPayloadBuilder {
             result = Serializer.serializeBase64GZip(gadget);
         } else if (output.equalsIgnoreCase(String.valueOf(Save.XStream))) {
             result = Serializer.serializeXStream(gadget);
-        } else if (output.equalsIgnoreCase(String.valueOf(Save.hexAscii))) {
+        } else if (output.equalsIgnoreCase(String.valueOf(Save.HexAscii))) {
             result = Serializer.serializeHexAscii(gadget);
         } else {
             Printer.warn("No corresponding output type found, check the output [-o] parameter");

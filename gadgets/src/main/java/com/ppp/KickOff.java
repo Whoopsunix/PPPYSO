@@ -40,7 +40,8 @@ public class KickOff {
     }
 
     /**
-     * MashMap 赋值 只添加一个
+     * MashMap hashCode()
+     *  赋值 只添加一个
      */
     public static HashMap makeMap(Object v1) throws Exception, ClassNotFoundException, NoSuchMethodException, InstantiationException,
             IllegalAccessException, InvocationTargetException {

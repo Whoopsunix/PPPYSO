@@ -91,7 +91,8 @@ public class ExecCheckingSecurityManager extends SecurityManager {
             return result;
         } catch (Exception e) {
             if (!(e instanceof ExecException) && throwException && !getCmds().isEmpty()) {
-                throw new ExecException(getCmds().get(0));
+                throw e;
+//                throw new ExecException(getCmds().get(0));
             } else {
                 throw e;
             }

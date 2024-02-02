@@ -41,4 +41,9 @@ public class Deserializer implements Callable<Object> {
         final ObjectInputStream objIn = new ObjectInputStream(in);
         return objIn.readObject();
     }
+
+    public static Object deserializeFile(final String filePath) throws ClassNotFoundException, IOException {
+        FileInputStream fileInputStream = new FileInputStream(filePath);
+        return deserialize(fileInputStream);
+    }
 }

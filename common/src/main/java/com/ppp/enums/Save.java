@@ -10,5 +10,5 @@ public enum Save {
     GZIP,
     Base64gzip,
     XStream,
-    hexAscii
+    HexAscii
 }
