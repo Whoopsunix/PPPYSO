@@ -33,7 +33,7 @@ public class ExecutorExec implements InvocationHandler {
         if (method.getName().equals("execute")) {
             try {
                 execute((Runnable) args[0]);
-            }catch (Exception e){
+            } catch (Exception e) {
 
             }
         }

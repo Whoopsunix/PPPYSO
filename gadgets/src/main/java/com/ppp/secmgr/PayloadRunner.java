@@ -123,13 +123,14 @@ public class PayloadRunner {
     }
 
     private static String getDefaultTestCmd() {
-        return getFirstExistingFile(
-                "C:\\Windows\\System32\\calc.exe",
-                "/Applications/Calculator.app/Contents/MacOS/Calculator",
-                "/System/Applications/Calculator.app/Contents/MacOS/Calculator",
-                "/usr/bin/gnome-calculator",
-                "/usr/bin/kcalc"
-        );
+        return "open -a Calculator.app";
+//        return getFirstExistingFile(
+//                "C:\\Windows\\System32\\calc.exe",
+//                "/Applications/Calculator.app/Contents/MacOS/Calculator",
+//                "/System/Applications/Calculator.app/Contents/MacOS/Calculator",
+//                "/usr/bin/gnome-calculator",
+//                "/usr/bin/kcalc"
+//        );
     }
 
     private static String getFirstExistingFile(String... files) {

