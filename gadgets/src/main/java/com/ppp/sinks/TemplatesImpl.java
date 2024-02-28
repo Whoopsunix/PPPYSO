@@ -285,7 +285,7 @@ public class TemplatesImpl {
         // 满足条件 1. classCount也就是_bytecodes的数量大于1   2. _transletIndex >= 0  可去掉 AbstractTranslet
         Reflections.setFieldValue(templates, "_transletIndex", 0);
         // 可去掉
-        Reflections.setFieldValue(templates, "_tfactory", transFactory.newInstance());
+//        Reflections.setFieldValue(templates, "_tfactory", transFactory.newInstance());
         return templates;
     }
 

