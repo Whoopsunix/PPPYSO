@@ -1,5 +1,6 @@
 package com.ppp.chain.commonsbeanutils;
 
+import com.ppp.utils.RanDomUtils;
 import com.ppp.utils.Reflections;
 import com.sun.org.apache.xerces.internal.dom.AttrNSImpl;
 import com.sun.org.apache.xerces.internal.dom.CoreDocumentImpl;
@@ -25,7 +26,7 @@ public class BeanComparatorBuilder {
         BeanComparator, CaseInsensitiveComparator, AttrCompare, ObjectToStringComparator, PropertySource, ReverseComparatorCC, ReverseComparatorJDK
     }
 
-    private static Object DEFAULT_QUEUE_PARAM = "x";
+    private static Object DEFAULT_QUEUE_PARAM = RanDomUtils.generateRandomString(1);
     private static String V_1_83 = "1.8.3";
 
     public static Object scheduler(CompareEnum compareEnum, Object templates, String version) throws Exception {

