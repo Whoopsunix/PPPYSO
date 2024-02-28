@@ -1,4 +1,4 @@
-package com.ppp.chain.collections4;
+package com.ppp.chain.commonscollections4;
 
 import com.ppp.ObjectPayload;
 import com.ppp.annotation.Authors;

@@ -17,6 +17,7 @@ public @interface Sink {
     String InvokerTransformer3 = "InvokerTransformer3";
     String InvokerTransformer4 = "InvokerTransformer4";
     String TemplatesImpl = "TemplatesImpl";
+    String JNDI = "JNDI";
     String URLDNS = "URLDNS";
     String WrapSerialization = "WrapSerialization";
 

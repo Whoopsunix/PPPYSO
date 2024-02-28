@@ -34,6 +34,7 @@ public class SinksHelper {
      * 二次反序列化
      */
     private EnchantEnums wrapSerialization;
+    private String CBVersion = "dafault";
 
     /**
      * 以下为增强功能的配置参数
@@ -155,7 +156,13 @@ public class SinksHelper {
     public void setWrapSerialization(EnchantEnums wrapSerialization) {
         this.wrapSerialization = wrapSerialization;
     }
+    public String getCBVersion() {
+        return CBVersion;
+    }
 
+    public void setCBVersion(String CBVersion) {
+        this.CBVersion = CBVersion;
+    }
     public String getCommand() {
         return command;
     }
@@ -293,6 +300,7 @@ public class SinksHelper {
                 ", save=" + save +
                 ", savePath='" + savePath + '\'' +
                 ", wrapSerialization=" + wrapSerialization +
+                ", CBVersion='" + CBVersion + '\'' +
                 ", command='" + command + '\'' +
                 ", os=" + os +
                 ", code='" + code + '\'' +

