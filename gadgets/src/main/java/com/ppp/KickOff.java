@@ -3,6 +3,7 @@ package com.ppp;
 import com.ppp.utils.Reflections;
 
 import javax.management.BadAttributeValueExpException;
+import javax.xml.transform.Templates;
 import java.lang.reflect.*;
 import java.util.HashMap;
 import java.util.Map;
@@ -17,20 +18,20 @@ public class KickOff {
 
 
     /**
-     * sun.reflect.annotation.AnnotationInvocationHandler
-     */
-    public static InvocationHandler annotationInvocationHandler(final Map map) throws Exception {
-        final InvocationHandler handler = annotationInvocationHandler(map, Override.class);
-        return handler;
-    }
-
-    /**
      * javax.management.BadAttributeValueExpException
      */
     public static BadAttributeValueExpException badAttributeValueExpException(final Object val) throws Exception {
         BadAttributeValueExpException badAttributeValueExpException = (BadAttributeValueExpException) Reflections.getFirstCtor(BAD_ATT_EXCEPTION_CLASS).newInstance((Object) null);
         Reflections.setFieldValue(badAttributeValueExpException, "val", val);
         return badAttributeValueExpException;
+    }
+
+    /**
+     * sun.reflect.annotation.AnnotationInvocationHandler
+     */
+    public static InvocationHandler annotationInvocationHandler(final Map map) throws Exception {
+        final InvocationHandler handler = annotationInvocationHandler(map, Override.class);
+        return handler;
     }
 
     public static InvocationHandler annotationInvocationHandler(final Map map, final Class ifaces) throws Exception {
@@ -49,6 +50,12 @@ public class KickOff {
             System.arraycopy(ifaces, 0, allIfaces, 1, ifaces.length);
         }
         return iface.cast(Proxy.newProxyInstance(KickOff.class.getClassLoader(), allIfaces, ih));
+    }
+
+    public static <T> T createClassProxy(final Map map, final Class<T> iface) throws Exception{
+        InvocationHandler handler = annotationInvocationHandler(map);
+        Reflections.setFieldValue(handler, "type", iface);
+        return createProxy(handler, iface);
     }
 
     /**

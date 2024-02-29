@@ -20,10 +20,29 @@
             <artifactId>xstream</artifactId>
             <version>1.4.17</version>
         </dependency>
+<!--        <dependency>-->
+<!--            <groupId>org.javassist</groupId>-->
+<!--            <artifactId>javassist</artifactId>-->
+<!--            <version>3.29.2-GA</version>-->
+<!--        </dependency>-->
         <dependency>
-            <groupId>org.javassist</groupId>
+            <groupId>javassist</groupId>
             <artifactId>javassist</artifactId>
-            <version>3.29.2-GA</version>
+            <version>3.12.0.GA</version>
         </dependency>
     </dependencies>
+
+    <build>
+        <finalName>common</finalName>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>6</source>
+                    <target>6</target>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 </project>
