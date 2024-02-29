@@ -4,6 +4,7 @@ package com.ppp;
 import com.ppp.enums.Save;
 import com.ppp.sinks.SinksHelper;
 import com.ppp.utils.Serializer;
+import com.ppp.utils.maker.CryptoUtils;
 
 import java.io.FileOutputStream;
 import java.io.PrintStream;
@@ -22,8 +23,18 @@ public class ObjectPayloadBuilder {
         PrintStream out = System.out;
         String output = sinksHelper.getOutput();
         Object result = null;
+        int byteLength;
 
-        if (output == null) {
+        // 如果返回直接为 byte[] 直接输出 base64 结果
+        if (gadget instanceof byte[]) {
+            byteLength = ((byte[]) gadget).length;
+            result = CryptoUtils.base64encoder((byte[]) gadget);
+            Printer.yellowInfo("Gadget result is byte[], output change is not supported.");
+        } else {
+            byteLength = Serializer.serialize(gadget).length;
+        }
+
+        if (output == null && result == null) {
             Serializer.serialize(gadget, out);
         } else if (output.equalsIgnoreCase(String.valueOf(Save.GZIP))) {
             Serializer.serializeGZip(gadget, out);
@@ -40,7 +51,7 @@ public class ObjectPayloadBuilder {
             Serializer.serialize(gadget, out);
         }
 
-        Printer.blueInfo("byte length: " + Serializer.serialize(gadget).length);
+        Printer.blueInfo("byte length: " + byteLength);
         System.out.println(result);
 
         // 保存文件

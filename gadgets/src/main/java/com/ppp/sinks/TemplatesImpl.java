@@ -17,7 +17,6 @@ import com.sun.org.apache.xalan.internal.xsltc.trax.TransformerFactoryImpl;
 import javassist.ClassPool;
 import javassist.CtClass;
 import javassist.CtConstructor;
-import javassist.CtField;
 
 import java.io.FileInputStream;
 import java.io.Serializable;
@@ -49,8 +48,8 @@ public class TemplatesImpl {
 
         // 设置 serialVersionUID
         JavaClassUtils.fieldChangeIfExist(ctClass, "serialVersionUID", "private static final long serialVersionUID = 8207363842866235160L;");
-        ctClass.defrost();
-        ctClass.addField(CtField.make("private static final long SerialVersionUIDDemo = 8207363842866235160L;", ctClass));
+//        ctClass.defrost();
+//        ctClass.addField(CtField.make("private static final long SerialVersionUID = 8207363842866235160L;", ctClass));
 
         // CtClass 增强
         byte[] bytes = JavaClassModifier.ctClassBuilderExt(ctClass, sinksHelper.getJavaClassHelper());
@@ -285,7 +284,7 @@ public class TemplatesImpl {
         // 满足条件 1. classCount也就是_bytecodes的数量大于1   2. _transletIndex >= 0  可去掉 AbstractTranslet
         Reflections.setFieldValue(templates, "_transletIndex", 0);
         // 可去掉
-//        Reflections.setFieldValue(templates, "_tfactory", transFactory.newInstance());
+        Reflections.setFieldValue(templates, "_tfactory", transFactory.newInstance());
         return templates;
     }
 
