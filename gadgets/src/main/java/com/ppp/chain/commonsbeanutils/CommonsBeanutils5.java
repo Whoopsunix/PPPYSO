@@ -16,14 +16,16 @@ import java.util.Map;
 
 /**
  * @author Whoopsunix
+ *
+ * CommonsBeanutilsDualTreeBidiMap
  */
 @Dependencies({"commons-beanutils:commons-beanutils:<=1.9.4", "commons-collections:commons-collections:3.1"})
 @Authors({Authors.Y4ER})
 @Sink({Sink.TemplatesImpl})
-public class CommonsBeanutilsDualTreeBidiMap implements ObjectPayload<Object> {
+public class CommonsBeanutils5 implements ObjectPayload<Object> {
 
     public static void main(String[] args) throws Exception {
-        PayloadRunner.run(CommonsBeanutilsDualTreeBidiMap.class, args);
+        PayloadRunner.run(CommonsBeanutils5.class, args);
     }
 
     public Object getObject(SinksHelper sinksHelper) throws Exception {

