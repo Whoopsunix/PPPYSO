@@ -18,6 +18,7 @@ public @interface Sink {
     String InvokerTransformer4 = "InvokerTransformer4";
     String TemplatesImpl = "TemplatesImpl";
     String JNDI = "JNDI";
+    String Python = "Python";
     String URLDNS = "URLDNS";
     String WrapSerialization = "WrapSerialization";
 
