@@ -20,13 +20,13 @@
         <dependency>
             <groupId>com.ppp</groupId>
             <artifactId>gadgets</artifactId>
-            <version>1.0</version>
+            <version>1.0.2</version>
         </dependency>
-        <dependency>
-            <groupId>com.ppp</groupId>
-            <artifactId>javaClassBuilder</artifactId>
-            <version>1.0</version>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>com.ppp</groupId>-->
+<!--            <artifactId>javaClassBuilder</artifactId>-->
+<!--            <version>1.0.1</version>-->
+<!--        </dependency>-->
 
         <dependency>
             <groupId>commons-cli</groupId>
