@@ -10,7 +10,6 @@ import com.ppp.secmgr.PayloadRunner;
 import com.ppp.sinks.SinkScheduler;
 import com.ppp.sinks.SinksHelper;
 import com.ppp.sinks.annotation.Sink;
-import com.ppp.utils.Reflections;
 import javassist.ClassPool;
 import javassist.CtClass;
 import javassist.CtMethod;
@@ -31,10 +30,10 @@ import java.util.HashMap;
 @Dependencies({"com.fasterxml.jackson.core:jackson-databind:<=2.15.2", "org.springframework:spring-aop:x"})
 @Authors({Authors.COKEBEER})
 @Sink({Sink.TemplatesImpl})
-public class Jackson2 implements ObjectPayload<Object> {
+public class Jackson_2 implements ObjectPayload<Object> {
 
     public static void main(String[] args) throws Exception {
-        PayloadRunner.run(Jackson2.class, args);
+        PayloadRunner.run(Jackson_2.class, args);
     }
 
     public Object getObject(SinksHelper sinksHelper) throws Exception {

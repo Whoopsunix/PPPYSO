@@ -42,7 +42,7 @@ import java.util.PriorityQueue;
  */
 @Dependencies({"org.python:jython-standalone:2.7.3"})
 @Authors({Authors.SSEELEY, Authors.RCALVI})
-@Sink({Sink.Python})
+@Sink({Sink.Command})
 public class Jython3 implements ObjectPayload<Object> {
 
     public static void main(String[] args) throws Exception {

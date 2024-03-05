@@ -10,6 +10,11 @@ import java.util.Random;
 public class RanDomUtils {
     private static final String CHARACTERS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 
+    /**
+     * 生成制定长度的随机字符串
+     * @param length
+     * @return
+     */
     public static String generateRandomString(int length) {
         Random random = new Random();
         StringBuilder sb = new StringBuilder(length);
@@ -19,6 +24,18 @@ public class RanDomUtils {
             sb.append(randomChar);
         }
         return sb.toString();
+    }
+
+    /**
+     * 生成指定长度区间的随机字符串
+     * @param minLength
+     * @param maxLength
+     * @return
+     */
+    public static String generateRandomString(int minLength, int maxLength) {
+        Random random = new Random();
+        int length = minLength + random.nextInt(maxLength - minLength + 1);
+        return generateRandomString(length);
     }
 
     public static void main(String[] args) {

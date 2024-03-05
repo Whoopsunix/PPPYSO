@@ -19,6 +19,7 @@ public @interface Sink {
     String TemplatesImpl = "TemplatesImpl";
     String JNDI = "JNDI";
     String Python = "Python";
+    String Command = "Command";
     String URLDNS = "URLDNS";
     String WrapSerialization = "WrapSerialization";
 
