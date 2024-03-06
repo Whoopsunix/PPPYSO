@@ -79,6 +79,11 @@
         <!--            <version>1.7.0</version>-->
         <!--        </dependency>-->
         <dependency>
+            <groupId>com.mchange</groupId>
+            <artifactId>c3p0</artifactId>
+            <version>0.9.5.2</version>
+        </dependency>
+        <dependency>
             <groupId>org.python</groupId>
             <artifactId>jython-standalone</artifactId>
 <!--            <version>2.5.2</version>-->
@@ -96,9 +101,9 @@
 <!--            <version>2.4.4</version>-->
         </dependency>
         <dependency>
-            <groupId>com.mchange</groupId>
-            <artifactId>c3p0</artifactId>
-            <version>0.9.5.2</version>
+            <groupId>org.clojure</groupId>
+            <artifactId>clojure</artifactId>
+            <version>1.8.0</version>
         </dependency>
 
         <dependency>
