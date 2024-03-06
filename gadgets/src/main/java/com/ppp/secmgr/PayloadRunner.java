@@ -3,6 +3,7 @@ package com.ppp.secmgr;
 import com.ppp.JavaClassHelper;
 import com.ppp.ObjectPayload;
 import com.ppp.chain.urldns.DNSHelper;
+import com.ppp.sinks.SinkScheduler;
 import com.ppp.sinks.annotation.EnchantType;
 import com.ppp.sinks.SinksHelper;
 import com.ppp.sinks.annotation.Sink;
@@ -44,6 +45,8 @@ public class PayloadRunner {
                     helper.setJavaClassHelper(javaClassHelper);
                 }
 
+                // 增强功能
+                SinkScheduler.builder(sinksHelper);
 
                 final Object objBefore = object.getObject(helper);
 

@@ -12,7 +12,6 @@ import org.codehaus.groovy.runtime.MethodClosure;
 
 import java.lang.reflect.Proxy;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.PriorityQueue;
 
 /**

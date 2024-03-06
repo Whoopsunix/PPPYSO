@@ -20,6 +20,7 @@ public @interface Sink {
     String JNDI = "JNDI";
     String Python = "Python";
     String Command = "Command";
+    String EL = "EL";
     String URLDNS = "URLDNS";
     String WrapSerialization = "WrapSerialization";
 
