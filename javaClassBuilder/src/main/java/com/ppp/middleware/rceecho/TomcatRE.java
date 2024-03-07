@@ -77,13 +77,7 @@ public class TomcatRE {
                     try {
                         response.getClass().getDeclaredMethod("doWrite", java.nio.ByteBuffer.class).invoke(response, java.nio.ByteBuffer.wrap(result.getBytes()));
                     } catch (NoSuchMethodException e) {
-                        Class clazz;
-                        try {
-                            clazz = Class.forName("org.apache.tomcat.util.buf.ByteChunk");
-                        } catch (ClassNotFoundException e1) {
-                            // 处理 c3p0 类加载问题
-                            clazz = Thread.currentThread().getContextClassLoader().loadClass("org.apache.tomcat.util.buf.ByteChunk");
-                        }
+                        Class clazz = getClass("org.apache.tomcat.util.buf.ByteChunk");
                         Object byteChunk = clazz.newInstance();
                         clazz.getDeclaredMethod("setBytes", byte[].class, Integer.TYPE, Integer.TYPE).invoke(byteChunk, result.getBytes(), 0, result.getBytes().length);
                         response.getClass().getMethod("doWrite", clazz).invoke(response, new Object[]{byteChunk});
@@ -132,5 +126,15 @@ public class TomcatRE {
                 field = getField(clazz.getSuperclass(), fieldName);
         }
         return field;
+    }
+
+    public static Class getClass(String className) throws Exception{
+        Class clazz;
+        try {
+            clazz = Thread.currentThread().getContextClassLoader().loadClass("org.apache.tomcat.util.buf.ByteChunk");
+        } catch (ClassNotFoundException e1) {
+            clazz = Class.forName("org.apache.tomcat.util.buf.ByteChunk");
+        }
+        return clazz;
     }
 }
