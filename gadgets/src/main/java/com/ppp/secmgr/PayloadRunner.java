@@ -31,9 +31,10 @@ public class PayloadRunner {
                 ObjectPayload<?> object = clazz.newInstance();
 
                 SinksHelper helper;
+                String sink = clazz.getAnnotation(Sink.class).value()[0];
                 if (sinksHelper == null) {
                     SinksHelper sinksHelper = new SinksHelper();
-                    sinksHelper.setSink(clazz.getAnnotation(Sink.class).value()[0]);
+                    sinksHelper.setSink(sink);
                     sinksHelper.setEnchant(EnchantType.DEFAULT);
                     sinksHelper.setCommand(command);
                     helper = sinksHelper;
@@ -46,7 +47,8 @@ public class PayloadRunner {
                 }
 
                 // 增强功能
-                SinkScheduler.builder(sinksHelper);
+                if (!sink.equals(Sink.TemplatesImpl) && !sink.equals(Sink.InvokerTransformer3))
+                    SinkScheduler.builder(helper);
 
                 final Object objBefore = object.getObject(helper);
 
