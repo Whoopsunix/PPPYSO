@@ -4,13 +4,14 @@ import com.ppp.JavaClassHelper;
 import com.ppp.ObjectPayload;
 import com.ppp.chain.urldns.DNSHelper;
 import com.ppp.sinks.SinkScheduler;
-import com.ppp.sinks.annotation.EnchantType;
 import com.ppp.sinks.SinksHelper;
+import com.ppp.sinks.annotation.EnchantType;
 import com.ppp.sinks.annotation.Sink;
 import com.ppp.utils.Deserializer;
 import com.ppp.utils.Serializer;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.util.concurrent.Callable;
 
 /**
@@ -47,7 +48,9 @@ public class PayloadRunner {
                 }
 
                 // 增强功能
-                if (!sink.equals(Sink.TemplatesImpl) && !sink.equals(Sink.InvokerTransformer3))
+                if (!sink.equals(Sink.TemplatesImpl)
+                        && !sink.equals(Sink.InvokerTransformer3)
+                        && !sink.equals(Sink.C3P0))
                     SinkScheduler.builder(helper);
 
                 final Object objBefore = object.getObject(helper);
@@ -62,6 +65,13 @@ public class PayloadRunner {
                     ser = Serializer.serialize(objBefore);
                     String base64 = Serializer.serializeBase64(objBefore);
                     System.out.println(base64);
+                }
+
+                // 保存文件
+                if (sinksHelper.isSave()) {
+                    FileOutputStream fos = new FileOutputStream(sinksHelper.getSavePath());
+                    fos.write(ser);
+                    fos.close();
                 }
 
                 return ser;
@@ -81,7 +91,7 @@ public class PayloadRunner {
     /**
      * URLDNS
      */
-    public static void run(final Class<? extends ObjectPayload> clazz,final DNSHelper dnsHelper) throws Exception {
+    public static void run(final Class<? extends ObjectPayload> clazz, final DNSHelper dnsHelper) throws Exception {
         byte[] serialized = new ExecCheckingSecurityManager().callWrapped(new Callable<byte[]>() {
             public byte[] call() throws Exception {
 

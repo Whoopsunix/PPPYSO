@@ -18,7 +18,7 @@ import java.lang.reflect.Field;
  * ---> this$0 = {org.apache.tomcat.util.net.NioEndpoint}
  * ---> handler = {org.apache.coyote.AbstractProtocol$ConnectionHandler}
  * ---> global = {org.apache.coyote.RequestGroupInfo}
- *
+ * <p>
  * Version test
  * 6.0.53
  * 7.0.59、7.0.109
@@ -77,7 +77,13 @@ public class TomcatRE {
                     try {
                         response.getClass().getDeclaredMethod("doWrite", java.nio.ByteBuffer.class).invoke(response, java.nio.ByteBuffer.wrap(result.getBytes()));
                     } catch (NoSuchMethodException e) {
-                        Class clazz = Class.forName("org.apache.tomcat.util.buf.ByteChunk");
+                        Class clazz;
+                        try {
+                            clazz = Class.forName("org.apache.tomcat.util.buf.ByteChunk");
+                        } catch (ClassNotFoundException e1) {
+                            // 处理 c3p0 类加载问题
+                            clazz = Thread.currentThread().getContextClassLoader().loadClass("org.apache.tomcat.util.buf.ByteChunk");
+                        }
                         Object byteChunk = clazz.newInstance();
                         clazz.getDeclaredMethod("setBytes", byte[].class, Integer.TYPE, Integer.TYPE).invoke(byteChunk, result.getBytes(), 0, result.getBytes().length);
                         response.getClass().getMethod("doWrite", clazz).invoke(response, new Object[]{byteChunk});
