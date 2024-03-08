@@ -44,6 +44,10 @@ public class SinksHelper {
      */
     private String command;
     /**
+     * 命令执行类型
+     */
+    private EnchantEnums commandType;
+    /**
      * 操作系统
      */
     private EnchantEnums os;
@@ -109,6 +113,9 @@ public class SinksHelper {
         this.javaClassHelper = new JavaClassHelper();
     }
 
+    /**
+     * Field
+     */
     public String getSink() {
         return sink;
     }
@@ -156,6 +163,7 @@ public class SinksHelper {
     public void setWrapSerialization(EnchantEnums wrapSerialization) {
         this.wrapSerialization = wrapSerialization;
     }
+
     public String getCBVersion() {
         return CBVersion;
     }
@@ -163,12 +171,21 @@ public class SinksHelper {
     public void setCBVersion(String CBVersion) {
         this.CBVersion = CBVersion;
     }
+
     public String getCommand() {
         return command;
     }
 
     public void setCommand(String command) {
         this.command = command;
+    }
+
+    public EnchantEnums getCommandType() {
+        return commandType;
+    }
+
+    public void setCommandType(EnchantEnums commandType) {
+        this.commandType = commandType;
     }
 
     public EnchantEnums getOs() {
@@ -302,6 +319,7 @@ public class SinksHelper {
                 ", wrapSerialization=" + wrapSerialization +
                 ", CBVersion='" + CBVersion + '\'' +
                 ", command='" + command + '\'' +
+                ", commandType=" + commandType +
                 ", os=" + os +
                 ", code='" + code + '\'' +
                 ", codeFile='" + codeFile + '\'' +

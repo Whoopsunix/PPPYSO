@@ -18,6 +18,8 @@ public @interface EnchantType {
     // 默认功能
     String DEFAULT = "Default";
     // 命令执行
+    String Command = "Command";
+    // 命令执行
     String RUNTIME = "Runtime";
     // 命令执行 ProcessBuilder
     String ProcessBuilder = "ProcessBuilder";

