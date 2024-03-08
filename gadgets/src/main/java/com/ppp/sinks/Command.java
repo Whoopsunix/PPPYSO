@@ -7,7 +7,7 @@ import com.ppp.sinks.annotation.Sink;
 /**
  * @author Whoopsunix
  *
- * 只允许命令执行
+ * 默认
  */
 @Sink({Sink.Command})
 public class Command {

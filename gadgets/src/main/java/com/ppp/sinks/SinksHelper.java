@@ -46,7 +46,7 @@ public class SinksHelper {
     /**
      * 命令执行类型
      */
-    private EnchantEnums commandType;
+    private EnchantEnums commandType = EnchantEnums.Default;
     /**
      * 操作系统
      */
