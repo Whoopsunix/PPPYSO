@@ -1,13 +1,14 @@
 package com.ppp;
 
 
-import com.ppp.enums.Save;
+import com.ppp.enums.Output;
+import com.ppp.enums.SerializationType;
 import com.ppp.sinks.SinksHelper;
 import com.ppp.utils.Serializer;
 import com.ppp.utils.maker.CryptoUtils;
 
+import java.io.ByteArrayOutputStream;
 import java.io.FileOutputStream;
-import java.io.PrintStream;
 
 /**
  * @author Whoopsunix
@@ -19,63 +20,71 @@ public class ObjectPayloadBuilder {
         ObjectPayload payload = cls.newInstance();
         Object gadget = payload.getObject(sinksHelper);
 
-        save(gadget, sinksHelper);
+        byte[] bytes = original(gadget, sinksHelper);
+        save(bytes, sinksHelper);
 
         // todo 似乎没用
-        return gadget;
+        return bytes;
     }
 
-    public static Object save(Object gadget, SinksHelper sinksHelper) throws Exception {
-        // 输出
-        PrintStream out = System.out;
-        String output = sinksHelper.getOutput();
-        Object result = null;
-        int byteLength;
+    /**
+     * 原始序列化
+     *
+     * @param gadget
+     * @param sinksHelper
+     * @return
+     * @throws Exception
+     */
+    public static byte[] original(Object gadget, SinksHelper sinksHelper) throws Exception {
+        byte[] bytes = new byte[0];
+        SerializationType serialization = sinksHelper.getSerialization();
 
-        // 如果返回直接为 byte[] 直接输出 base64 结果
+
         if (gadget instanceof byte[]) {
-            byteLength = ((byte[]) gadget).length;
-            result = CryptoUtils.base64encoder((byte[]) gadget);
+            bytes = (byte[]) gadget;
             Printer.yellowInfo("Gadget result is byte[], output change is not supported.");
         } else {
-            byteLength = Serializer.serialize(gadget).length;
+            switch (serialization) {
+                default:
+                case Default:
+                    bytes = Serializer.serialize(gadget);
+                    break;
+                case GZIP:
+                    bytes = Serializer.serializeGZip(gadget);
+                    break;
+                case XStream:
+                    bytes = Serializer.serializeXStream(gadget).getBytes();
+                    break;
+                case HexAscii:
+                    bytes = Serializer.serializeHexAscii(gadget).getBytes();
+                    break;
+                case UTF8Mix:
+                    bytes = Serializer.serializeUTF8(gadget);
+                    break;
+            }
         }
+        return bytes;
+    }
 
-        if (output == null && result == null) {
-            Serializer.serialize(gadget, out);
-            // todo 改类型
-        } else if (output.equalsIgnoreCase(String.valueOf(Save.GZIP))) {
-            Serializer.serializeGZip(gadget, out);
-        } else if (output.equalsIgnoreCase(String.valueOf(Save.Base64))) {
-            result = Serializer.serializeBase64(gadget);
-        } else if (output.equalsIgnoreCase(String.valueOf(Save.Base64gzip))) {
-            result = Serializer.serializeBase64GZip(gadget);
-        } else if (output.equalsIgnoreCase(String.valueOf(Save.XStream))) {
-            result = Serializer.serializeXStream(gadget);
-        } else if (output.equalsIgnoreCase(String.valueOf(Save.HexAscii))) {
-            result = Serializer.serializeHexAscii(gadget);
-        } else {
-            Printer.warn("No corresponding output type found, check the output [-o] parameter");
-            Serializer.serialize(gadget, out);
+    public static void save(byte[] bytes, SinksHelper sinksHelper) throws Exception {
+        Output output = sinksHelper.getOutput();
+        switch (output){
+            default:
+            case Default:
+                ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+                byteArrayOutputStream.write(bytes);
+                System.out.println(byteArrayOutputStream);
+                break;
+            case Base64:
+                String s = CryptoUtils.base64encoder(bytes);
+                System.out.println(s);
         }
-
-        Printer.blueInfo("byte length: " + byteLength);
-        System.out.println(result);
 
         // 保存文件
         if (sinksHelper.isSave()) {
-            if (result != null) {
-                // 保存
-                FileOutputStream fos = new FileOutputStream(sinksHelper.getSavePath());
-                fos.write(result.toString().getBytes());
-                fos.close();
-            } else if (output == null || !output.equalsIgnoreCase(String.valueOf(Save.GZIP))) {
-                Serializer.serialize(gadget, new PrintStream(sinksHelper.getSavePath()));
-            } else {
-                Serializer.serializeGZip(gadget, new PrintStream(sinksHelper.getSavePath()));
-            }
+            FileOutputStream fileOutputStream = new FileOutputStream(sinksHelper.getSavePath());
+            fileOutputStream.write(bytes);
+            fileOutputStream.close();
         }
-        return result;
     }
-
 }

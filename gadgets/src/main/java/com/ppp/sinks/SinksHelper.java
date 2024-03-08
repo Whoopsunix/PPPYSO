@@ -2,7 +2,10 @@ package com.ppp.sinks;
 
 import com.ppp.JavaClassHelper;
 import com.ppp.chain.urldns.DNSHelper;
+import com.ppp.enums.Output;
+import com.ppp.enums.SerializationType;
 import com.ppp.sinks.annotation.EnchantEnums;
+import jnr.ffi.annotations.Out;
 
 /**
  * @author Whoopsunix
@@ -19,9 +22,13 @@ public class SinksHelper {
      */
     private String enchant;
     /**
-     * 输出
+     * 输出类型
      */
-    private String output;
+    private Output output = Output.Default;
+    /**
+     * 序列化类型
+     */
+    private SerializationType serialization = SerializationType.Default;
     /**
      * 是否保存为文件
      */
@@ -132,12 +139,20 @@ public class SinksHelper {
         this.enchant = enchant;
     }
 
-    public String getOutput() {
+    public Output getOutput() {
         return output;
     }
 
-    public void setOutput(String output) {
+    public void setOutput(Output output) {
         this.output = output;
+    }
+
+    public SerializationType getSerialization() {
+        return serialization;
+    }
+
+    public void setSerialization(SerializationType serialization) {
+        this.serialization = serialization;
     }
 
     public boolean isSave() {
@@ -313,7 +328,8 @@ public class SinksHelper {
         return "SinksHelper{" +
                 "sink='" + sink + '\'' +
                 ", enchant='" + enchant + '\'' +
-                ", output='" + output + '\'' +
+                ", output=" + output +
+                ", serialization=" + serialization +
                 ", save=" + save +
                 ", savePath='" + savePath + '\'' +
                 ", wrapSerialization=" + wrapSerialization +

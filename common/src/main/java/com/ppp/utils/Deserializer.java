@@ -18,23 +18,17 @@ public class Deserializer implements Callable<Object> {
         return deserialize(bytes);
     }
 
-    public static Object deserialize(final byte[] serialized) throws IOException, ClassNotFoundException {
-        final ByteArrayInputStream in = new ByteArrayInputStream(serialized);
-        return deserialize(in);
-    }
-
+    /**
+     * original
+     */
     public static Object deserializeBase64(final String base64Str) throws Exception {
         final byte[] serialized = new sun.misc.BASE64Decoder().decodeBuffer(base64Str);
         final ByteArrayInputStream in = new ByteArrayInputStream(serialized);
         return deserialize(in);
     }
-
-    public static Object deserializeBase64GZip(final String base64Str) throws IOException, ClassNotFoundException {
-        final byte[] serialized = new sun.misc.BASE64Decoder().decodeBuffer(base64Str);
-        ByteArrayInputStream byteStream = new ByteArrayInputStream(serialized);
-        GZIPInputStream gzipStream = new GZIPInputStream(byteStream);
-        ObjectInput objectInput = new ObjectInputStream(gzipStream);
-        return objectInput.readObject();
+    public static Object deserialize(final byte[] serialized) throws IOException, ClassNotFoundException {
+        final ByteArrayInputStream in = new ByteArrayInputStream(serialized);
+        return deserialize(in);
     }
 
     public static Object deserialize(final InputStream in) throws ClassNotFoundException, IOException {
@@ -45,5 +39,22 @@ public class Deserializer implements Callable<Object> {
     public static Object deserializeFile(final String filePath) throws ClassNotFoundException, IOException {
         FileInputStream fileInputStream = new FileInputStream(filePath);
         return deserialize(fileInputStream);
+    }
+
+    /**
+     * Gzip
+     */
+    public static Object deserializeBase64GZip(final String base64Str) throws IOException, ClassNotFoundException {
+        final byte[] serialized = new sun.misc.BASE64Decoder().decodeBuffer(base64Str);
+        return deserializeGZip(serialized);
+    }
+    public static Object deserializeGZip(final byte[] serialized) throws IOException, ClassNotFoundException {
+        final ByteArrayInputStream in = new ByteArrayInputStream(serialized);
+        return deserializeGZip(in);
+    }
+    public static Object deserializeGZip(final InputStream in) throws ClassNotFoundException, IOException {
+        final GZIPInputStream gzipIn = new GZIPInputStream(in);
+        final ObjectInputStream objIn = new ObjectInputStream(gzipIn);
+        return objIn.readObject();
     }
 }

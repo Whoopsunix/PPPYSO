@@ -47,8 +47,8 @@ public class URLDNS implements ObjectPayload<Object> {
         SinksHelper sinksHelper = new SinksHelper();
         sinksHelper.setDnsHelper(dnsHelper);
         Object object = new URLDNS().getObject(sinksHelper);
-        String s = Serializer.serializeBase64(object);
-        System.out.println(s);
+//        String s = Serializer.serializeBase64(object);
+//        System.out.println(s);
 
 
         PayloadRunner.run(URLDNS.class, dnsHelper);

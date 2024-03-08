@@ -4,13 +4,13 @@ import com.ppp.JavaClassHelper;
 import com.ppp.ObjectPayload;
 import com.ppp.ObjectPayloadBuilder;
 import com.ppp.chain.urldns.DNSHelper;
-import com.ppp.enums.Save;
+import com.ppp.enums.Output;
+import com.ppp.enums.SerializationType;
 import com.ppp.sinks.SinkScheduler;
 import com.ppp.sinks.SinksHelper;
 import com.ppp.sinks.annotation.EnchantType;
 import com.ppp.sinks.annotation.Sink;
 import com.ppp.utils.Deserializer;
-import com.ppp.utils.Serializer;
 
 import java.io.File;
 import java.util.concurrent.Callable;
@@ -55,16 +55,11 @@ public class PayloadRunner {
                     SinkScheduler.builder(helper);
 
                 final Object objBefore = object.getObject(helper);
-                sinksHelper.setOutput(String.valueOf(Save.Base64));
-                ObjectPayloadBuilder.save(objBefore, sinksHelper);
-                byte[] ser = null;
-                if (objBefore instanceof byte[]) {
-                    ser = (byte[]) objBefore;
-                    System.out.println("Serialized payload is a byte array. " +
-                            "Make sure you have configured a stream handler that can handle it");
-                } else {
-                    ser = Serializer.serialize(objBefore);
-                }
+                sinksHelper.setSerialization(SerializationType.UTF8Mix);
+//                sinksHelper.setOutput(Output.Base64);
+                byte[] ser = ObjectPayloadBuilder.original(objBefore, sinksHelper);
+                ObjectPayloadBuilder.save(ser, sinksHelper);
+
                 return ser;
             }
         });
@@ -80,7 +75,7 @@ public class PayloadRunner {
     }
 
     /**
-     * URLDNS
+     * URLDNS todo
      */
     public static void run(final Class<? extends ObjectPayload> clazz, final DNSHelper dnsHelper) throws Exception {
         byte[] serialized = new ExecCheckingSecurityManager().callWrapped(new Callable<byte[]>() {
@@ -101,18 +96,19 @@ public class PayloadRunner {
                 }
 
                 final Object objBefore = object.getObject(sinksHelper);
+                byte[] ser = ObjectPayloadBuilder.original(objBefore, sinksHelper);
 
-                System.out.println("serializing payload");
-                byte[] ser = null;
-                if (objBefore instanceof byte[]) {
-                    ser = (byte[]) objBefore;
-                    System.out.println("Serialized payload is a byte array. " +
-                            "Make sure you have configured a stream handler that can handle it");
-                } else {
-                    ser = Serializer.serialize(objBefore);
-                    String base64 = Serializer.serializeBase64(objBefore);
-                    System.out.println(base64);
-                }
+//                System.out.println("serializing payload");
+//                byte[] ser = null;
+//                if (objBefore instanceof byte[]) {
+//                    ser = (byte[]) objBefore;
+//                    System.out.println("Serialized payload is a byte array. " +
+//                            "Make sure you have configured a stream handler that can handle it");
+//                } else {
+//                    ser = Serializer.serialize(objBefore);
+//                    String base64 = Serializer.serializeBase64(objBefore);
+//                    System.out.println(base64);
+//                }
 
                 return ser;
             }

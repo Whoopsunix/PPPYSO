@@ -3,7 +3,8 @@ package com.ppp.secmgr;
 import com.ppp.ObjectPayload;
 import com.ppp.chain.WrapSerialization;
 import com.ppp.chain.json.FastJson;
-import com.ppp.enums.Save;
+import com.ppp.enums.Output;
+import com.ppp.enums.SerializationType;
 import com.ppp.sinks.SinksHelper;
 import com.ppp.sinks.annotation.EnchantEnums;
 import com.ppp.sinks.annotation.EnchantType;
@@ -51,7 +52,7 @@ public class WrapRunner {
             final Class<? extends ObjectPayload> cls = FastJson.class;
 
             SinksHelper sinksHelper = new SinksHelper();
-            sinksHelper.setOutput(String.valueOf(Save.Base64));
+            sinksHelper.setOutput(Output.Base64);
             String[] sinks = (String[]) Reflections.invokeMethod(cls.getAnnotation(Sink.class), "value", new Class[]{}, new Object[]{});
             sinksHelper.setSink(sinks[0]);
 
@@ -81,7 +82,7 @@ public class WrapRunner {
             final Class<? extends ObjectPayload> cls = FastJson.class;
 
             SinksHelper sinksHelper = new SinksHelper();
-            sinksHelper.setOutput(String.valueOf(Save.Base64));
+            sinksHelper.setOutput(Output.Base64);
             String[] sinks = (String[]) Reflections.invokeMethod(cls.getAnnotation(Sink.class), "value", new Class[]{}, new Object[]{});
             sinksHelper.setSink(sinks[0]);
 

@@ -1,5 +1,6 @@
 package com.ppp.utils;
 
+import com.ppp.utils.maker.CryptoUtils;
 import com.thoughtworks.xstream.XStream;
 
 import java.io.*;
@@ -20,6 +21,9 @@ public class Serializer implements Callable<byte[]> {
         return serialize(object);
     }
 
+    /**
+     * 原始
+     */
     public static byte[] serialize(final Object obj) throws IOException {
         final ByteArrayOutputStream out = new ByteArrayOutputStream();
         serialize(obj, out);
@@ -31,56 +35,42 @@ public class Serializer implements Callable<byte[]> {
         objOut.writeObject(obj);
     }
 
-    public static void serialize(Object obj, String fileName) throws Exception {
-        ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(fileName));
-        oos.writeObject(obj);
+    /**
+     * Gzip
+     */
+    public static byte[] serializeGZip(final Object obj) throws IOException {
+        final ByteArrayOutputStream out = new ByteArrayOutputStream();
+        serializeGZip(obj, out);
+        return out.toByteArray();
+    }
+
+    public static void serializeGZip(final Object obj, final OutputStream out) throws IOException {
+        final GZIPOutputStream gzipOut = new GZIPOutputStream(out);
+        final ObjectOutputStream objOut = new ObjectOutputStream(gzipOut);
+        objOut.writeObject(obj);
+        objOut.close();
     }
 
     /**
-     * Base64 序列化结果
+     * UTF-8 Mix
      */
-    public static String serializeBase64(Object obj) throws Exception {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        ObjectOutputStream oos = new ObjectOutputStream(baos);
-        oos.writeObject(obj);
-        oos.close();
-        String base64str = new sun.misc.BASE64Encoder().encode(baos.toByteArray());
-        base64str = base64str.replaceAll("\n|\r", "");
-        return base64str;
+    public static byte[] serializeUTF8(final Object obj) throws IOException {
+        final ByteArrayOutputStream out = new ByteArrayOutputStream();
+        serializeUTF8(obj, out);
+        return out.toByteArray();
     }
 
-    public static void serializeGZip(Object obj, final OutputStream out) throws Exception {
-        ObjectOutputStream oos = new ObjectOutputStream(new GZIPOutputStream(out));
-        oos.writeObject(obj);
-        oos.close();
-    }
-
-    public static void serializeGZip(Object obj, String fileName) throws Exception {
-        ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(fileName));
-        oos.writeObject(obj);
-        oos.close();
-    }
-
-    /**
-     * Base64 GZip
-     */
-    public static String serializeBase64GZip(Object obj) throws Exception {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        ObjectOutputStream oos = new ObjectOutputStream(new GZIPOutputStream(baos));
-        oos.writeObject(obj);
-        oos.close();
-        String base64str = new sun.misc.BASE64Encoder().encode(baos.toByteArray());
-        base64str = base64str.replaceAll("\n|\r", "");
-        return base64str;
+    public static void serializeUTF8(final Object obj, final OutputStream out) throws IOException {
+        final UTF8OverlongObjectOutputStream objOut = new UTF8OverlongObjectOutputStream(out);
+        objOut.writeObject(obj);
     }
 
     /**
      * Base64 javaClass
      */
-    public static String serializeClassFilesBase64(Class<?> clazz) {
-        String base64str = new sun.misc.BASE64Encoder().encode(ClassFiles.classAsBytes(clazz));
-        base64str = base64str.replaceAll("\n|\r", "");
-        return base64str;
+    public static String serializeClassFilesBase64(Class<?> clazz) throws Exception {
+        byte[] bytes = ClassFiles.classAsBytes(clazz);
+        return CryptoUtils.base64encoder(bytes);
     }
 
     /**
