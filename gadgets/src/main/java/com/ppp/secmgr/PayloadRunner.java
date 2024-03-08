@@ -2,7 +2,9 @@ package com.ppp.secmgr;
 
 import com.ppp.JavaClassHelper;
 import com.ppp.ObjectPayload;
+import com.ppp.ObjectPayloadBuilder;
 import com.ppp.chain.urldns.DNSHelper;
+import com.ppp.enums.Save;
 import com.ppp.sinks.SinkScheduler;
 import com.ppp.sinks.SinksHelper;
 import com.ppp.sinks.annotation.EnchantType;
@@ -11,7 +13,6 @@ import com.ppp.utils.Deserializer;
 import com.ppp.utils.Serializer;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.util.concurrent.Callable;
 
 /**
@@ -54,8 +55,8 @@ public class PayloadRunner {
                     SinkScheduler.builder(helper);
 
                 final Object objBefore = object.getObject(helper);
-
-                System.out.println("serializing payload");
+                sinksHelper.setOutput(String.valueOf(Save.Base64));
+                ObjectPayloadBuilder.save(objBefore, sinksHelper);
                 byte[] ser = null;
                 if (objBefore instanceof byte[]) {
                     ser = (byte[]) objBefore;
@@ -63,17 +64,7 @@ public class PayloadRunner {
                             "Make sure you have configured a stream handler that can handle it");
                 } else {
                     ser = Serializer.serialize(objBefore);
-                    String base64 = Serializer.serializeBase64(objBefore);
-                    System.out.println(base64);
                 }
-
-                // 保存文件
-                if (sinksHelper.isSave()) {
-                    FileOutputStream fos = new FileOutputStream(sinksHelper.getSavePath());
-                    fos.write(ser);
-                    fos.close();
-                }
-
                 return ser;
             }
         });

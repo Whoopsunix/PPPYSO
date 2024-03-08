@@ -19,6 +19,13 @@ public class ObjectPayloadBuilder {
         ObjectPayload payload = cls.newInstance();
         Object gadget = payload.getObject(sinksHelper);
 
+        save(gadget, sinksHelper);
+
+        // todo 似乎没用
+        return gadget;
+    }
+
+    public static Object save(Object gadget, SinksHelper sinksHelper) throws Exception {
         // 输出
         PrintStream out = System.out;
         String output = sinksHelper.getOutput();
@@ -36,6 +43,7 @@ public class ObjectPayloadBuilder {
 
         if (output == null && result == null) {
             Serializer.serialize(gadget, out);
+            // todo 改类型
         } else if (output.equalsIgnoreCase(String.valueOf(Save.GZIP))) {
             Serializer.serializeGZip(gadget, out);
         } else if (output.equalsIgnoreCase(String.valueOf(Save.Base64))) {
@@ -61,14 +69,13 @@ public class ObjectPayloadBuilder {
                 FileOutputStream fos = new FileOutputStream(sinksHelper.getSavePath());
                 fos.write(result.toString().getBytes());
                 fos.close();
-            }else if (output == null || !output.equalsIgnoreCase(String.valueOf(Save.GZIP))) {
+            } else if (output == null || !output.equalsIgnoreCase(String.valueOf(Save.GZIP))) {
                 Serializer.serialize(gadget, new PrintStream(sinksHelper.getSavePath()));
             } else {
                 Serializer.serializeGZip(gadget, new PrintStream(sinksHelper.getSavePath()));
             }
         }
-
-        return gadget;
+        return result;
     }
 
 }
