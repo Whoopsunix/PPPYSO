@@ -52,20 +52,6 @@ public class Serializer implements Callable<byte[]> {
     }
 
     /**
-     * UTF-8 Mix
-     */
-    public static byte[] serializeUTF8(final Object obj) throws IOException {
-        final ByteArrayOutputStream out = new ByteArrayOutputStream();
-        serializeUTF8(obj, out);
-        return out.toByteArray();
-    }
-
-    public static void serializeUTF8(final Object obj, final OutputStream out) throws IOException {
-        final UTF8OverlongObjectOutputStream objOut = new UTF8OverlongObjectOutputStream(out);
-        objOut.writeObject(obj);
-    }
-
-    /**
      * Base64 javaClass
      */
     public static String serializeClassFilesBase64(Class<?> clazz) throws Exception {

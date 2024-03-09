@@ -9,7 +9,7 @@ import java.util.HashMap;
  * @author Whoopsunix
  */
 
-public class UTF8OverlongObjectOutputStream extends ObjectOutputStream {
+public class UTF8OverlongObjectOutputStreamBak extends ObjectOutputStream {
     public static HashMap<Character, int[]> map = new HashMap<Character, int[]>() {{
         put('.', new int[]{0xc0, 0xae});
         put(';', new int[]{0xc0, 0xbb});
@@ -70,7 +70,7 @@ public class UTF8OverlongObjectOutputStream extends ObjectOutputStream {
         put('Z', new int[]{0xc1, 0x9a});
     }};
 
-    public UTF8OverlongObjectOutputStream(OutputStream out) throws IOException {
+    public UTF8OverlongObjectOutputStreamBak(OutputStream out) throws IOException {
         super(out);
     }
 

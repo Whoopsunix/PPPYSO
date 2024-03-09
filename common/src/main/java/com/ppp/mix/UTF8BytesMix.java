@@ -1,0 +1,216 @@
+package com.ppp.mix;
+
+/**
+ * @author Whoopsunix
+ *
+ * UTF-8 混淆
+ */
+public class UTF8BytesMix {
+
+    public static byte[] resultBytes = new byte[0];
+    public static byte[] originalBytes = new byte[0];
+    // 原 byte[] 坐标
+    public static int index = 0;
+
+    final static byte TC_CLASSDESC = (byte) 0x72;
+    final static byte TC_PROXYCLASSDESC = (byte) 0x7d;
+    final static byte TC_STRING = (byte) 0x74;
+    final static byte TC_LONGSTRING = (byte) 0x7C;
+
+    final static byte Byte = (byte) 0x42;
+    final static byte Char = (byte) 0x43;
+    final static byte Double = (byte) 0x44;
+    final static byte Float = (byte) 0x46;
+    final static byte Integer = (byte) 0x49;
+    final static byte Long = (byte) 0x4a;
+    final static byte Object_L = (byte) 0x4c;
+    final static byte Short = (byte) 0x53;
+    final static byte Boolean = (byte) 0x5a;
+    final static byte Array = (byte) 0x5b;
+
+
+
+    public UTF8BytesMix(byte[] originalBytes) {
+        this.originalBytes = originalBytes;
+    }
+
+    public static byte[] builder() {
+        while (index < originalBytes.length) {
+            byte b = originalBytes[index];
+            byteAdd(b);
+
+            if (b == TC_CLASSDESC) {
+                changeTC_CLASSDESC(originalBytes);
+            } else if (b== TC_PROXYCLASSDESC) {
+                changeTC_PROXYCLASSDESC(originalBytes);
+            } else if (b == TC_STRING) {
+                changeTC_STRING();
+            }
+
+            index++;
+        }
+        return resultBytes;
+    }
+
+    public static void changeTC_PROXYCLASSDESC(byte[] originalBytes) {
+        int interfaceCount = ((originalBytes[index+1] & 0xFF) << 24) |
+                ((originalBytes[index+2] & 0xFF) << 16) |
+                ((originalBytes[index+3] & 0xFF) << 8) |
+                (originalBytes[index+4] & 0xFF);
+        if (interfaceCount > 0xff || interfaceCount < 0x00)
+            return;
+
+        for (int i = 0; i < 4; i++) {
+            byteAdd(originalBytes[index + 1]);
+            index++;
+        }
+
+        int length = ((originalBytes[index + 1] & 0xFF) << 8) | (originalBytes[index + 2] & 0xFF);
+        byte[] originalValue = new byte[length];
+        System.arraycopy(originalBytes, index + 3, originalValue, 0, length);
+        index += 3 + length;
+
+        encode(originalValue);
+        index--;
+    }
+
+    public static void main(String[] args) {
+        byte[] originalBytes = new byte[]{0x00,0x00,0x00,0x01};
+        changeTC_PROXYCLASSDESC(originalBytes);
+    }
+
+    public static void changeTC_CLASSDESC(byte[] originalBytes) {
+        /**
+         * 类信息
+         */
+        changeTC_STRING();
+        index++;
+
+        /**
+         * SerialVersionUID + ClassDescFlags
+         */
+        byte[] serialVersionUID = new byte[9];
+        System.arraycopy(originalBytes, index, serialVersionUID, 0, 9);
+        for (int i = 0; i < serialVersionUID.length; i++) {
+            byteAdd(serialVersionUID[i]);
+        }
+        index += 9;
+
+        /**
+         * FieldCount
+         */
+        byte[] fieldCount = new byte[2];
+        System.arraycopy(originalBytes, index, fieldCount, 0, 2);
+        for (int i = 0; i < fieldCount.length; i++) {
+            byteAdd(fieldCount[i]);
+        }
+        int fieldCounts = ((fieldCount[0] & 0xFF) << 8) | (fieldCount[1] & 0xFF);
+        index += 2;
+
+        for (int i = 0; i < fieldCounts; i++) {
+            /**
+             * FieldName
+             */
+            if (originalBytes[index] == Byte
+                    || originalBytes[index] == Char
+                    || originalBytes[index] == Double
+                    || originalBytes[index] == Float
+                    || originalBytes[index] == Integer
+                    || originalBytes[index] == Long
+                    || originalBytes[index] == Object_L
+                    || originalBytes[index] == Short
+                    || originalBytes[index] == Boolean
+                    || originalBytes[index] == Array) {
+                // Object
+                byteAdd(originalBytes[index]);
+                index++;
+
+                int fieldLength = ((originalBytes[index] & 0xFF) << 8) | (originalBytes[index + 1] & 0xFF);
+                byte[] originalFieldName = new byte[fieldLength];
+                System.arraycopy(originalBytes, index + 2, originalFieldName, 0, fieldLength);
+                index += 2 + fieldLength;
+                encode(originalFieldName);
+            }
+
+            /**
+             * Class Name
+             */
+            // TC_STRING 0x74
+            if (originalBytes[index] == TC_STRING) {
+
+                byteAdd(originalBytes[index]);
+                index++;
+
+                int classLength = ((originalBytes[index] & 0xFF) << 8) | (originalBytes[index + 1] & 0xFF);
+                byte[] originalClassName = new byte[classLength];
+                System.arraycopy(originalBytes, index + 2, originalClassName, 0, classLength);
+                index += 2 + classLength;
+                encode(originalClassName);
+            }
+        }
+
+        // 循环需要
+        index--;
+    }
+
+    public static void changeTC_STRING() {
+        int length = ((originalBytes[index + 1] & 0xFF) << 8) | (originalBytes[index + 2] & 0xFF);
+        // 溢出
+        if (length > 0xff || length < 0x00)
+            return;
+
+        // 原始内容
+        byte[] originalValue = new byte[length];
+        System.arraycopy(originalBytes, index + 3, originalValue, 0, length);
+        // 非全部可见字符，可能存在的报错，不继续执行
+        if (!isByteVisible(originalValue)) {
+            return;
+        }
+
+        index += 3 + length;
+        encode(originalValue);
+
+        index--;
+    }
+
+
+    /**
+     * 加密
+     *
+     * @return
+     */
+    public static void encode(byte[] originalValue) {
+        int newLength = originalValue.length * 2;
+
+        byteAdd((byte) ((newLength >> 8) & 0xFF));
+        byteAdd((byte) (newLength & 0xFF));
+
+        for (int i = 0; i < originalValue.length; i++) {
+            char c = (char) originalValue[i];
+            byteAdd((byte) (0xC0 | ((c >> 6) & 0x1F)));
+            byteAdd((byte) (0x80 | ((c >> 0) & 0x3F)));
+        }
+    }
+
+    /**
+     * 判断字节是否在可见字符的 ASCII 范围内
+     *
+     * @param bytes
+     * @return
+     */
+    public static boolean isByteVisible(byte[] bytes) {
+        for (byte b : bytes) {
+            if (b < 32 || b > 126) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public static void byteAdd(byte b) {
+        byte[] newBytes = new byte[resultBytes.length + 1];
+        System.arraycopy(resultBytes, 0, newBytes, 0, resultBytes.length);
+        newBytes[resultBytes.length] = b;
+        resultBytes = newBytes;
+    }
+}

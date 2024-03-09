@@ -3,6 +3,7 @@ package com.ppp;
 
 import com.ppp.enums.Output;
 import com.ppp.enums.SerializationType;
+import com.ppp.mix.UTF8BytesMix;
 import com.ppp.sinks.SinksHelper;
 import com.ppp.utils.Serializer;
 import com.ppp.utils.maker.CryptoUtils;
@@ -59,7 +60,7 @@ public class ObjectPayloadBuilder {
                     bytes = Serializer.serializeHexAscii(gadget).getBytes();
                     break;
                 case UTF8Mix:
-                    bytes = Serializer.serializeUTF8(gadget);
+                    bytes = new UTF8BytesMix(Serializer.serialize(gadget)).builder();
                     break;
             }
         }
@@ -68,7 +69,7 @@ public class ObjectPayloadBuilder {
 
     public static void save(byte[] bytes, SinksHelper sinksHelper) throws Exception {
         Output output = sinksHelper.getOutput();
-        switch (output){
+        switch (output) {
             default:
             case Default:
                 ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
