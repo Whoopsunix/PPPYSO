@@ -55,10 +55,10 @@ public class PayloadRunner {
                     SinkScheduler.builder(helper);
 
                 final Object objBefore = object.getObject(helper);
-                sinksHelper.setSerialization(SerializationType.UTF8Mix);
+                helper.setSerialization(SerializationType.UTF8Mix);
 //                sinksHelper.setOutput(Output.Base64);
-                byte[] ser = ObjectPayloadBuilder.original(objBefore, sinksHelper);
-                ObjectPayloadBuilder.save(ser, sinksHelper);
+                byte[] ser = ObjectPayloadBuilder.original(objBefore, helper);
+                ObjectPayloadBuilder.save(ser, helper);
 
                 return ser;
             }

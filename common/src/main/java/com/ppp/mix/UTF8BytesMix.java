@@ -17,6 +17,10 @@ public class UTF8BytesMix {
     final static byte TC_STRING = (byte) 0x74;
     final static byte TC_REFERENCE = (byte) 0x71;
     final static byte TC_LONGSTRING = (byte) 0x7C;
+    final static byte TC_ARRAY = (byte) 0x75;
+    final static byte TC_ENDBLOCKDATA = (byte) 0x78;
+    final static byte TC_NULL = (byte) 0x70;
+
 
     final static byte Byte = (byte) 0x42;
     final static byte Char = (byte) 0x43;
@@ -40,9 +44,9 @@ public class UTF8BytesMix {
             byteAdd(b);
 
             if (b == TC_CLASSDESC) {
-                changeTC_CLASSDESC(originalBytes);
+                changeTC_CLASSDESC();
             } else if (b == TC_PROXYCLASSDESC) {
-                changeTC_PROXYCLASSDESC(originalBytes);
+                changeTC_PROXYCLASSDESC();
             } else if (b == TC_STRING) {
                 changeTC_STRING();
             }
@@ -51,8 +55,7 @@ public class UTF8BytesMix {
         }
         return resultBytes;
     }
-
-    public static void changeTC_PROXYCLASSDESC(byte[] originalBytes) {
+    public static void changeTC_PROXYCLASSDESC() {
         int interfaceCount = ((originalBytes[index + 1] & 0xFF) << 24) |
                 ((originalBytes[index + 2] & 0xFF) << 16) |
                 ((originalBytes[index + 3] & 0xFF) << 8) |
@@ -75,13 +78,13 @@ public class UTF8BytesMix {
     }
 
 
-    public static void changeTC_CLASSDESC(byte[] originalBytes) {
+    public static boolean changeTC_CLASSDESC() {
         /**
          * 类信息
          */
         boolean isTC_CLASSDESC = changeTC_STRING();
         if (!isTC_CLASSDESC) {
-            return;
+            return false;
         }
         index++;
 
@@ -129,8 +132,6 @@ public class UTF8BytesMix {
                 int fieldLength = ((originalBytes[index] & 0xFF) << 8) | (originalBytes[index + 1] & 0xFF);
                 byte[] originalFieldName = new byte[fieldLength];
                 System.arraycopy(originalBytes, index + 2, originalFieldName, 0, fieldLength);
-                String s = new String(originalFieldName);
-                System.out.println(s);
                 index += 2 + fieldLength;
                 encode(originalFieldName);
             }
@@ -154,8 +155,6 @@ public class UTF8BytesMix {
                 int classLength = ((originalBytes[index] & 0xFF) << 8) | (originalBytes[index + 1] & 0xFF);
                 byte[] originalClassName = new byte[classLength];
                 System.arraycopy(originalBytes, index + 2, originalClassName, 0, classLength);
-                String s = new String(originalClassName);
-                System.out.println(s);
                 index += 2 + classLength;
                 encode(originalClassName);
                 isFiledOver = true;
@@ -179,7 +178,7 @@ public class UTF8BytesMix {
                 isFiledOver = true;
             }
 
-            // todo 解决其他未识别到的类型
+            // todo 看看其他可能未识别到的类型
 //            if(i < fieldCounts - 1 && !isFiledOver) {
 //                while (true) {
 //                    if (!isField(originalBytes, index)) {
@@ -195,35 +194,8 @@ public class UTF8BytesMix {
 
         // 循环需要
         index--;
-    }
-
-    public static boolean isField(byte[] checkBytes, int index){
-        if (!(checkBytes[index] == Byte
-                || checkBytes[index] == Char
-                || checkBytes[index] == Double
-                || checkBytes[index] == Float
-                || checkBytes[index] == Integer
-                || checkBytes[index] == Long
-                || checkBytes[index] == Object_L
-                || checkBytes[index] == Short
-                || checkBytes[index] == Boolean
-                || checkBytes[index] == Array)){
-            return false;
-        }
-
-        int length = ((checkBytes[index+1] & 0xFF) << 8) | (checkBytes[index + 2] & 0xFF);
-        if (length > 0xff || length < 0x00)
-            return false;
-        byte[] lengthBytes = new byte[length];
-        try {
-            System.arraycopy(checkBytes, index + 3, lengthBytes, 0, length);
-        }catch (Exception e){
-            return false;
-        }
-
         return true;
     }
-
 
     public static boolean changeTC_STRING() {
         int length = ((originalBytes[index + 1] & 0xFF) << 8) | (originalBytes[index + 2] & 0xFF);
@@ -238,8 +210,6 @@ public class UTF8BytesMix {
         if (!isByteVisible(originalValue)) {
             return false;
         }
-        String s = new String(originalValue);
-        System.out.println(s);
 
         index += 3 + length;
         encode(originalValue);
@@ -248,6 +218,33 @@ public class UTF8BytesMix {
         return true;
     }
 
+
+    public static boolean isField(byte[] checkBytes, int index) {
+        if (!(checkBytes[index] == Byte
+                || checkBytes[index] == Char
+                || checkBytes[index] == Double
+                || checkBytes[index] == Float
+                || checkBytes[index] == Integer
+                || checkBytes[index] == Long
+                || checkBytes[index] == Object_L
+                || checkBytes[index] == Short
+                || checkBytes[index] == Boolean
+                || checkBytes[index] == Array)) {
+            return false;
+        }
+
+        int length = ((checkBytes[index + 1] & 0xFF) << 8) | (checkBytes[index + 2] & 0xFF);
+        if (length > 0xff || length < 0x00)
+            return false;
+        byte[] lengthBytes = new byte[length];
+        try {
+            System.arraycopy(checkBytes, index + 3, lengthBytes, 0, length);
+        } catch (Exception e) {
+            return false;
+        }
+
+        return true;
+    }
 
     /**
      * 加密
