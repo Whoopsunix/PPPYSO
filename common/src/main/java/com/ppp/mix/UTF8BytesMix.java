@@ -2,7 +2,7 @@ package com.ppp.mix;
 
 /**
  * @author Whoopsunix
- *
+ * <p>
  * UTF-8 混淆
  */
 public class UTF8BytesMix {
@@ -15,6 +15,7 @@ public class UTF8BytesMix {
     final static byte TC_CLASSDESC = (byte) 0x72;
     final static byte TC_PROXYCLASSDESC = (byte) 0x7d;
     final static byte TC_STRING = (byte) 0x74;
+    final static byte TC_REFERENCE = (byte) 0x71;
     final static byte TC_LONGSTRING = (byte) 0x7C;
 
     final static byte Byte = (byte) 0x42;
@@ -29,7 +30,6 @@ public class UTF8BytesMix {
     final static byte Array = (byte) 0x5b;
 
 
-
     public UTF8BytesMix(byte[] originalBytes) {
         this.originalBytes = originalBytes;
     }
@@ -41,7 +41,7 @@ public class UTF8BytesMix {
 
             if (b == TC_CLASSDESC) {
                 changeTC_CLASSDESC(originalBytes);
-            } else if (b== TC_PROXYCLASSDESC) {
+            } else if (b == TC_PROXYCLASSDESC) {
                 changeTC_PROXYCLASSDESC(originalBytes);
             } else if (b == TC_STRING) {
                 changeTC_STRING();
@@ -53,10 +53,10 @@ public class UTF8BytesMix {
     }
 
     public static void changeTC_PROXYCLASSDESC(byte[] originalBytes) {
-        int interfaceCount = ((originalBytes[index+1] & 0xFF) << 24) |
-                ((originalBytes[index+2] & 0xFF) << 16) |
-                ((originalBytes[index+3] & 0xFF) << 8) |
-                (originalBytes[index+4] & 0xFF);
+        int interfaceCount = ((originalBytes[index + 1] & 0xFF) << 24) |
+                ((originalBytes[index + 2] & 0xFF) << 16) |
+                ((originalBytes[index + 3] & 0xFF) << 8) |
+                (originalBytes[index + 4] & 0xFF);
         if (interfaceCount > 0xff || interfaceCount < 0x00)
             return;
 
@@ -74,16 +74,15 @@ public class UTF8BytesMix {
         index--;
     }
 
-    public static void main(String[] args) {
-        byte[] originalBytes = new byte[]{0x00,0x00,0x00,0x01};
-        changeTC_PROXYCLASSDESC(originalBytes);
-    }
 
     public static void changeTC_CLASSDESC(byte[] originalBytes) {
         /**
          * 类信息
          */
-        changeTC_STRING();
+        boolean isTC_CLASSDESC = changeTC_STRING();
+        if (!isTC_CLASSDESC) {
+            return;
+        }
         index++;
 
         /**
@@ -108,6 +107,8 @@ public class UTF8BytesMix {
         index += 2;
 
         for (int i = 0; i < fieldCounts; i++) {
+            boolean isFiledOver = false;
+
             /**
              * FieldName
              */
@@ -128,12 +129,21 @@ public class UTF8BytesMix {
                 int fieldLength = ((originalBytes[index] & 0xFF) << 8) | (originalBytes[index + 1] & 0xFF);
                 byte[] originalFieldName = new byte[fieldLength];
                 System.arraycopy(originalBytes, index + 2, originalFieldName, 0, fieldLength);
+                String s = new String(originalFieldName);
+                System.out.println(s);
                 index += 2 + fieldLength;
                 encode(originalFieldName);
             }
 
             /**
              * Class Name
+             *
+             * 也规避了这种情况
+             *          Index 0:
+             *           Integer - I - 0x49
+             *           @FieldName
+             *             @Length - 4 - 0x00 04
+             *             @Value - size - 0x73 69 7a 65
              */
             // TC_STRING 0x74
             if (originalBytes[index] == TC_STRING) {
@@ -144,33 +154,98 @@ public class UTF8BytesMix {
                 int classLength = ((originalBytes[index] & 0xFF) << 8) | (originalBytes[index + 1] & 0xFF);
                 byte[] originalClassName = new byte[classLength];
                 System.arraycopy(originalBytes, index + 2, originalClassName, 0, classLength);
+                String s = new String(originalClassName);
+                System.out.println(s);
                 index += 2 + classLength;
                 encode(originalClassName);
+                isFiledOver = true;
+            } else if (originalBytes[index] == TC_REFERENCE) {
+                /**
+                 * Index 0:
+                 * Object - L - 0x4c
+                 * @FieldName
+                 * @Length - 9 - 0x00 09
+                 * @Value - decorated - 0x64 65 63 6f 72 61 74 65 64
+                 * @ClassName
+                 *         TC_REFERENCE - 0x71
+                 * @Handler - 8257537 - 0x00 7e 00 01
+                 */
+                byte[] reference = new byte[5];
+                System.arraycopy(originalBytes, index, reference, 0, 5);
+                for (int j = 0; j < reference.length; j++) {
+                    byteAdd(reference[j]);
+                }
+                index += 5;
+                isFiledOver = true;
             }
+
+            // todo 解决其他未识别到的类型
+//            if(i < fieldCounts - 1 && !isFiledOver) {
+//                while (true) {
+//                    if (!isField(originalBytes, index)) {
+//                        byteAdd(originalBytes[index]);
+//                        index++;
+//                    } else {
+//                        break;
+//                    }
+//                }
+//            }
+
         }
 
         // 循环需要
         index--;
     }
 
-    public static void changeTC_STRING() {
+    public static boolean isField(byte[] checkBytes, int index){
+        if (!(checkBytes[index] == Byte
+                || checkBytes[index] == Char
+                || checkBytes[index] == Double
+                || checkBytes[index] == Float
+                || checkBytes[index] == Integer
+                || checkBytes[index] == Long
+                || checkBytes[index] == Object_L
+                || checkBytes[index] == Short
+                || checkBytes[index] == Boolean
+                || checkBytes[index] == Array)){
+            return false;
+        }
+
+        int length = ((checkBytes[index+1] & 0xFF) << 8) | (checkBytes[index + 2] & 0xFF);
+        if (length > 0xff || length < 0x00)
+            return false;
+        byte[] lengthBytes = new byte[length];
+        try {
+            System.arraycopy(checkBytes, index + 3, lengthBytes, 0, length);
+        }catch (Exception e){
+            return false;
+        }
+
+        return true;
+    }
+
+
+    public static boolean changeTC_STRING() {
         int length = ((originalBytes[index + 1] & 0xFF) << 8) | (originalBytes[index + 2] & 0xFF);
         // 溢出
         if (length > 0xff || length < 0x00)
-            return;
+            return false;
 
         // 原始内容
         byte[] originalValue = new byte[length];
         System.arraycopy(originalBytes, index + 3, originalValue, 0, length);
         // 非全部可见字符，可能存在的报错，不继续执行
         if (!isByteVisible(originalValue)) {
-            return;
+            return false;
         }
+        String s = new String(originalValue);
+        System.out.println(s);
 
         index += 3 + length;
         encode(originalValue);
 
         index--;
+        return true;
     }
 
 
