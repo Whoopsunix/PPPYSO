@@ -134,11 +134,10 @@
             <version>2.14.1</version>
         </dependency>
         <dependency>
-            <groupId>org.apache.tomcat.embed</groupId>
-            <artifactId>tomcat-embed-core</artifactId>
-            <version>8.5.78</version>
+            <groupId>org.yaml</groupId>
+            <artifactId>snakeyaml</artifactId>
+            <version>1.33</version>
         </dependency>
-
 
         <dependency>
             <groupId>javax.servlet</groupId>
@@ -151,6 +150,11 @@
             <groupId>org.mortbay.jasper</groupId>
             <artifactId>apache-el</artifactId>
             <version>8.0.27</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.tomcat.embed</groupId>
+            <artifactId>tomcat-embed-core</artifactId>
+            <version>8.5.78</version>
         </dependency>
 
         <!-- build dependencies -->

