@@ -9,6 +9,10 @@ public class UTF8BytesMix {
 
     public static byte[] resultBytes = new byte[0];
     public static byte[] originalBytes = new byte[0];
+
+    // 加密字节位数
+    public static int type = 2; //3
+
     // 原 byte[] 坐标
     public static int index = 0;
 
@@ -55,6 +59,7 @@ public class UTF8BytesMix {
         }
         return resultBytes;
     }
+
     public static void changeTC_PROXYCLASSDESC() {
         int interfaceCount = ((originalBytes[index + 1] & 0xFF) << 24) |
                 ((originalBytes[index + 2] & 0xFF) << 16) |
@@ -73,7 +78,7 @@ public class UTF8BytesMix {
         System.arraycopy(originalBytes, index + 3, originalValue, 0, length);
         index += 3 + length;
 
-        encode(originalValue);
+        encode(originalValue, type);
         index--;
     }
 
@@ -133,7 +138,7 @@ public class UTF8BytesMix {
                 byte[] originalFieldName = new byte[fieldLength];
                 System.arraycopy(originalBytes, index + 2, originalFieldName, 0, fieldLength);
                 index += 2 + fieldLength;
-                encode(originalFieldName);
+                encode(originalFieldName, type);
             }
 
             /**
@@ -156,7 +161,7 @@ public class UTF8BytesMix {
                 byte[] originalClassName = new byte[classLength];
                 System.arraycopy(originalBytes, index + 2, originalClassName, 0, classLength);
                 index += 2 + classLength;
-                encode(originalClassName);
+                encode(originalClassName, type);
                 isFiledOver = true;
             } else if (originalBytes[index] == TC_REFERENCE) {
                 /**
@@ -212,7 +217,7 @@ public class UTF8BytesMix {
         }
 
         index += 3 + length;
-        encode(originalValue);
+        encode(originalValue, type);
 
         index--;
         return true;
@@ -251,17 +256,36 @@ public class UTF8BytesMix {
      *
      * @return
      */
-    public static void encode(byte[] originalValue) {
-        int newLength = originalValue.length * 2;
+    public static void encode(byte[] originalValue, int type) {
+        if (type == 3) {
+            // 3 byte format: 1110xxxx 10xxxxxx 10xxxxxx
+            int newLength = originalValue.length * 3;
 
-        byteAdd((byte) ((newLength >> 8) & 0xFF));
-        byteAdd((byte) (newLength & 0xFF));
+            byteAdd((byte) ((newLength >> 8) & 0xFF));
+            byteAdd((byte) (newLength & 0xFF));
 
-        for (int i = 0; i < originalValue.length; i++) {
-            char c = (char) originalValue[i];
-            byteAdd((byte) (0xC0 | ((c >> 6) & 0x1F)));
-            byteAdd((byte) (0x80 | ((c >> 0) & 0x3F)));
+            for (int i = 0; i < originalValue.length; i++) {
+                char c = (char) originalValue[i];
+                byteAdd((byte) (0xE0 | ((c >> 12) & 0x0F)));
+                byteAdd((byte) (0x80 | ((c >> 6) & 0x3F)));
+                byteAdd((byte) (0x80 | ((c >> 0) & 0x3F)));
+            }
+
+        } else {
+            // 2 byte format: 110xxxxx 10xxxxxx
+            int newLength = originalValue.length * 2;
+
+            byteAdd((byte) ((newLength >> 8) & 0xFF));
+            byteAdd((byte) (newLength & 0xFF));
+
+            for (int i = 0; i < originalValue.length; i++) {
+                char c = (char) originalValue[i];
+                byteAdd((byte) (0xC0 | ((c >> 6) & 0x1F)));
+                byteAdd((byte) (0x80 | ((c >> 0) & 0x3F)));
+            }
         }
+
+
     }
 
     /**
