@@ -10,7 +10,7 @@ import com.ppp.sinks.annotation.Sink;
 
 /**
  * @author Whoopsunix
- *
+ * <p>
  * CommonsBeanutilsPropertySource
  */
 @Dependencies({"commons-beanutils:commons-beanutils:<=1.9.4", "org.apache.logging.log4j:log4j-api:2.14.1"})

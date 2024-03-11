@@ -19,7 +19,7 @@ import java.util.Map;
 
 /**
  * @author Whoopsunix
- *
+ * <p>
  * JDK8
  */
 @Dependencies({"rome:rome:1.0", "JDK>1.8"})

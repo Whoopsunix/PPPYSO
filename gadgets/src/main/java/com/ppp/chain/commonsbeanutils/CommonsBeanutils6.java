@@ -10,7 +10,7 @@ import com.ppp.sinks.annotation.Sink;
 
 /**
  * @author Whoopsunix
- *
+ * <p>
  * CommonsBeanutilsObjectToStringComparator
  */
 @Dependencies({"commons-beanutils:commons-beanutils:<=1.9.4", "org.apache.commons:commons-lang3"})

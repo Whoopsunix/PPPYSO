@@ -8,7 +8,7 @@ import com.ppp.sinks.annotation.Sink;
  * @author Whoopsunix
  * <p>
  * EL Expression
- *  MyFaces 没复现出来
+ * MyFaces 没复现出来
  */
 @Sink({Sink.EL})
 public class EL {

@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 /**
  * @author Whoopsunix
- *
+ * <p>
  * URLDNS
  */
 public class DNSHelper {

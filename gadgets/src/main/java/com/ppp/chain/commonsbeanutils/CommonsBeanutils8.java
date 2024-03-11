@@ -10,7 +10,7 @@ import com.ppp.sinks.annotation.Sink;
 
 /**
  * @author Whoopsunix
- *
+ * <p>
  * CommonsBeanutilsReverseComparatorCC
  */
 @Dependencies({"commons-beanutils:commons-beanutils:<=1.9.4", "commons-collections:commons-collections:3.2.1"})

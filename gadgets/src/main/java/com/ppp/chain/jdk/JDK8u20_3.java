@@ -25,7 +25,7 @@ import java.util.LinkedHashSet;
 
 /**
  * @author Whoopsunix
- *
+ * <p>
  * 通过 BeanContextSupport 构建
  * https://github.com/1nhann/ysoserial/blob/master/src/main/java/ysoserial/payloads/Jdk8u20_my.java
  */

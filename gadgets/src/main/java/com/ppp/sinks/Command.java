@@ -6,7 +6,7 @@ import com.ppp.sinks.annotation.Sink;
 
 /**
  * @author Whoopsunix
- *
+ * <p>
  * 默认
  */
 @Sink({Sink.Command})

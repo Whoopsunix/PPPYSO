@@ -16,7 +16,7 @@ import java.util.Map;
 
 /**
  * @author Whoopsunix
- *
+ * <p>
  * CommonsBeanutilsDualTreeBidiMap
  */
 @Dependencies({"commons-beanutils:commons-beanutils:<=1.9.4", "commons-collections:commons-collections:3.1"})

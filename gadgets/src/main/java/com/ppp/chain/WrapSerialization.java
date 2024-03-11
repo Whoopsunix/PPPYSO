@@ -22,12 +22,12 @@ import java.util.Map;
 
 /**
  * @author Whoopsunix
- *
+ * <p>
  * 二次反序列化
  */
 public class WrapSerialization {
 
-    public static Object scheduler(Object object, SinksHelper sinksHelper) throws Exception{
+    public static Object scheduler(Object object, SinksHelper sinksHelper) throws Exception {
         EnchantEnums wrapSerialization = sinksHelper.getWrapSerialization();
 
         Object result = null;

@@ -11,7 +11,7 @@ import com.ppp.sinks.annotation.Sink;
 /**
  * @author Whoopsunix
  * Ref: https://github.com/SummerSec/ShiroAttack2
- *
+ * <p>
  * CommonsBeanutilsAttrCompare
  */
 @Dependencies({"commons-beanutils:commons-beanutils:<=1.9.4"})

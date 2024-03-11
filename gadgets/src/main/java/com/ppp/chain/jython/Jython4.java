@@ -65,7 +65,7 @@ public class Jython4 implements ObjectPayload<Object> {
         );
         PriorityQueue priorityQueue = new PriorityQueue(2, c);
 
-        Object [] queue = new Object[]{
+        Object[] queue = new Object[]{
                 new PyString(command),
                 s
         };
