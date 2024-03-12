@@ -43,7 +43,13 @@ public class ObjectPayloadBuilder {
 
         if (gadget instanceof byte[]) {
             bytes = (byte[]) gadget;
-            Printer.yellowInfo("Gadget result is byte[], output change is not supported.");
+//            Printer.yellowInfo("Gadget result is byte[], output change is not supported.");
+            switch (serialization) {
+                case UTF8Mix:
+                    bytes = new UTF8BytesMix(bytes).builder();
+                    break;
+            }
+
         } else {
             switch (serialization) {
                 default:

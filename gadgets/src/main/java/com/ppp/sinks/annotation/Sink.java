@@ -14,12 +14,12 @@ import java.lang.annotation.Target;
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Sink {
+    String Default = "Default";
     String InvokerTransformer3 = "InvokerTransformer3";
     String InvokerTransformer4 = "InvokerTransformer4";
     String TemplatesImpl = "TemplatesImpl";
     String JNDI = "JNDI";
     String Python = "Python";
-    String Command = "Command";
     String C3P0 = "C3P0";
     String EL = "EL";
     String URLDNS = "URLDNS";

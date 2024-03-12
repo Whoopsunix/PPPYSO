@@ -19,7 +19,7 @@ import java.util.PriorityQueue;
  */
 @Dependencies({"org.codehaus.groovy:groovy:<=2.4.3"})
 @Authors({Authors.Whoopsunix})
-@Sink({Sink.Command})
+@Sink({Sink.Default})
 public class Groovy2 implements ObjectPayload<Object> {
 
     public static void main(String[] args) throws Exception {

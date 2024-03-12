@@ -1,7 +1,5 @@
 package com.ppp.chain.clojure;
 
-import bsh.Interpreter;
-import bsh.XThis;
 import clojure.inspector.proxy$javax.swing.table.AbstractTableModel$ff19274a;
 import clojure.lang.PersistentArrayMap;
 import com.ppp.ObjectPayload;
@@ -10,14 +8,11 @@ import com.ppp.annotation.Dependencies;
 import com.ppp.secmgr.PayloadRunner;
 import com.ppp.sinks.SinksHelper;
 import com.ppp.sinks.annotation.Sink;
-import com.ppp.utils.RanDomUtils;
-import com.ppp.utils.Reflections;
 import com.ppp.utils.Strings;
 
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 /*
 	Gadget chain:
@@ -34,7 +29,7 @@ import java.util.*;
  */
 @Dependencies({"org.clojure:clojure:<=1.8.0"})
 @Authors({Authors.JACKOFMOSTTRADES})
-@Sink({Sink.Command})
+@Sink({Sink.Default})
 public class Clojure implements ObjectPayload<Object> {
 
     public static void main(String[] args) throws Exception {

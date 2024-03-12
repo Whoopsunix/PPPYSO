@@ -16,7 +16,7 @@ import java.util.Map;
 
 @Dependencies({"org.codehaus.groovy:groovy:<=2.4.3"})
 @Authors({Authors.FROHOFF})
-@Sink({Sink.Command})
+@Sink({Sink.Default})
 public class Groovy1 implements ObjectPayload<Object> {
 
     public static void main(String[] args) throws Exception {

@@ -22,7 +22,7 @@ import java.util.PriorityQueue;
 
 @Dependencies({"org.beanshell:bsh:2.0b5"})
 @Authors({Authors.PWNTESTER, Authors.CSCHNEIDER4711})
-@Sink({Sink.Command})
+@Sink({Sink.Default})
 public class BeanShell1 implements ObjectPayload<Object> {
 
     public static void main(String[] args) throws Exception {
