@@ -30,10 +30,10 @@ import java.util.Map;
 @Dependencies({"org.clojure:clojure:<=1.8.0"})
 @Authors({Authors.JACKOFMOSTTRADES})
 @Sink({Sink.Default})
-public class Clojure implements ObjectPayload<Object> {
+public class Clojure1 implements ObjectPayload<Object> {
 
     public static void main(String[] args) throws Exception {
-        PayloadRunner.run(Clojure.class, args);
+        PayloadRunner.run(Clojure1.class, args);
     }
 
     public Object getObject(SinksHelper sinksHelper) throws Exception {
