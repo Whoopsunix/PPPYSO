@@ -7,5 +7,6 @@ package com.ppp.enums;
  */
 public enum Output {
     Default,
-    Base64
+    Base64,
+    GZIP,
 }

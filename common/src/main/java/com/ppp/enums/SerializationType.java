@@ -7,7 +7,6 @@ package com.ppp.enums;
  */
 public enum SerializationType {
     Default,
-    GZIP,
     XStream,
     HexAscii,
     UTF8Mix,

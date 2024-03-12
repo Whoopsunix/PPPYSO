@@ -10,6 +10,7 @@ import com.ppp.utils.maker.CryptoUtils;
 
 import java.io.ByteArrayOutputStream;
 import java.io.FileOutputStream;
+import java.util.zip.GZIPOutputStream;
 
 /**
  * @author Whoopsunix
@@ -56,9 +57,6 @@ public class ObjectPayloadBuilder {
                 case Default:
                     bytes = Serializer.serialize(gadget);
                     break;
-                case GZIP:
-                    bytes = Serializer.serializeGZip(gadget);
-                    break;
                 case XStream:
                     bytes = Serializer.serializeXStream(gadget).getBytes();
                     break;
@@ -82,9 +80,18 @@ public class ObjectPayloadBuilder {
                 byteArrayOutputStream.write(bytes);
                 System.out.println(byteArrayOutputStream);
                 break;
+            case GZIP:
+                ByteArrayOutputStream byteArrayOutputStream1 = new ByteArrayOutputStream();
+                GZIPOutputStream gzipOutputStream = new GZIPOutputStream(byteArrayOutputStream1);
+                gzipOutputStream.write(bytes);
+                gzipOutputStream.close();
+                byteArrayOutputStream1.close();
+                System.out.println(CryptoUtils.base64encoder(byteArrayOutputStream1.toByteArray()));
+                break;
             case Base64:
                 String s = CryptoUtils.base64encoder(bytes);
                 System.out.println(s);
+                break;
         }
 
         // 保存文件
