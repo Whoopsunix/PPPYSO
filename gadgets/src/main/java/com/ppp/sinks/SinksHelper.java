@@ -5,7 +5,6 @@ import com.ppp.chain.urldns.DNSHelper;
 import com.ppp.enums.Output;
 import com.ppp.enums.SerializationType;
 import com.ppp.sinks.annotation.EnchantEnums;
-import jnr.ffi.annotations.Out;
 
 /**
  * @author Whoopsunix

@@ -51,10 +51,10 @@ import java.util.PriorityQueue;
 @Dependencies({"org.apache.click:click-nodeps:<=2.3.0", "javax.servlet:javax.servlet-api:3.1.0"})
 @Authors({Authors.ARTSPLOIT})
 @Sink({Sink.TemplatesImpl})
-public class Click1 implements ObjectPayload<Object> {
+public class Click implements ObjectPayload<Object> {
 
     public static void main(String[] args) throws Exception {
-        PayloadRunner.run(Click1.class, args);
+        PayloadRunner.run(Click.class, args);
     }
 
     public Object getObject(SinksHelper sinksHelper) throws Exception {

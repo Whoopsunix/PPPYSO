@@ -7,8 +7,8 @@ import com.ppp.sinks.annotation.Sink;
 /**
  * @author Whoopsunix
  */
-@Sink({Sink.Python})
-public class Python {
+@Sink({Sink.Jython})
+public class Jython {
     @EnchantType({EnchantType.DEFAULT})
     public String defaultPythonCode(SinksHelper sinksHelper) {
         String command = sinksHelper.getCommand();

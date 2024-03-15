@@ -4,7 +4,6 @@ import com.ppp.JavaClassHelper;
 import com.ppp.ObjectPayload;
 import com.ppp.ObjectPayloadBuilder;
 import com.ppp.chain.urldns.DNSHelper;
-import com.ppp.enums.Output;
 import com.ppp.enums.SerializationType;
 import com.ppp.sinks.SinkScheduler;
 import com.ppp.sinks.SinksHelper;
@@ -47,6 +46,7 @@ public class PayloadRunner {
                     JavaClassHelper javaClassHelper = new JavaClassHelper();
                     helper.setJavaClassHelper(javaClassHelper);
                 }
+//                helper.getJavaClassHelper().setRandomJavaClassName(false);
 
                 // 增强功能
                 if (!sink.equals(Sink.TemplatesImpl)

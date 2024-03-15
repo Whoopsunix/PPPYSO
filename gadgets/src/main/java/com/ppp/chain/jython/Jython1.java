@@ -41,7 +41,7 @@ import java.util.PriorityQueue;
  */
 @Dependencies({"org.python:jython-standalone:2.5.2"})
 @Authors({Authors.PWNTESTER, Authors.CSCHNEIDER4711})
-@Sink({Sink.Python})
+@Sink({Sink.Jython})
 public class Jython1 implements ObjectPayload<Object> {
 
     public static void main(String[] args) throws Exception {

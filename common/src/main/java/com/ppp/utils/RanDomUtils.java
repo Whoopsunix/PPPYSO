@@ -9,6 +9,23 @@ import java.util.Random;
  */
 public class RanDomUtils {
     private static final String CHARACTERS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+    private static final String CHARACTERSNOTNUM = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+
+    /**
+     * 生成制定长度的随机字符串
+     * @param length
+     * @return
+     */
+    public static String generateRandomNOTNUMString(int length) {
+        Random random = new Random();
+        StringBuilder sb = new StringBuilder(length);
+        for (int i = 0; i < length; i++) {
+            int index = random.nextInt(CHARACTERSNOTNUM.length());
+            char randomChar = CHARACTERSNOTNUM.charAt(index);
+            sb.append(randomChar);
+        }
+        return sb.toString();
+    }
 
     /**
      * 生成制定长度的随机字符串
