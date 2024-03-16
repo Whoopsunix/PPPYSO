@@ -16,7 +16,7 @@ public class RanDomUtils {
      * @param length
      * @return
      */
-    public static String generateRandomNOTNUMString(int length) {
+    public static String generateRandomOnlyString(int length) {
         Random random = new Random();
         StringBuilder sb = new StringBuilder(length);
         for (int i = 0; i < length; i++) {

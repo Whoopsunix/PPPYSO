@@ -4,6 +4,7 @@ import com.ppp.JavaClassHelper;
 import com.ppp.ObjectPayload;
 import com.ppp.ObjectPayloadBuilder;
 import com.ppp.chain.urldns.DNSHelper;
+import com.ppp.enums.Output;
 import com.ppp.enums.SerializationType;
 import com.ppp.sinks.SinkScheduler;
 import com.ppp.sinks.SinksHelper;
@@ -55,7 +56,7 @@ public class PayloadRunner {
                     SinkScheduler.builder(helper);
 
                 final Object objBefore = object.getObject(helper);
-                helper.setSerialization(SerializationType.UTF8Mix);
+//                helper.setSerialization(SerializationType.UTF8Mix);
 //                helper.setOutput(Output.Base64);
                 byte[] ser = ObjectPayloadBuilder.original(objBefore, helper);
                 ObjectPayloadBuilder.save(ser, helper);
