@@ -11,10 +11,18 @@ import java.lang.annotation.Target;
 @Target({ElementType.METHOD, ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface JavaClassModifiable {
+    // 类名
     String CLASSNAME = "CLASSNAME";
+    // 内存马名称
+    String NAME = "NAME";
+    // 请求头 key
     String HEADER = "HEADER";
+    // 参数 key
     String PARAM = "PARAM";
+    // 路径
     String PATH = "PATH";
+
+    // Godzilla
     String key = "key";
     String pass = "pass";
     String[] value() default {};

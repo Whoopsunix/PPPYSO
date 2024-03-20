@@ -16,8 +16,8 @@ import java.lang.reflect.Method;
 @Middleware(Middleware.Spring)
 @JavaClassModifiable({JavaClassModifiable.HEADER, JavaClassModifiable.PARAM})
 public class SpringRE {
-    public static String HEADER = "X-Token";
-    private static String PARAM = "cmd";
+    public static String HEADER;
+    private static String PARAM;
 
     static {
         try {

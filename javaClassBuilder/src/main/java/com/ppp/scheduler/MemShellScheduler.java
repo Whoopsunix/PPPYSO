@@ -75,7 +75,7 @@ public class MemShellScheduler {
         /**
          *  定位到各自 Builder 的具体生成方法
          *    目前的思路基本都是围绕 msMethod 实现 func 差异
-         *    loaderMethod 目前是冗余代码其实
+         *    loader 直接获取了，所以 loaderMethod 目前其实是冗余代码，保留是为了提示不支持的内存马组合
          */
         Method msMethod = null;
         Method loaderMethod = null;

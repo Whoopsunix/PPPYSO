@@ -1,5 +1,7 @@
 package com.ppp;
 
+import com.ppp.utils.RanDomUtils;
+
 /**
  * @author Whoopsunix
  */
@@ -30,8 +32,10 @@ public class JavaClassHelper {
     /**
      * 以下为内存马可自定义信息
      */
+    private String NAME = "Whoopsunix";
     private String HEADER = "X-Token";
     private String PARAM = "cmd";
+    private String PATH = "/whoopsunix";
     // Godzilla
     private String key = "3c6e0b8a9c15224a";
     public String pass = "pass";
@@ -48,6 +52,16 @@ public class JavaClassHelper {
     // 这个目前的场景是 需要指定注入类名的时候，所以会将随机类名、自定义步骤提前
     private String CLASSNAME;
 
+    public JavaClassHelper() {
+        this.NAME = RanDomUtils.generateRandomOnlyString(4, 7);
+        this.HEADER = RanDomUtils.generateRandomOnlyString(4, 7);
+        this.PARAM = RanDomUtils.generateRandomOnlyString(4, 7);
+        this.PATH = "/" + RanDomUtils.generateRandomOnlyString(4, 7);
+    }
+
+    /**
+     * Filed
+     */
     public boolean isExtendsAbstractTranslet() {
         return extendsAbstractTranslet;
     }
@@ -96,6 +110,14 @@ public class JavaClassHelper {
         this.memShellFunction = memShellFunction;
     }
 
+    public String getNAME() {
+        return NAME;
+    }
+
+    public void setNAME(String NAME) {
+        this.NAME = NAME;
+    }
+
     public String getHEADER() {
         return HEADER;
     }
@@ -110,6 +132,14 @@ public class JavaClassHelper {
 
     public void setPARAM(String PARAM) {
         this.PARAM = PARAM;
+    }
+
+    public String getPATH() {
+        return PATH;
+    }
+
+    public void setPATH(String PATH) {
+        this.PATH = PATH;
     }
 
     public String getKey() {

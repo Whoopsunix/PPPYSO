@@ -34,8 +34,8 @@ public class TomcatExecutorThreadLoader {
             // 获取
             Object nioEndpoint = getTargetObject("org.apache.tomcat.util.net.NioEndpoint");
 
-            if (!isInject(nioEndpoint, null)) {
-                inject(nioEndpoint, null);
+            if (!isInject(nioEndpoint)) {
+                inject(nioEndpoint);
             }
 
         } catch (Throwable e) {
@@ -43,7 +43,7 @@ public class TomcatExecutorThreadLoader {
         }
     }
 
-    public static boolean isInject(Object nioEndpoint, Object object) throws Exception{
+    public static boolean isInject(Object nioEndpoint) throws Exception{
         Object threadPoolExecutor = getFieldValue(nioEndpoint, "executor");
         if (threadPoolExecutor instanceof Proxy) {
             Object h = getFieldValue(threadPoolExecutor, "h");
@@ -54,7 +54,7 @@ public class TomcatExecutorThreadLoader {
 
         return false;
     }
-    public static void inject(Object nioEndpoint, Object object) throws Exception {
+    public static void inject(Object nioEndpoint) throws Exception {
         Object threadPoolExecutor = getFieldValue(nioEndpoint, "executor");
 
         Object var1 = invokeMethod(threadPoolExecutor, "getCorePoolSize", new Class[]{}, new Object[]{});

@@ -10,9 +10,7 @@ import javassist.CtClass;
  * @author Whoopsunix
  */
 @Builder(Builder.RceEcho)
-//@Middleware(Middleware.Tomcat)
 public class RceEchoBuilder {
-//    @Middleware(Middleware.Tomcat)
     public byte[] build(Class cls, JavaClassHelper javaClassHelper) throws Exception {
         ClassPool classPool = ClassPool.getDefault();
         classPool.insertClassPath(new ClassClassPath(cls));

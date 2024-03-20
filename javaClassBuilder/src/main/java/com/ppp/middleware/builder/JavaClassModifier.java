@@ -57,9 +57,9 @@ public class JavaClassModifier {
             Printer.blueInfo("JavaClass Name (Also MS ClassName): " + javaClassHelper.getCLASSNAME());
         } else if (javaClassHelper.isRandomJavaClassName()) {
             // 随机类名
-            String javaClassName = randomJavaClassName(javaClassHelper);
-            // 修改类名
-            ctClass.setName(javaClassName);
+//            String javaClassName = randomJavaClassName(javaClassHelper);
+//            // 修改类名
+//            ctClass.setName(javaClassName);
         }
         if (unChangeFlag == null)
             Printer.blueInfo("JavaClass Name: " + ctClass.getName());
@@ -139,24 +139,37 @@ public class JavaClassModifier {
             JavaClassUtils.fieldChangeIfExist(ctClass, JavaClassModifiable.CLASSNAME, String.format("private static String %s = \"%s\";", JavaClassModifiable.CLASSNAME, javaClassHelper.getCLASSNAME()));
         }
 
-
-        // 固定
+        // 参数
+        if (AnnotationUtils.containsValue(cls, JavaClassModifiable.class, JavaClassModifiable.NAME)) {
+            String name = javaClassHelper.getNAME();
+            Printer.yellowInfo(String.format("Name: %s", name));
+            JavaClassUtils.fieldChangeIfExist(ctClass, JavaClassModifiable.NAME, String.format("private static String %s = \"%s\";", JavaClassModifiable.NAME, name));
+        }
         if (AnnotationUtils.containsValue(cls, JavaClassModifiable.class, JavaClassModifiable.HEADER)) {
-            Printer.yellowInfo(String.format("Header: %s", javaClassHelper.getHEADER()));
-            JavaClassUtils.fieldChangeIfExist(ctClass, JavaClassModifiable.HEADER, String.format("private static String %s = \"%s\";", JavaClassModifiable.HEADER, javaClassHelper.getHEADER()));
+            String header = javaClassHelper.getHEADER();
+            Printer.yellowInfo(String.format("Header: %s", header));
+            JavaClassUtils.fieldChangeIfExist(ctClass, JavaClassModifiable.HEADER, String.format("private static String %s = \"%s\";", JavaClassModifiable.HEADER, header));
         }
         if (AnnotationUtils.containsValue(cls, JavaClassModifiable.class, JavaClassModifiable.PARAM)) {
-            Printer.yellowInfo(String.format("Param: %s", javaClassHelper.getPARAM()));
-            JavaClassUtils.fieldChangeIfExist(ctClass, JavaClassModifiable.PARAM, String.format("private static String %s = \"%s\";", JavaClassModifiable.PARAM, javaClassHelper.getPARAM()));
+            String param = javaClassHelper.getPARAM();
+            Printer.yellowInfo(String.format("Param: %s", param));
+            JavaClassUtils.fieldChangeIfExist(ctClass, JavaClassModifiable.PARAM, String.format("private static String %s = \"%s\";", JavaClassModifiable.PARAM, param));
+        }
+        if (AnnotationUtils.containsValue(cls, JavaClassModifiable.class, JavaClassModifiable.PATH)) {
+            String path = javaClassHelper.getPATH();
+            Printer.yellowInfo(String.format("Path: %s", path));
+            JavaClassUtils.fieldChangeIfExist(ctClass, JavaClassModifiable.PATH, String.format("private static String %s = \"%s\";", JavaClassModifiable.PATH, path));
         }
 
         if (AnnotationUtils.containsValue(cls, JavaClassModifiable.class, JavaClassModifiable.pass)) {
-            Printer.yellowInfo(String.format("pass: %s", javaClassHelper.getPass()));
-            JavaClassUtils.fieldChangeIfExist(ctClass, JavaClassModifiable.pass, String.format("private static String %s = \"%s\";", JavaClassModifiable.pass, javaClassHelper.getPass()));
+            String pass = javaClassHelper.getPass();
+            Printer.yellowInfo(String.format("pass: %s", pass));
+            JavaClassUtils.fieldChangeIfExist(ctClass, JavaClassModifiable.pass, String.format("private static String %s = \"%s\";", JavaClassModifiable.pass, pass));
         }
         if (AnnotationUtils.containsValue(cls, JavaClassModifiable.class, JavaClassModifiable.key)) {
-            Printer.yellowInfo(String.format("key: %s", javaClassHelper.getKey()));
-            JavaClassUtils.fieldChangeIfExist(ctClass, JavaClassModifiable.key, String.format("private static String %s = \"%s\";", JavaClassModifiable.key, javaClassHelper.getKey()));
+            String key = javaClassHelper.getKey();
+            Printer.yellowInfo(String.format("key: %s", key));
+            JavaClassUtils.fieldChangeIfExist(ctClass, JavaClassModifiable.key, String.format("private static String %s = \"%s\";", JavaClassModifiable.key, key));
         }
     }
 

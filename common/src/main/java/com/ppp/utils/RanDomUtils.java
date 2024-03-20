@@ -55,6 +55,12 @@ public class RanDomUtils {
         return generateRandomString(length);
     }
 
+    public static String generateRandomOnlyString(int minLength, int maxLength) {
+        Random random = new Random();
+        int length = minLength + random.nextInt(maxLength - minLength + 1);
+        return generateRandomOnlyString(length);
+    }
+
     public static void main(String[] args) {
         int length = 1; // 指定字符串长度
         String randomString = generateRandomString(length);
