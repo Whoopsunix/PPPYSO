@@ -1,6 +1,6 @@
 package com.ppp;
 
-import com.ppp.annotation.*;
+import com.ppp.annotation.JavaClassHelperType;
 import com.ppp.utils.Reflections;
 import com.ppp.utils.maker.ClassUtils;
 import com.ppp.utils.maker.CryptoUtils;

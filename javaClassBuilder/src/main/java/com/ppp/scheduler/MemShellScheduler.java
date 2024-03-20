@@ -3,7 +3,6 @@ package com.ppp.scheduler;
 import com.ppp.JavaClassHelper;
 import com.ppp.Printer;
 import com.ppp.annotation.*;
-import com.ppp.utils.maker.AnnotationUtils;
 import com.ppp.utils.maker.ClassUtils;
 import com.ppp.utils.maker.CryptoUtils;
 
@@ -42,7 +41,7 @@ public class MemShellScheduler {
         // 用于打印信息
 
         /**
-         * 获取 Builder
+         * 获取 MSLoaderBuilder 和 MemShellBuilder
          */
         Class loaderBuilderClass = null;
         Class msBuilderClass = null;
@@ -52,16 +51,13 @@ public class MemShellScheduler {
             Builder builder = clazz.getAnnotation(Builder.class);
             if (builder == null) continue;
 
-            Middleware middlewareAnnotation = clazz.getAnnotation(Middleware.class);
-            if (middlewareAnnotation == null) continue;
-
             // 获取 Loader Builder
-            if (builder.value().equalsIgnoreCase(Builder.Loader) && middlewareAnnotation.value().equalsIgnoreCase(middleware)) {
+            if (builder.value().equalsIgnoreCase(Builder.Loader)) {
                 loaderBuilderClass = clazz;
                 Printer.log("Loader builder Class: " + clazz.getName() + ", Annotation Value: " + builder.value());
             }
             // 获取 MemShell Builder
-            if (builder.value().equalsIgnoreCase(Builder.MS) && middlewareAnnotation.value().equalsIgnoreCase(middleware)) {
+            if (builder.value().equalsIgnoreCase(Builder.MS)) {
                 msBuilderClass = clazz;
                 Printer.log("MemShell builder Class: " + clazz.getName() + ", Annotation Value: " + builder.value());
             }
@@ -77,37 +73,49 @@ public class MemShellScheduler {
         }
 
         /**
-         * 生成 Builder
-         *  即定位到具体的执行方法
+         *  定位到各自 Builder 的具体生成方法
+         *    目前的思路基本都是围绕 msMethod 实现 func 差异
+         *    loaderMethod 目前是冗余代码其实
          */
         Method msMethod = null;
         Method loaderMethod = null;
 
         Method[] msMethods = msBuilderClass.getDeclaredMethods();
         for (Method method : msMethods) {
+            Middleware middlewareAnnotation = method.getAnnotation(Middleware.class);
+            if (middlewareAnnotation == null) continue;
+
             MemShell memShellAnnotation = method.getAnnotation(MemShell.class);
             if (memShellAnnotation == null) continue;
 
             MemShellFunction memShellFunctionAnnotation = method.getAnnotation(MemShellFunction.class);
             if (memShellFunctionAnnotation == null) continue;
 
-            String memShellValue = AnnotationUtils.getValue(memShellAnnotation.value(), memShell);
-            if (memShellValue != null && memShellValue.equalsIgnoreCase(memShell) && memShellFunctionAnnotation.value().equalsIgnoreCase(memShellFunction)) {
+            if (
+                    middlewareAnnotation.value().equalsIgnoreCase(middleware)
+                            && memShellAnnotation.value().equalsIgnoreCase(memShell)
+                            && memShellFunctionAnnotation.value().equalsIgnoreCase(memShellFunction)
+            ) {
                 msMethod = method;
-                Printer.log("MS builder Method: " + method.getName() + ", Annotation Value: " + memShellValue);
+                Printer.log("MS builder Method: " + method.getName() + ", Annotation Value: " + memShellAnnotation);
                 break;
             }
         }
 
         Method[] loaderMethods = loaderBuilderClass.getDeclaredMethods();
         for (Method method : loaderMethods) {
+            Middleware middlewareAnnotation = method.getAnnotation(Middleware.class);
+            if (middlewareAnnotation == null) continue;
+
             MemShell memShellAnnotation = method.getAnnotation(MemShell.class);
             if (memShellAnnotation == null) continue;
 
-            String memShellValue = AnnotationUtils.getValue(memShellAnnotation.value(), memShell);
-            if (memShellValue != null && memShellValue.equalsIgnoreCase(memShell)) {
+            if (
+                    middlewareAnnotation.value().equalsIgnoreCase(middleware)
+                            && memShellAnnotation.value().equalsIgnoreCase(memShell)
+            ) {
                 loaderMethod = method;
-                Printer.log("Loader builder Method: " + method.getName() + ", Annotation Value: " + memShellValue);
+                Printer.log("Loader builder Method: " + method.getName() + ", Annotation Value: " + memShellAnnotation);
                 break;
             }
         }
@@ -126,8 +134,10 @@ public class MemShellScheduler {
             MemShell memShellAnnotation = clazz.getAnnotation(MemShell.class);
             if (memShellAnnotation == null) continue;
 
-            String memShellValue = AnnotationUtils.getValue(memShellAnnotation.value(), memShell);
-            if (memShellValue != null && memShellValue.equalsIgnoreCase(memShell) && middlewareAnnotation.value().equalsIgnoreCase(middleware)) {
+            if (
+                    middlewareAnnotation.value().equalsIgnoreCase(middleware)
+                            && memShellAnnotation.value().equalsIgnoreCase(memShell)
+            ) {
                 loaderClass = clazz;
                 Printer.blueInfo("Loader Class: " + clazz.getName() + ", Annotation Value: " + middlewareAnnotation.value());
                 break;
@@ -142,12 +152,15 @@ public class MemShellScheduler {
             MemShellFunction memShellFunctionAnnotation = clazz.getAnnotation(MemShellFunction.class);
             if (memShellFunctionAnnotation == null) continue;
 
-            String memShellValue = AnnotationUtils.getValue(memShellAnnotation.value(), memShell);
-            if (memShellValue != null && memShellValue.equalsIgnoreCase(memShell) && memShellFunctionAnnotation.value().equalsIgnoreCase(memShellFunction)) {
+            if (
+                    memShellAnnotation.value().equalsIgnoreCase(memShell)
+                            && memShellFunctionAnnotation.value().equalsIgnoreCase(memShellFunction)
+            ) {
                 msClass = clazz;
-                Printer.blueInfo("MemShell Class: " + clazz.getName() + ", Annotation Value: " + memShellValue);
+                Printer.blueInfo("MemShell Class: " + clazz.getName() + ", Annotation Value: " + memShellAnnotation.value());
                 break;
             }
+
         }
 
         if (loaderClass == null) {

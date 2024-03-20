@@ -5,14 +5,16 @@ import com.ppp.annotation.Builder;
 import com.ppp.annotation.MemShell;
 import com.ppp.annotation.Middleware;
 import com.ppp.utils.maker.JavaClassUtils;
-import javassist.*;
+import javassist.ClassClassPath;
+import javassist.ClassPool;
+import javassist.CtClass;
 
 /**
  * @author Whoopsunix
  */
 @Builder(Builder.Loader)
-@Middleware(Middleware.Tomcat)
-public class TomcatLoaderBuilder {
+public class MSLoaderBuilder {
+    @Middleware(Middleware.Tomcat)
     @MemShell(MemShell.Listener)
     public byte[] listener(Class cls, String MSGzipBase64, JavaClassHelper javaClassHelper) throws Exception {
         ClassPool classPool = ClassPool.getDefault();
@@ -70,6 +72,7 @@ public class TomcatLoaderBuilder {
         return JavaClassModifier.ctClassBuilder(ctClass, javaClassHelper, null);
     }
 
+    @Middleware(Middleware.Tomcat)
     @MemShell(MemShell.Executor)
     public byte[] executor(Class cls, String MSGzipBase64, JavaClassHelper javaClassHelper) throws Exception {
         ClassPool classPool = ClassPool.getDefault();

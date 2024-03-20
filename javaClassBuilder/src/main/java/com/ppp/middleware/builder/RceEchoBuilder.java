@@ -2,7 +2,6 @@ package com.ppp.middleware.builder;
 
 import com.ppp.JavaClassHelper;
 import com.ppp.annotation.Builder;
-import com.ppp.annotation.Middleware;
 import javassist.ClassClassPath;
 import javassist.ClassPool;
 import javassist.CtClass;
@@ -11,9 +10,9 @@ import javassist.CtClass;
  * @author Whoopsunix
  */
 @Builder(Builder.RceEcho)
-@Middleware(Middleware.Spring)
-public class SpringRceEchoBuilder {
-
+//@Middleware(Middleware.Tomcat)
+public class RceEchoBuilder {
+//    @Middleware(Middleware.Tomcat)
     public byte[] build(Class cls, JavaClassHelper javaClassHelper) throws Exception {
         ClassPool classPool = ClassPool.getDefault();
         classPool.insertClassPath(new ClassClassPath(cls));

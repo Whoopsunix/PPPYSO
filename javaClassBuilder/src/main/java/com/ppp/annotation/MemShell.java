@@ -16,21 +16,22 @@ public @interface MemShell {
     String Executor = "Executor";
     String Controller = "Controller";
 
-    String[] value() default {};
+    String value();
+//    String[] value() default {};
 
-    public static class Utils {
-        public static String getTargetMemShell(String ms) {
-            if (ms.equalsIgnoreCase(MemShell.Listener)) {
-                return MemShell.Listener;
-            } else if (ms.equalsIgnoreCase(MemShell.Servlet)) {
-                return MemShell.Servlet;
-            } else if (ms.equalsIgnoreCase(MemShell.Executor)) {
-                return MemShell.Executor;
-            } else {
-                return null;
-            }
-        }
-    }
+//    public static class Utils {
+//        public static String getTargetMemShell(String ms) {
+//            if (ms.equalsIgnoreCase(MemShell.Listener)) {
+//                return MemShell.Listener;
+//            } else if (ms.equalsIgnoreCase(MemShell.Servlet)) {
+//                return MemShell.Servlet;
+//            } else if (ms.equalsIgnoreCase(MemShell.Executor)) {
+//                return MemShell.Executor;
+//            } else {
+//                return null;
+//            }
+//        }
+//    }
 
 
 }

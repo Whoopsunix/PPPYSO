@@ -5,7 +5,6 @@ import com.ppp.annotation.Builder;
 import com.ppp.annotation.MemShell;
 import com.ppp.annotation.MemShellFunction;
 import com.ppp.annotation.Middleware;
-import com.ppp.utils.maker.JavaClassUtils;
 import javassist.ClassClassPath;
 import javassist.ClassPool;
 import javassist.CtClass;
@@ -15,8 +14,8 @@ import javassist.CtMethod;
  * @author Whoopsunix
  */
 @Builder(Builder.MS)
-@Middleware(Middleware.Tomcat)
-public class TomcatMSJavaClassBuilder {
+public class MSJavaClassBuilder {
+    @Middleware(Middleware.Tomcat)
     @MemShell(MemShell.Listener)
     @MemShellFunction(MemShellFunction.Exec)
     public byte[] listenerExec(Class cls, JavaClassHelper javaClassHelper) throws Exception {

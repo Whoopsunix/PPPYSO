@@ -19,7 +19,7 @@ import java.util.zip.GZIPInputStream;
  * 5-10 全版本
  */
 @Middleware(Middleware.Tomcat)
-@MemShell({MemShell.Listener})
+@MemShell(MemShell.Listener)
 public class TomcatThreadLoader {
     private static String gzipObject;
     private static Object[] applicationEventListenersObjects;

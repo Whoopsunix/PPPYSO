@@ -60,9 +60,10 @@ public class JavaClassModifier {
             String javaClassName = randomJavaClassName(javaClassHelper);
             // 修改类名
             ctClass.setName(javaClassName);
-            if (unChangeFlag == null)
-                Printer.blueInfo("JavaClass Name: " + javaClassName);
         }
+        if (unChangeFlag == null)
+            Printer.blueInfo("JavaClass Name: " + ctClass.getName());
+
 
         // 目前唯一用处 用于本地文件加载时必要的类名
         if (javaClassHelper.getJavaClassName() == null) {

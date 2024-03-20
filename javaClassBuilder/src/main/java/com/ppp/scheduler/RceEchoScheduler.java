@@ -2,9 +2,10 @@ package com.ppp.scheduler;
 
 import com.ppp.JavaClassHelper;
 import com.ppp.Printer;
-import com.ppp.annotation.*;
+import com.ppp.annotation.Builder;
+import com.ppp.annotation.JavaClassHelperType;
+import com.ppp.annotation.Middleware;
 import com.ppp.utils.Reflections;
-import com.ppp.utils.maker.AnnotationUtils;
 import com.ppp.utils.maker.ClassUtils;
 import com.ppp.utils.maker.CryptoUtils;
 
@@ -31,11 +32,11 @@ public class RceEchoScheduler {
             Builder builder = clazz.getAnnotation(Builder.class);
             if (builder == null) continue;
 
-            Middleware middlewareAnnotation = clazz.getAnnotation(Middleware.class);
-            if (middlewareAnnotation == null) continue;
+//            Middleware middlewareAnnotation = clazz.getAnnotation(Middleware.class);
+//            if (middlewareAnnotation == null) continue;
 
             // 获取 RceEcho Builder
-            if (builder.value().equalsIgnoreCase(Builder.RceEcho) && middlewareAnnotation.value().equalsIgnoreCase(middleware)) {
+            if (builder.value().equalsIgnoreCase(Builder.RceEcho)) {
                 rceEchoClass = clazz;
                 Printer.log("RceEcho builder Class: " + clazz.getName() + ", Annotation Value: " + builder.value());
                 break;
@@ -44,7 +45,7 @@ public class RceEchoScheduler {
 
 
         /**
-         * 生成 Builder
+         * 获取 rceEcho 类
          */
         if (rceEchoClass == null) {
             Printer.error(String.format("The %s RceEcho is not supported", middleware));
