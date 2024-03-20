@@ -99,6 +99,7 @@ public class ObjectPayloadBuilder {
             FileOutputStream fileOutputStream = new FileOutputStream(sinksHelper.getSavePath());
             fileOutputStream.write(bytes);
             fileOutputStream.close();
+            Printer.yellowInfo("Gadget save in " + sinksHelper.getSavePath());
         }
     }
 }

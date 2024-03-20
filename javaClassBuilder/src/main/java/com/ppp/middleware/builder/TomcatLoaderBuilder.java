@@ -67,7 +67,7 @@ public class TomcatLoaderBuilder {
 //                "}\n" +
 //                "flag = new Boolean(true);}");
 
-        return JavaClassModifier.ctClassBuilder(ctClass, javaClassHelper);
+        return JavaClassModifier.ctClassBuilder(ctClass, javaClassHelper, null);
     }
 
     @MemShell(MemShell.Executor)
@@ -86,6 +86,6 @@ public class TomcatLoaderBuilder {
         // todo 避免影响到加载器
         javaClassHelper.setCLASSNAME(null);
 
-        return JavaClassModifier.ctClassBuilder(ctClass, javaClassHelper);
+        return JavaClassModifier.ctClassBuilder(ctClass, javaClassHelper, null);
     }
 }

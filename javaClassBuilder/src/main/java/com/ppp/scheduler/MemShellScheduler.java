@@ -58,12 +58,12 @@ public class MemShellScheduler {
             // 获取 Loader Builder
             if (builder.value().equalsIgnoreCase(Builder.Loader) && middlewareAnnotation.value().equalsIgnoreCase(middleware)) {
                 loaderBuilderClass = clazz;
-                Printer.blueInfo("Loader builder Class: " + clazz.getName() + ", Annotation Value: " + builder.value());
+                Printer.log("Loader builder Class: " + clazz.getName() + ", Annotation Value: " + builder.value());
             }
             // 获取 MemShell Builder
             if (builder.value().equalsIgnoreCase(Builder.MS) && middlewareAnnotation.value().equalsIgnoreCase(middleware)) {
                 msBuilderClass = clazz;
-                Printer.blueInfo("MemShell builder Class: " + clazz.getName() + ", Annotation Value: " + builder.value());
+                Printer.log("MemShell builder Class: " + clazz.getName() + ", Annotation Value: " + builder.value());
             }
         }
 
@@ -94,7 +94,7 @@ public class MemShellScheduler {
             String memShellValue = AnnotationUtils.getValue(memShellAnnotation.value(), memShell);
             if (memShellValue != null && memShellValue.equalsIgnoreCase(memShell) && memShellFunctionAnnotation.value().equalsIgnoreCase(memShellFunction)) {
                 msMethod = method;
-                Printer.blueInfo("MS builder Method: " + method.getName() + ", Annotation Value: " + memShellValue);
+                Printer.log("MS builder Method: " + method.getName() + ", Annotation Value: " + memShellValue);
                 break;
             }
         }
@@ -107,7 +107,7 @@ public class MemShellScheduler {
             String memShellValue = AnnotationUtils.getValue(memShellAnnotation.value(), memShell);
             if (memShellValue != null && memShellValue.equalsIgnoreCase(memShell)) {
                 loaderMethod = method;
-                Printer.blueInfo("Loader builder Method: " + method.getName() + ", Annotation Value: " + memShellValue);
+                Printer.log("Loader builder Method: " + method.getName() + ", Annotation Value: " + memShellValue);
                 break;
             }
         }
@@ -165,18 +165,15 @@ public class MemShellScheduler {
         Object loaderBuilder = loaderBuilderClass.newInstance();
         Object msBuilder = msBuilderClass.newInstance();
 
-        byte[] msJavaClassBytes = (byte[]) msMethod.invoke(msBuilder, msClass, javaClassHelper);
-        String msJavaClassBase64 = CryptoUtils.base64encoder(msJavaClassBytes);
         Printer.yellowInfo("ms:");
-        Printer.yellowInfo(msJavaClassBase64);
+        byte[] msJavaClassBytes = (byte[]) msMethod.invoke(msBuilder, msClass, javaClassHelper);
+
         // gzip
         byte[] msJavaClassGzipBytes = CryptoUtils.compress(msJavaClassBytes);
         String msJavaClassGzipBase64 = CryptoUtils.base64encoder(msJavaClassGzipBytes);
 
-        byte[] msLoaderJavaClassBytes = (byte[]) loaderMethod.invoke(loaderBuilder, loaderClass, msJavaClassGzipBase64, javaClassHelper);
-        String b64 = CryptoUtils.base64encoder(msLoaderJavaClassBytes);
         Printer.yellowInfo("ms+loader:");
-        Printer.yellowInfo(b64);
+        byte[] msLoaderJavaClassBytes = (byte[]) loaderMethod.invoke(loaderBuilder, loaderClass, msJavaClassGzipBase64, javaClassHelper);
 
         return msLoaderJavaClassBytes;
 

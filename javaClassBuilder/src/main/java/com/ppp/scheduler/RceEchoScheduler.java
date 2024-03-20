@@ -4,6 +4,7 @@ import com.ppp.JavaClassHelper;
 import com.ppp.Printer;
 import com.ppp.annotation.*;
 import com.ppp.utils.Reflections;
+import com.ppp.utils.maker.AnnotationUtils;
 import com.ppp.utils.maker.ClassUtils;
 import com.ppp.utils.maker.CryptoUtils;
 
@@ -36,7 +37,8 @@ public class RceEchoScheduler {
             // 获取 RceEcho Builder
             if (builder.value().equalsIgnoreCase(Builder.RceEcho) && middlewareAnnotation.value().equalsIgnoreCase(middleware)) {
                 rceEchoClass = clazz;
-                Printer.blueInfo("RceEcho builder Class: " + clazz.getName() + ", Annotation Value: " + builder.value());
+                Printer.log("RceEcho builder Class: " + clazz.getName() + ", Annotation Value: " + builder.value());
+                break;
             }
         }
 
@@ -57,6 +59,7 @@ public class RceEchoScheduler {
             if (middlewareAnnotation.value().equalsIgnoreCase(middleware)) {
                 recEchoJavaClass = clazz;
                 Printer.blueInfo("RceEcho Class: " + clazz.getName() + ", Annotation Value: " + middlewareAnnotation.value());
+                break;
             }
         }
 

@@ -14,6 +14,7 @@ public @interface MemShell {
     String Listener = "Listener";
     String Servlet = "Servlet";
     String Executor = "Executor";
+    String Controller = "Controller";
 
     String[] value() default {};
 

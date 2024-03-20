@@ -293,7 +293,7 @@ public class TemplatesImpl {
     }
 
     public static byte[] createRandomNameClass() throws Exception{
-        Printer.blueInfo("_bytecodes[1] make");
+//        Printer.yellowInfo("_bytecodes[1] make");
         ClassPool classPool = ClassPool.getDefault();
         CtClass ctClass = classPool.makeClass("Whoopsunix");
         ctClass.addInterface(classPool.get("java.io.Serializable"));
@@ -301,7 +301,7 @@ public class TemplatesImpl {
 
         JavaClassHelper javaClassHelper = new JavaClassHelper();
         javaClassHelper.setRandomJavaClassName(true);
-        return JavaClassModifier.ctClassBuilder(ctClass, javaClassHelper);
+        return JavaClassModifier.ctClassBuilder(ctClass, javaClassHelper, new Object());
     }
 
     public static void main(String[] args) {

@@ -14,6 +14,7 @@ public @interface Middleware {
     // 中间件
     String Tomcat = "Tomcat";
     String Jetty = "Jetty";
+    String Spring = "Spring";
 
     String value();
 

