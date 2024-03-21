@@ -33,29 +33,21 @@ public class TomcatExecutorThreadLoader {
         try {
             // 获取
             Object nioEndpoint = getTargetObject("org.apache.tomcat.util.net.NioEndpoint");
-
-            if (!isInject(nioEndpoint)) {
-                inject(nioEndpoint);
-            }
+            inject(nioEndpoint);
 
         } catch (Throwable e) {
 
         }
     }
 
-    public static boolean isInject(Object nioEndpoint) throws Exception{
+    public static void inject(Object nioEndpoint) throws Exception {
         Object threadPoolExecutor = getFieldValue(nioEndpoint, "executor");
         if (threadPoolExecutor instanceof Proxy) {
             Object h = getFieldValue(threadPoolExecutor, "h");
             if (h.getClass().getName().equalsIgnoreCase(CLASSNAME)) {
-                return true;
+                return;
             }
         }
-
-        return false;
-    }
-    public static void inject(Object nioEndpoint) throws Exception {
-        Object threadPoolExecutor = getFieldValue(nioEndpoint, "executor");
 
         Object var1 = invokeMethod(threadPoolExecutor.getClass(), threadPoolExecutor, "getCorePoolSize", new Class[]{}, new Object[]{});
         Object var2 = invokeMethod(threadPoolExecutor.getClass(), threadPoolExecutor, "getMaximumPoolSize", new Class[]{}, new Object[]{});
