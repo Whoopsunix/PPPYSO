@@ -21,61 +21,39 @@ import java.util.jar.JarFile;
  * @author Whoopsunix
  */
 public class JavaClassModifier {
-
-    /**
-     * 修改 JavaClass 信息，继承 AbstractTranslet 判断
-     *
-     * @param ctClass
-     * @param javaClassHelper
-     * @throws Exception
-     */
-    public static byte[] ctClassBuilderExt(CtClass ctClass, JavaClassHelper javaClassHelper) throws Exception {
-        // 继承 AbstractTranslet
-        extendsAbstractTranslet(ctClass, javaClassHelper);
-
-        // JavaClass 信息修改
-        byte[] classBytes = ctClassBuilder(ctClass, javaClassHelper, null);
-
-        return classBytes;
-    }
-
-    /**
-     * 修改 JavaClass 信息，通用
-     *
-     * @param ctClass
-     * @param javaClassHelper
-     * @throws Exception
-     */
-    public static byte[] ctClassBuilder(CtClass ctClass, JavaClassHelper javaClassHelper, Object unChangeFlag) throws Exception {
+    public static void ctClassBuilderNew(Class localCls, CtClass ctClass, JavaClassHelper javaClassHelper) throws Exception {
         ctClass.rebuildClassFile();
+        // 继承 AbstractTranslet
+        if (javaClassHelper.isExtendsAbstractTranslet()) {
+            ClassPool pool = ClassPool.getDefault();
+            pool.insertClassPath(new ClassClassPath(AbstractTranslet.class));
+            CtClass superCtClass = pool.get(AbstractTranslet.class.getName());
+            ctClass.setSuperclass(superCtClass);
+            Printer.yellowInfo("extends AbstractTranslet");
+        }
+
         // 清除所有注解
         JavaClassUtils.clearAllAnnotations(ctClass);
 
-        if (javaClassHelper.getCLASSNAME() != null && unChangeFlag == null) {
-            // 用于需要类名来生成的内存马
-            ctClass.setName(javaClassHelper.getCLASSNAME());
-            Printer.blueInfo("JavaClass Name (Also MS ClassName): " + javaClassHelper.getCLASSNAME());
-        } else if (javaClassHelper.isRandomJavaClassName()) {
-            // 随机类名
-//            String javaClassName = randomJavaClassName(javaClassHelper);
+        // 随机类名
+        if (javaClassHelper.getCLASSNAME() == null && javaClassHelper.isRandomJavaClassName()) {
+//            String randomJavaClassName = randomJavaClassName(javaClassHelper);
 //            // 修改类名
-//            ctClass.setName(javaClassName);
-        }
-        if (unChangeFlag == null)
-            Printer.blueInfo("JavaClass Name: " + ctClass.getName());
-
-
-        // 目前唯一用处 用于本地文件加载时必要的类名
-        if (javaClassHelper.getJavaClassName() == null) {
-            // 保证该字段不为空 直接构建的 CtClass 也是有类名的 所以不存在报错
-            javaClassHelper.setJavaClassName(ctClass.getName());
+//            ctClass.setName(randomJavaClassName);
         }
 
-//        // 移除类文件部分属性
+        // 根据随机类名赋予字段值
+        if (localCls != null)
+            fieldChange(localCls, ctClass, javaClassHelper);
+
+        if (javaClassHelper.getCLASSNAME() == null)
+            javaClassHelper.setCLASSNAME(ctClass.getName());
+
+        // 移除类文件属性
         ClassFile classFile = ctClass.getClassFile();
-//        // 源文件信息
+        // 源文件信息
         classFile.removeAttribute(SourceFileAttribute.tag);
-//        // 移除行号信息
+        // 移除行号信息
         classFile.removeAttribute(LineNumberAttribute.tag);
         classFile.removeAttribute(LocalVariableAttribute.tag);
         classFile.removeAttribute(LocalVariableAttribute.typeTag);
@@ -83,8 +61,12 @@ public class JavaClassModifier {
         classFile.removeAttribute(SignatureAttribute.tag);
         classFile.removeAttribute(StackMapTable.tag);
 
-        byte[] classBytes = ctClass.toBytecode();
 
+        Printer.blueInfo("JavaClass Name: " + ctClass.getName());
+    }
+
+    public static byte[] toBytes(CtClass ctClass) throws Exception {
+        byte[] classBytes = ctClass.toBytecode();
 
         // jdk5
 //        ctClass.getClassFile().setVersionToJava5();
@@ -97,28 +79,13 @@ public class JavaClassModifier {
 //        ctClass.getClassFile().setMajorVersion(50);
         classBytes[7] = 50;
 
-        if (unChangeFlag == null)
-            Printer.blueInfo("JavaClass: " + CryptoUtils.base64encoder(classBytes));
-        ctClass.writeFile("/tmp");
+        Printer.blueInfo("JavaClass: " + CryptoUtils.base64encoder(classBytes));
+
         return classBytes;
     }
 
-    /**
-     * 是否继承 AbstractTranslet
-     *
-     * @param ctClass
-     * @param javaClassHelper
-     * @throws Exception
-     */
-    public static void extendsAbstractTranslet(CtClass ctClass, JavaClassHelper javaClassHelper) throws Exception {
-        if (!javaClassHelper.isExtendsAbstractTranslet()) {
-            return;
-        }
-        ClassPool pool = ClassPool.getDefault();
-        pool.insertClassPath(new ClassClassPath(AbstractTranslet.class));
-        CtClass superCtClass = pool.get(AbstractTranslet.class.getName());
-        ctClass.setSuperclass(superCtClass);
-        Printer.yellowInfo("extends AbstractTranslet");
+    public static void saveCtClass(CtClass ctClass, JavaClassHelper javaClassHelper) throws Exception {
+        ctClass.writeFile("/tmp");
     }
 
     /**
@@ -136,7 +103,9 @@ public class JavaClassModifier {
 
         // 内存马类名
         if (AnnotationUtils.containsValue(cls, JavaClassModifiable.class, JavaClassModifiable.CLASSNAME)) {
-            JavaClassUtils.fieldChangeIfExist(ctClass, JavaClassModifiable.CLASSNAME, String.format("private static String %s = \"%s\";", JavaClassModifiable.CLASSNAME, javaClassHelper.getCLASSNAME()));
+            String classname = javaClassHelper.getCLASSNAME();
+            Printer.yellowInfo(String.format("Class Name: %s", classname));
+            JavaClassUtils.fieldChangeIfExist(ctClass, JavaClassModifiable.CLASSNAME, String.format("private static String %s = \"%s\";", JavaClassModifiable.CLASSNAME, classname));
         }
 
         // 参数

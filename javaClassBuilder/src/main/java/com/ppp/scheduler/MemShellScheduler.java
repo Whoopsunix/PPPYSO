@@ -97,7 +97,7 @@ public class MemShellScheduler {
                             && memShellFunctionAnnotation.value().equalsIgnoreCase(memShellFunction)
             ) {
                 msMethod = method;
-                Printer.log("MS builder Method: " + method.getName() + ", Annotation Value: " + memShellAnnotation);
+                Printer.log("MS builder Method: " + method.getName() + ", Annotation Value: " + memShellAnnotation.value());
                 break;
             }
         }
@@ -115,7 +115,7 @@ public class MemShellScheduler {
                             && memShellAnnotation.value().equalsIgnoreCase(memShell)
             ) {
                 loaderMethod = method;
-                Printer.log("Loader builder Method: " + method.getName() + ", Annotation Value: " + memShellAnnotation);
+                Printer.log("Loader builder Method: " + method.getName() + ", Annotation Value: " + memShellAnnotation.value());
                 break;
             }
         }

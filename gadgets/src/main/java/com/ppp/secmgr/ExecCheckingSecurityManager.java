@@ -1,13 +1,11 @@
 package com.ppp.secmgr;
 
-import java.beans.PropertyVetoException;
 import java.security.Permission;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.Callable;
 
-// TODO per-thread secmgr
 public class ExecCheckingSecurityManager extends SecurityManager {
     public ExecCheckingSecurityManager() {
         this(true);

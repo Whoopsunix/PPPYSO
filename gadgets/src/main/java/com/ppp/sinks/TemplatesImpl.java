@@ -49,12 +49,10 @@ public class TemplatesImpl {
 
         // 设置 serialVersionUID
         JavaClassUtils.fieldChangeIfExist(ctClass, "serialVersionUID", "private static final long serialVersionUID = 8207363842866235160L;");
-//        ctClass.defrost();
-//        ctClass.addField(CtField.make("private static final long SerialVersionUID = 8207363842866235160L;", ctClass));
 
         // CtClass 增强
-        byte[] bytes = JavaClassModifier.ctClassBuilderExt(ctClass, sinksHelper.getJavaClassHelper());
-
+        JavaClassModifier.ctClassBuilderNew(null, ctClass, sinksHelper.getJavaClassHelper());
+        byte[] bytes = JavaClassModifier.toBytes(ctClass);
         return createTemplatesImpl(bytes);
     }
 
@@ -89,8 +87,8 @@ public class TemplatesImpl {
 
 
         // CtClass 增强
-        byte[] bytes = JavaClassModifier.ctClassBuilderExt(ctClass, sinksHelper.getJavaClassHelper());
-
+        JavaClassModifier.ctClassBuilderNew(null, ctClass, sinksHelper.getJavaClassHelper());
+        byte[] bytes = JavaClassModifier.toBytes(ctClass);
         return createTemplatesImpl(bytes);
     }
 
@@ -121,8 +119,8 @@ public class TemplatesImpl {
         ctClass.addConstructor(ctConstructor);
 
         // CtClass 增强
-        byte[] bytes = JavaClassModifier.ctClassBuilderExt(ctClass, sinksHelper.getJavaClassHelper());
-
+        JavaClassModifier.ctClassBuilderNew(null, ctClass, sinksHelper.getJavaClassHelper());
+        byte[] bytes = JavaClassModifier.toBytes(ctClass);
         return createTemplatesImpl(bytes);
     }
 
@@ -179,8 +177,8 @@ public class TemplatesImpl {
 
 
         // CtClass 增强
-        byte[] bytes = JavaClassModifier.ctClassBuilderExt(ctClass, sinksHelper.getJavaClassHelper());
-
+        JavaClassModifier.ctClassBuilderNew(null, ctClass, sinksHelper.getJavaClassHelper());
+        byte[] bytes = JavaClassModifier.toBytes(ctClass);
         return createTemplatesImpl(bytes);
     }
 
@@ -231,8 +229,8 @@ public class TemplatesImpl {
         ctClass.addConstructor(ctConstructor);
 
         // CtClass 增强
-        byte[] bytes = JavaClassModifier.ctClassBuilderExt(ctClass, sinksHelper.getJavaClassHelper());
-
+        JavaClassModifier.ctClassBuilderNew(null, ctClass, sinksHelper.getJavaClassHelper());
+        byte[] bytes = JavaClassModifier.toBytes(ctClass);
         return createTemplatesImpl(bytes);
     }
 
@@ -301,7 +299,8 @@ public class TemplatesImpl {
 
         JavaClassHelper javaClassHelper = new JavaClassHelper();
         javaClassHelper.setRandomJavaClassName(true);
-        return JavaClassModifier.ctClassBuilder(ctClass, javaClassHelper, new Object());
+        JavaClassModifier.ctClassBuilderNew(null, ctClass, javaClassHelper);
+        return JavaClassModifier.toBytes(ctClass);
     }
 
     public static void main(String[] args) {

@@ -1,7 +1,5 @@
 package com.ppp;
 
-import com.ppp.utils.RanDomUtils;
-
 /**
  * @author Whoopsunix
  */
@@ -9,7 +7,7 @@ public class JavaClassHelper {
     /**
      * 继承 AbstractTranslet
      */
-    private boolean extendsAbstractTranslet = false;
+    private boolean extendsAbstractTranslet;
     /**
      * 本地 JavaClass 文件
      */
@@ -43,20 +41,27 @@ public class JavaClassHelper {
     /**
      * JavaClass 信息
      */
+    //
+    // 用于内存马时 代表真正注入请求上下文的类名，loader 不可控
+    private String CLASSNAME;
+    // 是否为注入器
+    private boolean isLoader;
     // javaClassName 是最外层的类名
     private String javaClassName;
-    private boolean randomJavaClassName = true;
+    private boolean randomJavaClassName;
     private String javaClassPackageHost;
 
-    // 内存马全限定类名
-    // 这个目前的场景是 需要指定注入类名的时候，所以会将随机类名、自定义步骤提前
-    private String CLASSNAME;
+
 
     public JavaClassHelper() {
-        this.NAME = RanDomUtils.generateRandomOnlyString(4, 7);
-        this.HEADER = RanDomUtils.generateRandomOnlyString(4, 7);
-        this.PARAM = RanDomUtils.generateRandomOnlyString(4, 7);
-        this.PATH = "/" + RanDomUtils.generateRandomOnlyString(4, 7);
+        this.randomJavaClassName = true;
+        this.extendsAbstractTranslet = false;
+        this.isLoader = false;
+
+//        this.NAME = RanDomUtils.generateRandomOnlyString(4, 7);
+//        this.HEADER = RanDomUtils.generateRandomOnlyString(4, 7);
+//        this.PARAM = RanDomUtils.generateRandomOnlyString(4, 7);
+//        this.PATH = "/" + RanDomUtils.generateRandomOnlyString(4, 7);
     }
 
     /**
@@ -158,6 +163,22 @@ public class JavaClassHelper {
         this.pass = pass;
     }
 
+    public String getCLASSNAME() {
+        return CLASSNAME;
+    }
+
+    public void setCLASSNAME(String CLASSNAME) {
+        this.CLASSNAME = CLASSNAME;
+    }
+
+    public boolean isLoader() {
+        return isLoader;
+    }
+
+    public void setLoader(boolean loader) {
+        isLoader = loader;
+    }
+
     public String getJavaClassName() {
         return javaClassName;
     }
@@ -180,13 +201,5 @@ public class JavaClassHelper {
 
     public void setJavaClassPackageHost(String javaClassPackageHost) {
         this.javaClassPackageHost = javaClassPackageHost;
-    }
-
-    public String getCLASSNAME() {
-        return CLASSNAME;
-    }
-
-    public void setCLASSNAME(String CLASSNAME) {
-        this.CLASSNAME = CLASSNAME;
     }
 }

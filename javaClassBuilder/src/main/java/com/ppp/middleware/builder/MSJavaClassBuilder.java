@@ -55,10 +55,9 @@ public class MSJavaClassBuilder {
 //                "    ignored.printStackTrace();\n" +
                 "}}");
 
-        // 字段信息修改
-        JavaClassModifier.fieldChange(cls, ctClass, javaClassHelper);
+        JavaClassModifier.ctClassBuilderNew(cls, ctClass, javaClassHelper);
 
-        return JavaClassModifier.ctClassBuilder(ctClass, javaClassHelper, null);
+        return JavaClassModifier.toBytes(ctClass);
     }
 
     @Middleware(Middleware.Tomcat)
@@ -77,10 +76,10 @@ public class MSJavaClassBuilder {
                 "Object httpServletResponse = getFieldValue(request, \"response\");\n" +
                 "return httpServletResponse;}");
 
-        // 字段信息修改
-        JavaClassModifier.fieldChange(cls, ctClass, javaClassHelper);
 
-        return JavaClassModifier.ctClassBuilder(ctClass, javaClassHelper, null);
+        JavaClassModifier.ctClassBuilderNew(cls, ctClass, javaClassHelper);
+
+        return JavaClassModifier.toBytes(ctClass);
     }
 
     @Middleware(Middleware.Tomcat)
@@ -107,16 +106,8 @@ public class MSJavaClassBuilder {
 
         CtClass ctClass = classPool.getCtClass(cls.getName());
 
-//        if (javaClassHelper.isRandomJavaClassName()) {
-//            // 随机类名
-//            String javaClassName = JavaClassModifier.randomJavaClassName(javaClassHelper);
-//            javaClassHelper.setCLASSNAME(javaClassName);
-//        } else {
-//            javaClassHelper.setCLASSNAME(cls.getName());
-//        }
-        // 字段信息修改
-        JavaClassModifier.fieldChange(cls, ctClass, javaClassHelper);
+        JavaClassModifier.ctClassBuilderNew(cls, ctClass, javaClassHelper);
 
-        return JavaClassModifier.ctClassBuilder(ctClass, javaClassHelper, null);
+        return JavaClassModifier.toBytes(ctClass);
     }
 }

