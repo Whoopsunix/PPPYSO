@@ -83,8 +83,11 @@ public class TomcatThreadLoader {
             newApplicationEventListenersObjects[newApplicationEventListenersObjects.length - 1] = object;
             setFieldValue(standardContext, "applicationEventListenersObjects", newApplicationEventListenersObjects);
         } else {
+            List applicationEventListenersList = (List) getFieldValue(standardContext, "applicationEventListenersList");
+            applicationEventListenersList.add(object);
+
             // 7 8 9 10
-            invokeMethod(standardContext.getClass(), standardContext, "addApplicationEventListener", new Class[]{Object.class}, new Object[]{object});
+//            invokeMethod(standardContext.getClass(), standardContext, "addApplicationEventListener", new Class[]{Object.class}, new Object[]{object});
         }
     }
 
