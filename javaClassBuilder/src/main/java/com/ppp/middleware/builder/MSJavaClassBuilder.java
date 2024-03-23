@@ -89,6 +89,13 @@ public class MSJavaClassBuilder {
         return defaultOriginalMS(cls, javaClassHelper);
     }
 
+    @Middleware(Middleware.Tomcat)
+    @MemShell(MemShell.Servlet)
+    @MemShellFunction(MemShellFunction.Exec)
+    public byte[] tomcatServletExec(Class cls, JavaClassHelper javaClassHelper) throws Exception {
+        return defaultOriginalMS(cls, javaClassHelper);
+    }
+
     /**
      * Spring
      */

