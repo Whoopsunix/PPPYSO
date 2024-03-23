@@ -94,8 +94,7 @@ public class MSLoaderBuilder {
     @MemShell(MemShell.Servlet)
     public byte[] tomcat_servlet(Class cls, String MSGzipBase64, JavaClassHelper javaClassHelper) throws Exception {
         String name = javaClassHelper.getNAME();
-        String simpleName = name.substring(name.lastIndexOf(".") + 1);
-        javaClassHelper.setNAME(simpleName + "Servlet");
+        javaClassHelper.setNAME(name + "Servlet");
 
         return defaultLoader(cls, MSGzipBase64, javaClassHelper);
     }
