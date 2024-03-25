@@ -13,6 +13,7 @@ import java.lang.annotation.Target;
 public @interface MemShell {
     String Listener = "Listener";
     String Servlet = "Servlet";
+    String Filter = "Filter";
     String Executor = "Executor";
     String Controller = "Controller";
 

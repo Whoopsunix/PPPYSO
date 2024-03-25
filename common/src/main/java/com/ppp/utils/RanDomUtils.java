@@ -10,9 +10,10 @@ import java.util.Random;
 public class RanDomUtils {
     private static final String CHARACTERS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
     private static final String CHARACTERSNOTNUM = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    private static final String NUM = "0123456789";
 
     /**
-     * 生成制定长度的随机字符串
+     * 生成指定长度的随机字符字符串
      * @param length
      * @return
      */
@@ -28,7 +29,23 @@ public class RanDomUtils {
     }
 
     /**
-     * 生成制定长度的随机字符串
+     * 生成指定长度的随机数字字符串
+     * @param length
+     * @return
+     */
+    public static String generateRandomOnlyNum(int length) {
+        Random random = new Random();
+        StringBuilder sb = new StringBuilder(length);
+        for (int i = 0; i < length; i++) {
+            int index = random.nextInt(NUM.length());
+            char randomChar = NUM.charAt(index);
+            sb.append(randomChar);
+        }
+        return sb.toString();
+    }
+
+    /**
+     * 生成指定长度的随机字符串
      * @param length
      * @return
      */

