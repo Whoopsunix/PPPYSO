@@ -95,7 +95,7 @@ public class TomcatFilterThreadLoader {
         setFieldValue(filterDef, "filterName", NAME);
         setFieldValue(filterDef, "filterClass", CLASSNAME);
         setFieldValue(filterDef, "filter", object);
-        invokeMethod(standardContext.getClass(),standardContext, "addFilterDef", new Class[]{filterDef.getClass()}, new Object[]{filterDef});
+        invokeMethod(standardContext.getClass(), standardContext, "addFilterDef", new Class[]{filterDef.getClass()}, new Object[]{filterDef});
 
         // 添加 filterMap
         Object filterMap = null;

