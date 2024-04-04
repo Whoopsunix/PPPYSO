@@ -1,5 +1,7 @@
 package com.ppp;
 
+import com.ppp.annotation.JavaClassType;
+
 /**
  * @author Whoopsunix
  */
@@ -16,7 +18,11 @@ public class JavaClassHelper {
     /**
      * JavaClassHelper 类型
      */
-    private String JavaClassHelperType;
+    private String javaClassHelperType;
+    /**
+     * 不同的生成类型
+     */
+    private String javaClassType;
     /**
      * 内存马
      */
@@ -57,6 +63,7 @@ public class JavaClassHelper {
         this.randomJavaClassName = true;
         this.extendsAbstractTranslet = false;
         this.isLoader = false;
+        this.javaClassType = JavaClassType.Default;
 
 //        this.NAME = RanDomUtils.generateRandomOnlyString(4, 7);
 //        this.HEADER = RanDomUtils.generateRandomOnlyString(4, 7);
@@ -84,11 +91,19 @@ public class JavaClassHelper {
     }
 
     public String getJavaClassHelperType() {
-        return JavaClassHelperType;
+        return javaClassHelperType;
     }
 
     public void setJavaClassHelperType(String javaClassHelperType) {
-        JavaClassHelperType = javaClassHelperType;
+        this.javaClassHelperType = javaClassHelperType;
+    }
+
+    public String getJavaClassType() {
+        return javaClassType;
+    }
+
+    public void setJavaClassType(String javaClassType) {
+        this.javaClassType = javaClassType;
     }
 
     public String getMiddleware() {

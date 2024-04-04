@@ -15,6 +15,7 @@ public @interface Middleware {
     String Tomcat = "Tomcat";
     String Jetty = "Jetty";
     String Spring = "Spring";
+    String Undertow = "Undertow";
 
     String value();
 

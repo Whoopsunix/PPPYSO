@@ -6,12 +6,13 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * 命令执行回显类型
+ * 生成类型
  */
 @Target({ElementType.METHOD, ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface RceEcho {
-    String TomcatEcho = "TomcatEcho";
+public @interface JavaClassType {
+    String Default = "Default";
+    String AutoFind = "AutoFind";
 
     String value();
 }

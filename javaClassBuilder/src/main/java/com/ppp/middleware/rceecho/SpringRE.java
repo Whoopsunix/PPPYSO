@@ -1,6 +1,7 @@
 package com.ppp.middleware.rceecho;
 
 import com.ppp.annotation.JavaClassModifiable;
+import com.ppp.annotation.JavaClassType;
 import com.ppp.annotation.Middleware;
 
 import java.io.InputStream;
@@ -14,6 +15,7 @@ import java.lang.reflect.Method;
  * [2.2.x, 2.7.x]
  */
 @Middleware(Middleware.Spring)
+@JavaClassType(JavaClassType.Default)
 @JavaClassModifiable({JavaClassModifiable.HEADER, JavaClassModifiable.PARAM})
 public class SpringRE {
     public static String HEADER;

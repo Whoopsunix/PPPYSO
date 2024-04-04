@@ -4,6 +4,7 @@ import com.ppp.JavaClassHelper;
 import com.ppp.Printer;
 import com.ppp.annotation.Builder;
 import com.ppp.annotation.JavaClassHelperType;
+import com.ppp.annotation.JavaClassType;
 import com.ppp.annotation.Middleware;
 import com.ppp.utils.Reflections;
 import com.ppp.utils.maker.ClassUtils;
@@ -21,6 +22,7 @@ public class RceEchoScheduler {
 
     public static byte[] build(JavaClassHelper javaClassHelper) throws Exception {
         String middleware = javaClassHelper.getMiddleware();
+        String javaClassType = javaClassHelper.getJavaClassType();
 
         /**
          * 获取 Builder
@@ -57,9 +59,12 @@ public class RceEchoScheduler {
             Middleware middlewareAnnotation = clazz.getAnnotation(Middleware.class);
             if (middlewareAnnotation == null) continue;
 
-            if (middlewareAnnotation.value().equalsIgnoreCase(middleware)) {
+            JavaClassType javaClassTypeAnnotation = clazz.getAnnotation(JavaClassType.class);
+            if (javaClassTypeAnnotation == null) continue;
+
+            if (middlewareAnnotation.value().equalsIgnoreCase(middleware) && javaClassTypeAnnotation.value().equalsIgnoreCase(javaClassType)) {
                 recEchoJavaClass = clazz;
-                Printer.blueInfo("RceEcho Class: " + clazz.getName() + ", Annotation Value: " + middlewareAnnotation.value());
+                Printer.blueInfo("RceEcho Class: " + clazz.getName() + " , Annotation Value: " + middlewareAnnotation.value() + " , JavaClassType: " + javaClassTypeAnnotation.value());
                 break;
             }
         }
