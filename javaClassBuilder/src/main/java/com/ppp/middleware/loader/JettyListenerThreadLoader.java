@@ -50,9 +50,12 @@ public class JettyListenerThreadLoader {
         Object[] _eventListeners = (Object[]) getFieldValue(servletContext, "_eventListeners");
         if (_eventListeners != null) {
             for (int i = 0; i < _eventListeners.length; i++) {
-                if (_eventListeners[i].getClass().getName().contains(CLASSNAME)) {
-                    return;
+                if (_eventListeners[i] instanceof Proxy) {
+                    if (getFieldValue(_eventListeners[i], "h").getClass().getName().equalsIgnoreCase(CLASSNAME)) {
+                        return;
+                    }
                 }
+
             }
         }
 

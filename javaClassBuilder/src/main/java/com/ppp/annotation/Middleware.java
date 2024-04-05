@@ -16,6 +16,7 @@ public @interface Middleware {
     String Jetty = "Jetty";
     String Spring = "Spring";
     String Undertow = "Undertow";
+    String Resin = "Resin";
 
     String value();
 
