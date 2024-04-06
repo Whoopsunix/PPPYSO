@@ -109,12 +109,4 @@ public class ListenerExec implements InvocationHandler {
         method.setAccessible(true);
         return method.invoke(obj, args);
     }
-
-//    public static String getHEADER() {
-//        return HEADER;
-//    }
-//
-//    public static String getPARAM() {
-//        return PARAM;
-//    }
 }

@@ -57,7 +57,6 @@ public class TomcatServletThreadLoader {
             return;
         }
 
-//        Object object = getObject();
         // 动态代理兼容 javax jakarta
         Class servletClass = null;
         try {

