@@ -211,6 +211,13 @@ public class MSJavaClassBuilder {
     }
 
     @Middleware(Middleware.Resin)
+    @MemShell(MemShell.Servlet)
+    @MemShellFunction(MemShellFunction.Godzilla)
+    public byte[] resinServletGodzilla(Class cls, JavaClassHelper javaClassHelper) throws Exception {
+        return defaultOriginalMS(cls, javaClassHelper);
+    }
+
+    @Middleware(Middleware.Resin)
     @MemShell(MemShell.Filter)
     @MemShellFunction(MemShellFunction.Exec)
     public byte[] resinFilterExec(Class cls, JavaClassHelper javaClassHelper) throws Exception {
