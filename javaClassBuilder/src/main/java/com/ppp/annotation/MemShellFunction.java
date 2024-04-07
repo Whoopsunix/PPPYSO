@@ -13,6 +13,7 @@ import java.lang.annotation.Target;
 public @interface MemShellFunction {
     String Exec = "Exec";
     String Godzilla = "Godzilla";
+    String Behinder = "Behinder";
 
     String value();
 

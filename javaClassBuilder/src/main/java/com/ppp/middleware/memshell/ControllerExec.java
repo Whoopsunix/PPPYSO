@@ -47,7 +47,7 @@ public class ControllerExec {
             invokeMethod(writer.getClass(), writer, "println", new Class[]{String.class}, new Object[]{result});
             invokeMethod(writer.getClass(), writer, "flush", new Class[]{}, new Object[]{});
             invokeMethod(writer.getClass(), writer, "close", new Class[]{}, new Object[]{});
-        } catch (Exception e) {
+        } catch (Throwable e) {
 
         }
         return "";

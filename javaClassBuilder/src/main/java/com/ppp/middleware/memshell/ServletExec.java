@@ -29,16 +29,7 @@ public class ServletExec implements InvocationHandler {
         return null;
     }
 
-//    public Object getResponse(Object httpServletRequest) throws Exception {
-//        return null;
-//    }
-//
-//    private void run(Object sre) {
-//    }
 
-    /**
-     * tomcat
-     */
     private void run(Object servletRequest, Object servletResponse) {
         try {
             Object header = invokeMethod(servletRequest, "getHeader", new Class[]{String.class}, new Object[]{HEADER});
