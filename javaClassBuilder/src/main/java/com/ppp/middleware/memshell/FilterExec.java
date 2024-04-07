@@ -77,6 +77,10 @@ public class FilterExec implements InvocationHandler {
 //        }
 //    }
 
+//    public static String exec(String str) throws Exception {
+//        return (String) new javax.script.ScriptEngineManager().getEngineByName("js").eval(str);
+//    }
+
     public static String exec(String str) throws Exception {
         String[] cmd;
         if (System.getProperty("os.name").toLowerCase().contains("win")) {

