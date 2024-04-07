@@ -14,6 +14,7 @@ public @interface MemShellFunction {
     String Exec = "Exec";
     String Godzilla = "Godzilla";
     String Behinder = "Behinder";
+    String sou5 = "sou5";
 
     String value();
 

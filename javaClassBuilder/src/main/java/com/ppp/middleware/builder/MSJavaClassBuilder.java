@@ -99,6 +99,13 @@ public class MSJavaClassBuilder {
     }
 
     @Middleware(Middleware.Tomcat)
+    @MemShell(MemShell.Filter)
+    @MemShellFunction(MemShellFunction.sou5)
+    public byte[] tomcatFilterSou5(Class cls, JavaClassHelper javaClassHelper) throws Exception {
+        return defaultOriginalMS(cls, javaClassHelper);
+    }
+
+    @Middleware(Middleware.Tomcat)
     @MemShell(MemShell.Executor)
     @MemShellFunction(MemShellFunction.Exec)
     public byte[] tomcatExecutorExec(Class cls, JavaClassHelper javaClassHelper) throws Exception {
@@ -264,6 +271,13 @@ public class MSJavaClassBuilder {
     @MemShellFunction(MemShellFunction.Behinder)
     public byte[] resinFilterBehinder(Class cls, JavaClassHelper javaClassHelper) throws Exception {
         behinderMS(javaClassHelper);
+        return defaultOriginalMS(cls, javaClassHelper);
+    }
+
+    @Middleware(Middleware.Resin)
+    @MemShell(MemShell.Filter)
+    @MemShellFunction(MemShellFunction.sou5)
+    public byte[] resinFilterSuo5(Class cls, JavaClassHelper javaClassHelper) throws Exception {
         return defaultOriginalMS(cls, javaClassHelper);
     }
 
