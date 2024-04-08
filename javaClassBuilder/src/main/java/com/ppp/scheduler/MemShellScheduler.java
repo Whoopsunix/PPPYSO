@@ -37,6 +37,7 @@ public class MemShellScheduler {
         String middleware = javaClassHelper.getMiddleware();
         String memShell = javaClassHelper.getMemShell();
         String memShellFunction = javaClassHelper.getMemShellFunction();
+        String javaClassType = javaClassHelper.getJavaClassType();
 
         // 用于打印信息
 
@@ -54,12 +55,12 @@ public class MemShellScheduler {
             // 获取 Loader Builder
             if (builder.value().equalsIgnoreCase(Builder.Loader)) {
                 loaderBuilderClass = clazz;
-                Printer.log("Loader builder Class: " + clazz.getName() + ", Annotation Value: " + builder.value());
+//                Printer.log("Loader builder Class: " + clazz.getName() + ", Annotation Value: " + builder.value());
             }
             // 获取 MemShell Builder
             if (builder.value().equalsIgnoreCase(Builder.MS)) {
                 msBuilderClass = clazz;
-                Printer.log("MemShell builder Class: " + clazz.getName() + ", Annotation Value: " + builder.value());
+//                Printer.log("MemShell builder Class: " + clazz.getName() + ", Annotation Value: " + builder.value());
             }
         }
 
@@ -97,7 +98,7 @@ public class MemShellScheduler {
                             && memShellFunctionAnnotation.value().equalsIgnoreCase(memShellFunction)
             ) {
                 msMethod = method;
-                Printer.log("MS builder Method: " + method.getName() + ", Annotation Value: " + memShellAnnotation.value());
+//                Printer.log("MS builder Method: " + method.getName() + ", Annotation Value: " + memShellAnnotation.value());
                 break;
             }
         }
@@ -115,7 +116,7 @@ public class MemShellScheduler {
                             && memShellAnnotation.value().equalsIgnoreCase(memShell)
             ) {
                 loaderMethod = method;
-                Printer.log("Loader builder Method: " + method.getName() + ", Annotation Value: " + memShellAnnotation.value());
+//                Printer.log("Loader builder Method: " + method.getName() + ", Annotation Value: " + memShellAnnotation.value());
                 break;
             }
         }
@@ -134,12 +135,16 @@ public class MemShellScheduler {
             MemShell memShellAnnotation = clazz.getAnnotation(MemShell.class);
             if (memShellAnnotation == null) continue;
 
+            JavaClassType javaClassTypeAnnotation = clazz.getAnnotation(JavaClassType.class);
+            if (javaClassTypeAnnotation == null) continue;
+
             if (
                     middlewareAnnotation.value().equalsIgnoreCase(middleware)
                             && memShellAnnotation.value().equalsIgnoreCase(memShell)
+                    && javaClassTypeAnnotation.value().equalsIgnoreCase(javaClassType)
             ) {
                 loaderClass = clazz;
-                Printer.blueInfo("Loader Class: " + clazz.getName() + ", Annotation Value: " + middlewareAnnotation.value());
+                Printer.blueInfo("Loader Class: " + clazz.getName() + ", Annotation Value: " + middlewareAnnotation.value() + " , JavaClassType: " + javaClassTypeAnnotation.value());
                 break;
             }
         }

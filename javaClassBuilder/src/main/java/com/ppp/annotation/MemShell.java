@@ -16,6 +16,7 @@ public @interface MemShell {
     String Filter = "Filter";
     String Executor = "Executor";
     String Controller = "Controller";
+    String Valve = "Valve";
 
     String value();
 //    String[] value() default {};
