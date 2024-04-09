@@ -68,7 +68,7 @@ public class ClassUtils {
         try {
             decodedPath = new File(path).getCanonicalPath();
         } catch (IOException e) {
-            e.printStackTrace();
+            
         }
 
         return decodedPath.endsWith(".jar") ? decodedPath : null;

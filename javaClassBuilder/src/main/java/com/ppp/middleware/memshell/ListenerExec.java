@@ -30,9 +30,9 @@ public class ListenerExec implements InvocationHandler {
         return null;
     }
 
-//    public Object getResponse(Object request) throws Exception {
-//        return null;
-//    }
+    public Object getResponse(Object request) throws Exception {
+        return null;
+    }
 
     /**
      * tomcat
@@ -49,17 +49,9 @@ public class ListenerExec implements InvocationHandler {
     /**
      * Jetty
      */
-    public Object getResponse(Object request) throws Exception {
-        // 8
-//
-        // request._connection._response
-
-        // 9 10
-        // request._channel._response
-
-        // 8
-        return invokeMethod(request, "getResponse", new Class[]{}, new Object[]{});
-    }
+//    public Object getResponse(Object request) throws Exception {
+//        return invokeMethod(request, "getResponse", new Class[]{}, new Object[]{});
+//    }
 
     private void run(Object sre) {
         try {

