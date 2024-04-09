@@ -43,11 +43,14 @@ public class JavaClassHelper {
     // Godzilla
     private String key = "3c6e0b8a9c15224a";
     public String pass = "pass";
+    // 内存马约束请求头
+    private String lockHeaderKey = "User-Agent";
+    private String lockHeaderValue = "Whoopsunix";
 
     /**
      * JavaClass 信息
      */
-    //
+
     // 用于内存马时 代表真正注入请求上下文的类名，loader 不可控
     private String CLASSNAME;
     // 是否为注入器
@@ -176,6 +179,22 @@ public class JavaClassHelper {
 
     public void setPass(String pass) {
         this.pass = pass;
+    }
+
+    public String getLockHeaderKey() {
+        return lockHeaderKey;
+    }
+
+    public void setLockHeaderKey(String lockHeaderKey) {
+        this.lockHeaderKey = lockHeaderKey;
+    }
+
+    public String getLockHeaderValue() {
+        return lockHeaderValue;
+    }
+
+    public void setLockHeaderValue(String lockHeaderValue) {
+        this.lockHeaderValue = lockHeaderValue;
     }
 
     public String getCLASSNAME() {

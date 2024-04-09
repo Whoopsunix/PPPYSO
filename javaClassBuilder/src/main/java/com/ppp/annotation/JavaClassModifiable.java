@@ -25,5 +25,7 @@ public @interface JavaClassModifiable {
     // Godzilla
     String key = "key";
     String pass = "pass";
+    String lockHeaderKey = "lockHeaderKey";
+    String lockHeaderValue = "lockHeaderValue";
     String[] value() default {};
 }

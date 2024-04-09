@@ -144,7 +144,7 @@ public class MemShellScheduler {
                     && javaClassTypeAnnotation.value().equalsIgnoreCase(javaClassType)
             ) {
                 loaderClass = clazz;
-                Printer.blueInfo("Loader Class: " + clazz.getName() + ", Annotation Value: " + middlewareAnnotation.value() + " , JavaClassType: " + javaClassTypeAnnotation.value());
+                Printer.log("Loader Class: " + clazz.getName() + ", Annotation Value: " + middlewareAnnotation.value() + " , JavaClassType: " + javaClassTypeAnnotation.value());
                 break;
             }
         }
@@ -162,7 +162,7 @@ public class MemShellScheduler {
                             && memShellFunctionAnnotation.value().equalsIgnoreCase(memShellFunction)
             ) {
                 msClass = clazz;
-                Printer.blueInfo("MemShell Class: " + clazz.getName() + ", Annotation Value: " + memShellAnnotation.value());
+                Printer.log("MemShell Class: " + clazz.getName() + ", Annotation Value: " + memShellAnnotation.value());
                 break;
             }
 
