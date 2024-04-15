@@ -22,11 +22,7 @@ public class MSJavaClassBuilder {
     @MemShell(MemShell.Listener)
     @MemShellFunction(MemShellFunction.Exec)
     public byte[] tomcatListenerExec(Class cls, JavaClassHelper javaClassHelper) throws Exception {
-        ClassPool classPool = ClassPool.getDefault();
-        classPool.insertClassPath(new ClassClassPath(cls));
-        classPool.importPackage("javax.servlet.http");
-
-        CtClass ctClass = classPool.getCtClass(cls.getName());
+        CtClass ctClass = initCtClass(cls);
 
         // response
         tomcatListenerResponseMaker(ctClass);
@@ -61,11 +57,7 @@ public class MSJavaClassBuilder {
     @MemShell(MemShell.Listener)
     @MemShellFunction(MemShellFunction.Godzilla)
     public byte[] tomcatListenerGodzilla(Class cls, JavaClassHelper javaClassHelper) throws Exception {
-        ClassPool classPool = ClassPool.getDefault();
-        classPool.insertClassPath(new ClassClassPath(cls));
-        classPool.importPackage("javax.servlet.http");
-
-        CtClass ctClass = classPool.getCtClass(cls.getName());
+        CtClass ctClass = initCtClass(cls);
 
         // response
         tomcatListenerResponseMaker(ctClass);
@@ -80,11 +72,7 @@ public class MSJavaClassBuilder {
     @MemShell(MemShell.Listener)
     @MemShellFunction(MemShellFunction.Behinder)
     public byte[] tomcatListenerBehinder(Class cls, JavaClassHelper javaClassHelper) throws Exception {
-        ClassPool classPool = ClassPool.getDefault();
-        classPool.insertClassPath(new ClassClassPath(cls));
-        classPool.importPackage("javax.servlet.http");
-
-        CtClass ctClass = classPool.getCtClass(cls.getName());
+        CtClass ctClass = initCtClass(cls);
 
         // response
         tomcatListenerResponseMaker(ctClass);
@@ -99,11 +87,7 @@ public class MSJavaClassBuilder {
     @MemShell(MemShell.Listener)
     @MemShellFunction(MemShellFunction.sou5)
     public byte[] tomcatListenerSou5(Class cls, JavaClassHelper javaClassHelper) throws Exception {
-        ClassPool classPool = ClassPool.getDefault();
-        classPool.insertClassPath(new ClassClassPath(cls));
-        classPool.importPackage("javax.servlet.http");
-
-        CtClass ctClass = classPool.getCtClass(cls.getName());
+        CtClass ctClass = initCtClass(cls);
 
         // response
         tomcatListenerResponseMaker(ctClass);
@@ -235,11 +219,7 @@ public class MSJavaClassBuilder {
     @MemShell(MemShell.Listener)
     @MemShellFunction(MemShellFunction.Exec)
     public byte[] jettyListenerExec(Class cls, JavaClassHelper javaClassHelper) throws Exception {
-        ClassPool classPool = ClassPool.getDefault();
-        classPool.insertClassPath(new ClassClassPath(cls));
-        classPool.importPackage("javax.servlet.http");
-
-        CtClass ctClass = classPool.getCtClass(cls.getName());
+        CtClass ctClass = initCtClass(cls);
 
         // response
         jettyListenerResponseMaker(ctClass);
@@ -254,11 +234,7 @@ public class MSJavaClassBuilder {
     @MemShell(MemShell.Listener)
     @MemShellFunction(MemShellFunction.Godzilla)
     public byte[] jettyListenerGodzilla(Class cls, JavaClassHelper javaClassHelper) throws Exception {
-        ClassPool classPool = ClassPool.getDefault();
-        classPool.insertClassPath(new ClassClassPath(cls));
-        classPool.importPackage("javax.servlet.http");
-
-        CtClass ctClass = classPool.getCtClass(cls.getName());
+        CtClass ctClass = initCtClass(cls);
 
         // response
         jettyListenerResponseMaker(ctClass);
@@ -272,11 +248,7 @@ public class MSJavaClassBuilder {
     @MemShell(MemShell.Listener)
     @MemShellFunction(MemShellFunction.Behinder)
     public byte[] jettyListenerBehinder(Class cls, JavaClassHelper javaClassHelper) throws Exception {
-        ClassPool classPool = ClassPool.getDefault();
-        classPool.insertClassPath(new ClassClassPath(cls));
-        classPool.importPackage("javax.servlet.http");
-
-        CtClass ctClass = classPool.getCtClass(cls.getName());
+        CtClass ctClass = initCtClass(cls);
 
         // response
         jettyListenerResponseMaker(ctClass);
@@ -291,11 +263,7 @@ public class MSJavaClassBuilder {
     @MemShell(MemShell.Listener)
     @MemShellFunction(MemShellFunction.sou5)
     public byte[] jettyListenerSuo5(Class cls, JavaClassHelper javaClassHelper) throws Exception {
-        ClassPool classPool = ClassPool.getDefault();
-        classPool.insertClassPath(new ClassClassPath(cls));
-        classPool.importPackage("javax.servlet.http");
-
-        CtClass ctClass = classPool.getCtClass(cls.getName());
+        CtClass ctClass = initCtClass(cls);
 
         // response
         jettyListenerResponseMaker(ctClass);
@@ -320,11 +288,7 @@ public class MSJavaClassBuilder {
     @MemShell(MemShell.Listener)
     @MemShellFunction(MemShellFunction.Exec)
     public byte[] resinListenerExec(Class cls, JavaClassHelper javaClassHelper) throws Exception {
-        ClassPool classPool = ClassPool.getDefault();
-        classPool.insertClassPath(new ClassClassPath(cls));
-        classPool.importPackage("javax.servlet.http");
-
-        CtClass ctClass = classPool.getCtClass(cls.getName());
+        CtClass ctClass = initCtClass(cls);
 
         // response
         resinListenerResponseMaker(ctClass);
@@ -338,11 +302,7 @@ public class MSJavaClassBuilder {
     @MemShell(MemShell.Listener)
     @MemShellFunction(MemShellFunction.Godzilla)
     public byte[] resinListenerGodzilla(Class cls, JavaClassHelper javaClassHelper) throws Exception {
-        ClassPool classPool = ClassPool.getDefault();
-        classPool.insertClassPath(new ClassClassPath(cls));
-        classPool.importPackage("javax.servlet.http");
-
-        CtClass ctClass = classPool.getCtClass(cls.getName());
+        CtClass ctClass = initCtClass(cls);
 
         // response
         resinListenerResponseMaker(ctClass);
@@ -356,11 +316,7 @@ public class MSJavaClassBuilder {
     @MemShell(MemShell.Listener)
     @MemShellFunction(MemShellFunction.Behinder)
     public byte[] resinListenerBehinder(Class cls, JavaClassHelper javaClassHelper) throws Exception {
-        ClassPool classPool = ClassPool.getDefault();
-        classPool.insertClassPath(new ClassClassPath(cls));
-        classPool.importPackage("javax.servlet.http");
-
-        CtClass ctClass = classPool.getCtClass(cls.getName());
+        CtClass ctClass = initCtClass(cls);
 
         // response
         resinListenerResponseMaker(ctClass);
@@ -375,11 +331,7 @@ public class MSJavaClassBuilder {
     @MemShell(MemShell.Listener)
     @MemShellFunction(MemShellFunction.sou5)
     public byte[] resinListenerSuo5(Class cls, JavaClassHelper javaClassHelper) throws Exception {
-        ClassPool classPool = ClassPool.getDefault();
-        classPool.insertClassPath(new ClassClassPath(cls));
-        classPool.importPackage("javax.servlet.http");
-
-        CtClass ctClass = classPool.getCtClass(cls.getName());
+        CtClass ctClass = initCtClass(cls);
 
         // response
         resinListenerResponseMaker(ctClass);
@@ -387,6 +339,13 @@ public class MSJavaClassBuilder {
         JavaClassModifier.ctClassBuilderNew(cls, ctClass, javaClassHelper);
 
         return JavaClassModifier.toBytes(ctClass);
+    }
+
+    public void resinListenerResponseMaker(CtClass ctClass) throws Exception {
+        // response
+        CtMethod responseCtMethod = ctClass.getDeclaredMethod("getResponse");
+        responseCtMethod.setBody("{\n" +
+                "return getFieldValue($1, \"_response\");}");
     }
 
     @Middleware(Middleware.Resin)
@@ -447,6 +406,9 @@ public class MSJavaClassBuilder {
         return defaultOriginalMS(cls, javaClassHelper);
     }
 
+    /**
+     * Resin
+     */
     @Middleware(Middleware.Undertow)
     @MemShell(MemShell.Servlet)
     @MemShellFunction(MemShellFunction.Exec)
@@ -476,11 +438,112 @@ public class MSJavaClassBuilder {
         return defaultOriginalMS(cls, javaClassHelper);
     }
 
-    public void resinListenerResponseMaker(CtClass ctClass) throws Exception {
+    @Middleware(Middleware.Undertow)
+    @MemShell(MemShell.Listener)
+    @MemShellFunction(MemShellFunction.Exec)
+    public byte[] undertowListenerExec(Class cls, JavaClassHelper javaClassHelper) throws Exception {
+        CtClass ctClass = initCtClass(cls);
+
+        // response
+        undertowListenerResponseMaker(ctClass);
+
+        JavaClassModifier.ctClassBuilderNew(cls, ctClass, javaClassHelper);
+
+        return JavaClassModifier.toBytes(ctClass);
+    }
+
+    @Middleware(Middleware.Undertow)
+    @MemShell(MemShell.Listener)
+    @MemShellFunction(MemShellFunction.Godzilla)
+    public byte[] undertowListenerGodzilla(Class cls, JavaClassHelper javaClassHelper) throws Exception {
+        CtClass ctClass = initCtClass(cls);
+
+        // response
+        undertowListenerResponseMaker(ctClass);
+
+        JavaClassModifier.ctClassBuilderNew(cls, ctClass, javaClassHelper);
+
+        return JavaClassModifier.toBytes(ctClass);
+    }
+
+    @Middleware(Middleware.Undertow)
+    @MemShell(MemShell.Listener)
+    @MemShellFunction(MemShellFunction.Behinder)
+    public byte[] undertowListenerBehinder(Class cls, JavaClassHelper javaClassHelper) throws Exception {
+        CtClass ctClass = initCtClass(cls);
+
+        // response
+        undertowListenerResponseMaker(ctClass);
+
+        behinderMS(javaClassHelper);
+        JavaClassModifier.ctClassBuilderNew(cls, ctClass, javaClassHelper);
+
+        return JavaClassModifier.toBytes(ctClass);
+    }
+
+    @Middleware(Middleware.Undertow)
+    @MemShell(MemShell.Listener)
+    @MemShellFunction(MemShellFunction.sou5)
+    public byte[] undertowListenerSuo5(Class cls, JavaClassHelper javaClassHelper) throws Exception {
+        CtClass ctClass = initCtClass(cls);
+
+        // response
+        undertowListenerResponseMaker(ctClass);
+
+        JavaClassModifier.ctClassBuilderNew(cls, ctClass, javaClassHelper);
+
+        return JavaClassModifier.toBytes(ctClass);
+    }
+
+    public void undertowListenerResponseMaker(CtClass ctClass) throws Exception {
         // response
         CtMethod responseCtMethod = ctClass.getDeclaredMethod("getResponse");
-        responseCtMethod.setBody("{\n" +
-                "return getFieldValue($1, \"_response\");}");
+        responseCtMethod.setBody("{" +
+                "    Object exchange = getFieldValue($1, \"exchange\");\n" +
+                "    Map attachments = (Map) getFieldValue(exchange, \"attachments\");\n" +
+                "    Object[] tables = (Object[]) getFieldValue(attachments, \"table\");\n" +
+                "    for (int i = 0; i < tables.length; i++) {\n" +
+                "        try {\n" +
+                "            Object table = tables[i];\n" +
+                "            if (table == null)\n" +
+                "                continue;\n" +
+                "            if (table.getClass().getName().equals(\"io.undertow.servlet.handlers.ServletRequestContext\")) {\n" +
+                "                return getFieldValue(table, \"originalResponse\");\n" +
+                "            }\n" +
+                "        } catch (Exception e) {\n" +
+                "        }\n" +
+                "    }\n" +
+                "    return null;" +
+                "}");
+    }
+
+    @Middleware(Middleware.Undertow)
+    @MemShell(MemShell.Filter)
+    @MemShellFunction(MemShellFunction.Exec)
+    public byte[] undertowFilterExec(Class cls, JavaClassHelper javaClassHelper) throws Exception {
+        return defaultOriginalMS(cls, javaClassHelper);
+    }
+
+    @Middleware(Middleware.Undertow)
+    @MemShell(MemShell.Filter)
+    @MemShellFunction(MemShellFunction.Godzilla)
+    public byte[] undertowFilterGodzilla(Class cls, JavaClassHelper javaClassHelper) throws Exception {
+        return defaultOriginalMS(cls, javaClassHelper);
+    }
+
+    @Middleware(Middleware.Undertow)
+    @MemShell(MemShell.Filter)
+    @MemShellFunction(MemShellFunction.Behinder)
+    public byte[] undertowFilterBehinder(Class cls, JavaClassHelper javaClassHelper) throws Exception {
+        behinderMS(javaClassHelper);
+        return defaultOriginalMS(cls, javaClassHelper);
+    }
+
+    @Middleware(Middleware.Undertow)
+    @MemShell(MemShell.Filter)
+    @MemShellFunction(MemShellFunction.sou5)
+    public byte[] undertowFilterSou5(Class cls, JavaClassHelper javaClassHelper) throws Exception {
+        return defaultOriginalMS(cls, javaClassHelper);
     }
 
 
@@ -500,15 +563,21 @@ public class MSJavaClassBuilder {
      * @throws Exception
      */
     public static byte[] defaultOriginalMS(Class cls, JavaClassHelper javaClassHelper) throws Exception {
-        ClassPool classPool = ClassPool.getDefault();
-        classPool.insertClassPath(new ClassClassPath(cls));
-        classPool.importPackage("javax.servlet.http");
-
-        CtClass ctClass = classPool.getCtClass(cls.getName());
+        CtClass ctClass = initCtClass(cls);
 
         JavaClassModifier.ctClassBuilderNew(cls, ctClass, javaClassHelper);
 
         return JavaClassModifier.toBytes(ctClass);
+    }
+
+    public static CtClass initCtClass(Class cls) throws Exception {
+        ClassPool classPool = ClassPool.getDefault();
+        classPool.insertClassPath(new ClassClassPath(cls));
+        classPool.importPackage("javax.servlet.http");
+        classPool.importPackage("java.util");
+
+        CtClass ctClass = classPool.getCtClass(cls.getName());
+        return ctClass;
     }
 
 

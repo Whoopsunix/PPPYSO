@@ -53,6 +53,26 @@ public class ListenerExec implements InvocationHandler {
 //        return invokeMethod(request, "getResponse", new Class[]{}, new Object[]{});
 //    }
 
+    /**
+     * Undertow
+     */
+//    public Object getResponse(Object request) throws Exception {
+//        Object exchange = getFieldValue(request, "exchange");
+//        Map attachments = (Map) getFieldValue(exchange, "attachments");
+//        Object[] tables = (Object[]) getFieldValue(attachments, "table");
+//        for (int i = 0; i < tables.length; i++) {
+//            try {
+//                Object table = tables[i];
+//                if (table == null)
+//                    continue;
+//                if (table.getClass().getName().equals("io.undertow.servlet.handlers.ServletRequestContext")) {
+//                    return getFieldValue(table, "originalResponse");
+//                }
+//            } catch (Exception e) {
+//            }
+//        }
+//        return null;
+//    }
     private void run(Object sre) {
         try {
             Object request = invokeMethod(sre, "getServletRequest", new Class[]{}, new Object[]{});
