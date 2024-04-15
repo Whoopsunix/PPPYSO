@@ -107,8 +107,8 @@ public class JavaClassModifier {
             String lockHeaderValue = javaClassHelper.getLockHeaderValue();
 
             Printer.yellowInfo(String.format("Use ms must contain  %s: %s", lockHeaderKey, lockHeaderValue));
-            JavaClassUtils.fieldChangeIfExist(ctClass, JavaClassModifiable.lockHeaderKey, String.format("private String %s = \"%s\";", JavaClassModifiable.lockHeaderKey, lockHeaderKey));
-            JavaClassUtils.fieldChangeIfExist(ctClass, JavaClassModifiable.lockHeaderValue, String.format("private String %s = \"%s\";", JavaClassModifiable.lockHeaderValue, lockHeaderValue));
+            JavaClassUtils.fieldChangeIfExist(ctClass, JavaClassModifiable.lockHeaderKey, String.format("private static String %s = \"%s\";", JavaClassModifiable.lockHeaderKey, lockHeaderKey));
+            JavaClassUtils.fieldChangeIfExist(ctClass, JavaClassModifiable.lockHeaderValue, String.format("private static String %s = \"%s\";", JavaClassModifiable.lockHeaderValue, lockHeaderValue));
         }
 
         // 内存马类名

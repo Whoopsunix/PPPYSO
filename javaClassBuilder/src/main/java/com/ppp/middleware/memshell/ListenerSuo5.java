@@ -29,8 +29,8 @@ public class ListenerSuo5 implements InvocationHandler, Runnable, HostnameVerifi
 
     InputStream gInStream;
     OutputStream gOutStream;
-    private String lockHeaderKey;
-    private String lockHeaderValue;
+    private static String lockHeaderKey;
+    private static String lockHeaderValue;
 
     public ListenerSuo5() {
     }

