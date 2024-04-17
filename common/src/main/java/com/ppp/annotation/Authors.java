@@ -15,7 +15,7 @@ public @interface Authors {
     String MBECHLER = "mbechler";
     String JACKOFMOSTTRADES = "JackOfMostTrades";
     String MATTHIASKAISER = "matthias kaiser";
-    String GEBL = "gebl";
+    String CCKUAILONG = "cckuailong";
     String JACOBAINES = "jacob-baines";
     String JASINNER = "jasinner";
     String KULLRICH = "kai_ullrich";
@@ -36,7 +36,6 @@ public @interface Authors {
     String YKOSTER = "ykoster";
     String POTATS0 = "potats0";
     String PHITHON = "phith0n";
-    String SU18 = "su18";
     String SSEELEY = "steven_seeley";
     String RCALVI = "rocco_calvi";
     String TESTANULL = "testanull";

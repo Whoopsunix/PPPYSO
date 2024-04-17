@@ -64,14 +64,14 @@ public class SinkScheduler {
     public static void showGadget() throws Exception {
         List<Class<?>> classes = ClassUtils.getClasses(gadgetPackageName);
         System.out.println("Available payload types:\n");
-        System.out.printf("%-20s\t%-20s\t%-20s\t%-20s\t%n", "Payload", "Sink", "Authors", "Dependencies");
-        System.out.printf("%-20s\t%-20s\t%-20s\t%-20s\t%n", "--------", "--------", "--------", "--------");
+        System.out.printf("%-25s\t%-25s\t%-25s\t%-25s\t%n", "Payload", "Sink", "Authors", "Dependencies");
+        System.out.printf("%-25s\t%-25s\t%-25s\t%-25s\t%n", "--------", "--------", "--------", "--------");
         for (Class<?> clazz : classes) {
             Sink classAnnotation = clazz.getAnnotation(Sink.class);
             Authors authors = clazz.getAnnotation(Authors.class);
             Dependencies dependencies = clazz.getAnnotation(Dependencies.class);
             if (classAnnotation != null) {
-                System.out.printf("%-20s\t%-20s\t%-20s\t%-20s%n", clazz.getSimpleName(), classAnnotation.value()[0], Arrays.toString(authors.value()), Arrays.toString(dependencies.value()));
+                System.out.printf("%-25s\t%-25s\t%-25s\t%-25s%n", clazz.getSimpleName(), classAnnotation.value()[0], Arrays.toString(authors.value()), Arrays.toString(dependencies.value()));
             }
         }
     }

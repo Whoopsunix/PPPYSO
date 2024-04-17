@@ -7,7 +7,7 @@
     <version>1.0</version>
     <packaging>pom</packaging>
 
-    <name>PPPYso</name>
+    <name>PPPYSO</name>
     <description>Whoopsunix</description>
 
     <modules>
@@ -43,6 +43,61 @@
                     <source>1.6</source>
                     <target>1.6</target>
                 </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-install-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>install-coherence1</id>
+                        <phase>clean</phase>
+                        <configuration>
+                            <file>${basedir}/libs/coherence.jar</file>
+                            <repositoryLayout>default</repositoryLayout>
+                            <groupId>weblogic</groupId>
+                            <artifactId>coherence</artifactId>
+                            <version>12.2.1</version>
+                            <packaging>jar</packaging>
+                            <generatePom>true</generatePom>
+                        </configuration>
+                        <goals>
+                            <goal>install-file</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>install-coherence2</id>
+                        <phase>clean</phase>
+                        <configuration>
+                            <file>${basedir}/libs/coherence-rest.jar</file>
+                            <repositoryLayout>default</repositoryLayout>
+                            <groupId>weblogic</groupId>
+                            <artifactId>coherence-rest</artifactId>
+                            <version>12.2.1</version>
+                            <packaging>jar</packaging>
+                            <generatePom>true</generatePom>
+                        </configuration>
+                        <goals>
+                            <goal>install-file</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>install-coherence4</id>
+                        <phase>clean</phase>
+                        <configuration>
+                            <file>${basedir}/libs/coherence-web.jar</file>
+                            <repositoryLayout>default</repositoryLayout>
+                            <groupId>weblogic</groupId>
+                            <artifactId>coherence-web</artifactId>
+                            <version>12.2.1</version>
+                            <packaging>jar</packaging>
+                            <generatePom>true</generatePom>
+                        </configuration>
+                        <goals>
+                            <goal>install-file</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
