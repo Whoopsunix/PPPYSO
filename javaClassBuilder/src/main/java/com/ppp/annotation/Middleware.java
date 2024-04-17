@@ -1,5 +1,7 @@
 package com.ppp.annotation;
 
+import com.ppp.Printer;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -21,12 +23,19 @@ public @interface Middleware {
     String value();
 
     public static class Utils {
-        public static String getTargetMiddleware(String middleware) {
-            if (middleware.equalsIgnoreCase(Middleware.Tomcat)) {
+        public static String getMiddleware(String middleware) {
+            if (middleware != null && middleware.equalsIgnoreCase(Middleware.Tomcat)) {
                 return Middleware.Tomcat;
-            } else if (middleware.equalsIgnoreCase(Middleware.Jetty)) {
+            } else if (middleware != null && middleware.equalsIgnoreCase(Middleware.Jetty)) {
                 return Middleware.Jetty;
+            } else if (middleware != null && middleware.equalsIgnoreCase(Middleware.Spring)) {
+                return Middleware.Spring;
+            } else if (middleware != null && middleware.equalsIgnoreCase(Middleware.Undertow)) {
+                return Middleware.Undertow;
+            } else if (middleware != null && middleware.equalsIgnoreCase(Middleware.Resin)) {
+                return Middleware.Resin;
             } else {
+                Printer.error(String.format("Middleware not found: %s", middleware));
                 return null;
             }
         }

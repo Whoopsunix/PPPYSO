@@ -5,6 +5,7 @@ import com.ppp.chain.urldns.DNSHelper;
 import com.ppp.enums.Output;
 import com.ppp.enums.SerializationType;
 import com.ppp.sinks.annotation.EnchantEnums;
+import com.ppp.sinks.annotation.EnchantType;
 
 /**
  * @author Whoopsunix
@@ -23,24 +24,27 @@ public class SinksHelper {
     /**
      * 输出类型
      */
-    private Output output = Output.Default;
+    private Output output;
     /**
      * 序列化类型
      */
-    private SerializationType serialization = SerializationType.Default;
+    private SerializationType serializationType;
     /**
      * 是否保存为文件
      */
-    private boolean save = false;
+    private boolean save;
     /**
      * payload 保存文件路径
      */
-    private String savePath = "./result.bin";
+    private String savePath;
     /**
      * 二次反序列化
      */
     private EnchantEnums wrapSerialization;
-    private String CBVersion = "dafault";
+    /**
+     * CB 版本
+     */
+    private String CBVersion;
 
     /**
      * 以下为增强功能的配置参数
@@ -52,7 +56,7 @@ public class SinksHelper {
     /**
      * 命令执行类型
      */
-    private EnchantEnums commandType = EnchantEnums.Default;
+    private EnchantEnums commandType;
     /**
      * 操作系统
      */
@@ -116,7 +120,14 @@ public class SinksHelper {
     private DNSHelper dnsHelper;
 
     public SinksHelper() {
+        this.enchant = EnchantType.DEFAULT;
+        this.serializationType = SerializationType.Default;
         this.javaClassHelper = new JavaClassHelper();
+        this.output = Output.Default;
+        this.save = true;
+        this.savePath = "./result.bin";
+        this.CBVersion = "dafault";
+        this.commandType = EnchantEnums.Default;
     }
 
     /**
@@ -146,12 +157,12 @@ public class SinksHelper {
         this.output = output;
     }
 
-    public SerializationType getSerialization() {
-        return serialization;
+    public SerializationType getSerializationType() {
+        return serializationType;
     }
 
-    public void setSerialization(SerializationType serialization) {
-        this.serialization = serialization;
+    public void setSerializationType(SerializationType serialization) {
+        this.serializationType = serialization;
     }
 
     public boolean isSave() {
@@ -328,7 +339,7 @@ public class SinksHelper {
                 "sink='" + sink + '\'' +
                 ", enchant='" + enchant + '\'' +
                 ", output=" + output +
-                ", serialization=" + serialization +
+                ", serializationType=" + serializationType +
                 ", save=" + save +
                 ", savePath='" + savePath + '\'' +
                 ", wrapSerialization=" + wrapSerialization +

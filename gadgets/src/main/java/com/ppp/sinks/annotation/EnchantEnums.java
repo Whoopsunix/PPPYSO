@@ -1,5 +1,7 @@
 package com.ppp.sinks.annotation;
 
+import com.ppp.Printer;
+
 /**
  * @author Whoopsunix
  * <p>
@@ -24,4 +26,15 @@ public enum EnchantEnums {
     ProcessBuilder,
     ScriptEngine,
     SnakeYAML,
+    ;
+
+    public static EnchantEnums getEnchantEnums(String enchantEnums) {
+        for (EnchantEnums value : values()) {
+            if (value.name().equalsIgnoreCase(enchantEnums)) {
+                return value;
+            }
+        }
+        Printer.warn(String.format("No such enchantEnums: %s , use Default", enchantEnums));
+        return Default;
+    }
 }

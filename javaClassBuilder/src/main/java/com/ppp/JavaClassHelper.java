@@ -20,7 +20,7 @@ public class JavaClassHelper {
      */
     private String javaClassHelperType;
     /**
-     * 不同的生成类型
+     * 额外生成方式
      */
     private String javaClassType;
     /**

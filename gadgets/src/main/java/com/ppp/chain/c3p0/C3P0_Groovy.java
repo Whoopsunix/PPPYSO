@@ -3,6 +3,7 @@ package com.ppp.chain.c3p0;
 import com.mchange.v2.c3p0.impl.PoolBackedDataSourceBase;
 import com.ppp.JavaClassHelper;
 import com.ppp.ObjectPayload;
+import com.ppp.annotation.Authors;
 import com.ppp.annotation.Dependencies;
 import com.ppp.secmgr.PayloadRunner;
 import com.ppp.sinks.SinkScheduler;
@@ -30,6 +31,7 @@ import java.util.logging.Logger;
  */
 @Dependencies({"com.mchange:c3p0:0.9.5.2", "com.mchange:mchange-commons-java:0.2.11", "org.apache:tomcat:8.5.35", "org.codehaus.groovy:groovy:2.3.9"})
 @Sink({Sink.C3P0})
+@Authors()
 public class C3P0_Groovy implements ObjectPayload<Object> {
 
     public static void main(String[] args) throws Exception {

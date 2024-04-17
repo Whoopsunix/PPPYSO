@@ -1,5 +1,7 @@
 package com.ppp.enums;
 
+import com.ppp.Printer;
+
 /**
  * @author Whoopsunix
  *
@@ -10,4 +12,15 @@ public enum SerializationType {
     XStream,
     HexAscii,
     UTF8Mix,
+    ;
+
+    public static SerializationType getSerializationType(String serializationType) {
+        for (SerializationType value : values()) {
+            if (value.name().equalsIgnoreCase(serializationType)) {
+                return value;
+            }
+        }
+        Printer.warn(String.format("No such serializationType: %s , use Default", serializationType));
+        return Default;
+    }
 }

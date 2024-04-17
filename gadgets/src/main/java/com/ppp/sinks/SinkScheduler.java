@@ -1,12 +1,16 @@
 package com.ppp.sinks;
 
+import com.ppp.ObjectPayload;
 import com.ppp.Printer;
+import com.ppp.annotation.Authors;
+import com.ppp.annotation.Dependencies;
 import com.ppp.sinks.annotation.EnchantType;
 import com.ppp.sinks.annotation.Sink;
 import com.ppp.utils.maker.AnnotationUtils;
 import com.ppp.utils.maker.ClassUtils;
 
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -14,16 +18,10 @@ import java.util.List;
  */
 public class SinkScheduler {
     private static String packageName = "com.ppp.sinks";
+    private static String gadgetPackageName = "com.ppp.chain";
 
     public static void main(String[] args) throws Exception {
-        SinksHelper sinksHelper = new SinksHelper();
-        // 通过
-        sinksHelper.setSink(Sink.InvokerTransformer3);
-        sinksHelper.setEnchant(EnchantType.RUNTIME);
-
-        sinksHelper.setCommand("calc");
-
-        SinkScheduler.builder(sinksHelper);
+        showGadget();
     }
 
     /**
@@ -62,5 +60,34 @@ public class SinkScheduler {
 
         return targetMethod.invoke(targetClass.newInstance(), sinksHelper);
     }
+
+    public static void showGadget() throws Exception {
+        List<Class<?>> classes = ClassUtils.getClasses(gadgetPackageName);
+        System.out.println("Available payload types:\n");
+        System.out.printf("%-20s\t%-20s\t%-20s\t%-20s\t%n", "Payload", "Sink", "Authors", "Dependencies");
+        System.out.printf("%-20s\t%-20s\t%-20s\t%-20s\t%n", "--------", "--------", "--------", "--------");
+        for (Class<?> clazz : classes) {
+            Sink classAnnotation = clazz.getAnnotation(Sink.class);
+            Authors authors = clazz.getAnnotation(Authors.class);
+            Dependencies dependencies = clazz.getAnnotation(Dependencies.class);
+            if (classAnnotation != null) {
+                System.out.printf("%-20s\t%-20s\t%-20s\t%-20s%n", clazz.getSimpleName(), classAnnotation.value()[0], Arrays.toString(authors.value()), Arrays.toString(dependencies.value()));
+            }
+        }
+    }
+
+    public static Class<? extends ObjectPayload> getGadgetClass(String gadget) throws Exception {
+        // 调用链检查
+        List<Class<?>> classes = ClassUtils.getClasses(gadgetPackageName);
+        for (Class<?> clazz : classes) {
+            String className = clazz.getSimpleName();
+            if (className.equalsIgnoreCase(gadget)) {
+                return (Class<? extends ObjectPayload>) clazz;
+            }
+        }
+        Printer.error(String.format("No such gadget: %s", gadget));
+        return null;
+    }
+
 
 }

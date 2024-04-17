@@ -36,10 +36,10 @@ public class JavaClassModifier {
         JavaClassUtils.clearAllAnnotations(ctClass);
 
         // 随机类名
-        if (javaClassHelper.getCLASSNAME() == null && javaClassHelper.isRandomJavaClassName()) {
-//            String randomJavaClassName = randomJavaClassName(javaClassHelper);
-//            // 修改类名
-//            ctClass.setName(randomJavaClassName);
+        if ((javaClassHelper.isLoader() || javaClassHelper.getCLASSNAME() == null) && javaClassHelper.isRandomJavaClassName()) {
+            String randomJavaClassName = randomJavaClassName(javaClassHelper);
+            // 修改类名
+            ctClass.setName(randomJavaClassName);
         }
 
         // 根据随机类名赋予字段值
@@ -106,7 +106,7 @@ public class JavaClassModifier {
             String lockHeaderKey = javaClassHelper.getLockHeaderKey();
             String lockHeaderValue = javaClassHelper.getLockHeaderValue();
 
-            Printer.yellowInfo(String.format("Use ms must contain  %s: %s", lockHeaderKey, lockHeaderValue));
+            Printer.yellowInfo(String.format("Header %s must contain: %s", lockHeaderKey, lockHeaderValue));
             JavaClassUtils.fieldChangeIfExist(ctClass, JavaClassModifiable.lockHeaderKey, String.format("private static String %s = \"%s\";", JavaClassModifiable.lockHeaderKey, lockHeaderKey));
             JavaClassUtils.fieldChangeIfExist(ctClass, JavaClassModifiable.lockHeaderValue, String.format("private static String %s = \"%s\";", JavaClassModifiable.lockHeaderValue, lockHeaderValue));
         }
@@ -114,7 +114,7 @@ public class JavaClassModifier {
         // 内存马类名
         if (AnnotationUtils.containsValue(cls, JavaClassModifiable.class, JavaClassModifiable.CLASSNAME)) {
             String classname = javaClassHelper.getCLASSNAME();
-            Printer.yellowInfo(String.format("Class Name: %s", classname));
+            Printer.yellowInfo(String.format("MS Class Name: %s", classname));
             JavaClassUtils.fieldChangeIfExist(ctClass, JavaClassModifiable.CLASSNAME, String.format("private static String %s = \"%s\";", JavaClassModifiable.CLASSNAME, classname));
         }
 

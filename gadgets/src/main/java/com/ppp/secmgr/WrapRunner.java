@@ -56,7 +56,7 @@ public class WrapRunner {
             String[] sinks = (String[]) Reflections.invokeMethod(cls.getAnnotation(Sink.class), "value", new Class[]{}, new Object[]{});
             sinksHelper.setSink(sinks[0]);
 
-            sinksHelper.setEnchant(EnchantType.RUNTIME);
+            sinksHelper.setEnchant(EnchantType.DEFAULT);
             sinksHelper.setCommand("open -a Calculator.app");
 
             // 生成 Gadget
@@ -86,7 +86,7 @@ public class WrapRunner {
             String[] sinks = (String[]) Reflections.invokeMethod(cls.getAnnotation(Sink.class), "value", new Class[]{}, new Object[]{});
             sinksHelper.setSink(sinks[0]);
 
-            sinksHelper.setEnchant(EnchantType.RUNTIME);
+            sinksHelper.setEnchant(EnchantType.DEFAULT);
             sinksHelper.setWrapSerialization(EnchantEnums.SignedObject);
             sinksHelper.setCommand("open -a Calculator.app");
 

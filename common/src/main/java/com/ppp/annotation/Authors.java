@@ -49,6 +49,7 @@ public @interface Authors {
     String ONENHANN = "1nhann";
     String COKEBEER = "cokeBeer";
     String ZDI = "ZDI";
+    String HUGOW = "hugow";
 
     String[] value() default {};
 

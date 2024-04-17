@@ -2,6 +2,8 @@ package com.ppp.chain.urldns;
 
 import com.ppp.ObjectPayload;
 import com.ppp.Printer;
+import com.ppp.annotation.Authors;
+import com.ppp.annotation.Dependencies;
 import com.ppp.secmgr.PayloadRunner;
 import com.ppp.sinks.SinksHelper;
 import com.ppp.sinks.annotation.Sink;
@@ -29,6 +31,8 @@ import java.util.List;
  * URL.hashCode()
  */
 @Sink({Sink.URLDNS})
+@Dependencies()
+@Authors()
 public class URLDNS implements ObjectPayload<Object> {
     public static void main(String[] args) throws Exception {
         DNSHelper dnsHelper = new DNSHelper();

@@ -2,6 +2,7 @@ package com.ppp.chain.rome;
 
 import com.ppp.KickOff;
 import com.ppp.ObjectPayload;
+import com.ppp.annotation.Authors;
 import com.ppp.annotation.Dependencies;
 import com.ppp.chain.WrapSerialization;
 import com.ppp.secmgr.PayloadRunner;
@@ -21,6 +22,7 @@ import java.security.SignedObject;
  */
 @Dependencies({"rome:rome:1.0", "JDK>1.8"})
 @Sink({Sink.TemplatesImpl})
+@Authors()
 public class ROME4 implements ObjectPayload<Object> {
 
     public static void main(String[] args) throws Exception {

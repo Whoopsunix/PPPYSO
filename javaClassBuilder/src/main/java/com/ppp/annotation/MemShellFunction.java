@@ -1,5 +1,7 @@
 package com.ppp.annotation;
 
+import com.ppp.Printer;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -19,12 +21,17 @@ public @interface MemShellFunction {
     String value();
 
     public static class Utils {
-        public static String getTargetMemShellFunction(String msf) {
-            if (msf.equalsIgnoreCase(MemShellFunction.Exec)) {
+        public static String getMemShellFunction(String msf) {
+            if (msf != null && msf.equalsIgnoreCase(MemShellFunction.Exec)) {
                 return MemShellFunction.Exec;
-            } else if (msf.equalsIgnoreCase(MemShellFunction.Godzilla)) {
+            } else if (msf != null && msf.equalsIgnoreCase(MemShellFunction.Godzilla)) {
                 return MemShellFunction.Godzilla;
+            } else if (msf != null && msf.equalsIgnoreCase(MemShellFunction.Behinder)) {
+                return MemShellFunction.Behinder;
+            } else if (msf != null && msf.equalsIgnoreCase(MemShellFunction.sou5)) {
+                return MemShellFunction.sou5;
             } else {
+                Printer.error(String.format("MemShellFunction not found: %s", msf));
                 return null;
             }
         }

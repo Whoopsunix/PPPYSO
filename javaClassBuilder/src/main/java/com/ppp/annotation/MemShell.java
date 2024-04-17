@@ -1,5 +1,7 @@
 package com.ppp.annotation;
 
+import com.ppp.Printer;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -21,19 +23,26 @@ public @interface MemShell {
     String value();
 //    String[] value() default {};
 
-//    public static class Utils {
-//        public static String getTargetMemShell(String ms) {
-//            if (ms.equalsIgnoreCase(MemShell.Listener)) {
-//                return MemShell.Listener;
-//            } else if (ms.equalsIgnoreCase(MemShell.Servlet)) {
-//                return MemShell.Servlet;
-//            } else if (ms.equalsIgnoreCase(MemShell.Executor)) {
-//                return MemShell.Executor;
-//            } else {
-//                return null;
-//            }
-//        }
-//    }
+    public static class Utils {
+        public static String getMemShell(String ms) {
+            if (ms != null && ms.equalsIgnoreCase(MemShell.Listener)) {
+                return MemShell.Listener;
+            } else if (ms != null && ms.equalsIgnoreCase(MemShell.Servlet)) {
+                return MemShell.Servlet;
+            } else if (ms != null && ms.equalsIgnoreCase(MemShell.Filter)) {
+                return MemShell.Filter;
+            } else if (ms != null && ms.equalsIgnoreCase(MemShell.Controller)) {
+                return MemShell.Controller;
+            } else if (ms != null && ms.equalsIgnoreCase(MemShell.Valve)) {
+                return MemShell.Valve;
+            } else if (ms != null && ms.equalsIgnoreCase(MemShell.Executor)) {
+                return MemShell.Executor;
+            } else {
+                Printer.error(String.format("MemShell not found: %s", ms));
+                return null;
+            }
+        }
+    }
 
 
 }

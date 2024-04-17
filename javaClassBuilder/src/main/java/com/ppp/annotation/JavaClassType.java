@@ -1,5 +1,7 @@
 package com.ppp.annotation;
 
+import com.ppp.Printer;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -15,4 +17,15 @@ public @interface JavaClassType {
     String AutoFind = "AutoFind";
 
     String value();
+
+    public static class Utils {
+        public static String getJavaClassType(String javaClassType) {
+            if (javaClassType != null && javaClassType.equalsIgnoreCase(JavaClassType.AutoFind)) {
+                return JavaClassType.AutoFind;
+            } else {
+                Printer.warn("JavaClassType not found use Default");
+                return JavaClassType.Default;
+            }
+        }
+    }
 }

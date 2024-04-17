@@ -19,12 +19,6 @@ public @interface EnchantType {
     String DEFAULT = "Default";
     // 命令执行
     String Command = "Command";
-    // 命令执行
-    String RUNTIME = "Runtime";
-    // 命令执行 ProcessBuilder
-    String ProcessBuilder = "ProcessBuilder";
-    // 命令执行 ScriptEngine
-    String ScriptEngine = "ScriptEngine";
     // 线程延时
     String Delay = "Delay";
     // Socket 探测

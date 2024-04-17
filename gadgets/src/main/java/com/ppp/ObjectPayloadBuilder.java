@@ -20,6 +20,7 @@ public class ObjectPayloadBuilder {
     public static Object builder(Class<? extends ObjectPayload> cls, SinksHelper sinksHelper) throws Exception {
         // 生成 Gadget
         ObjectPayload payload = cls.newInstance();
+        Printer.blueInfo("Gadget: " + payload.getClass().getSimpleName());
         Object gadget = payload.getObject(sinksHelper);
 
         byte[] bytes = original(gadget, sinksHelper);
@@ -39,7 +40,7 @@ public class ObjectPayloadBuilder {
      */
     public static byte[] original(Object gadget, SinksHelper sinksHelper) throws Exception {
         byte[] bytes = new byte[0];
-        SerializationType serialization = sinksHelper.getSerialization();
+        SerializationType serialization = sinksHelper.getSerializationType();
 
 
         if (gadget instanceof byte[]) {

