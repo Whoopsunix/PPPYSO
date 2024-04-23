@@ -1,5 +1,7 @@
 package com.ppp.chain.urldns;
 
+import com.ppp.Printer;
+
 /**
  * @author Whoopsunix
  */
@@ -82,6 +84,13 @@ public enum Subdomain {
         this.product = product;
         this.subdomain = subdomain;
         this.className = className;
+    }
+
+
+    public static void show() {
+        for (Subdomain subdomainEnum : Subdomain.values()) {
+            Printer.blueInfo(subdomainEnum.getProduct() + " | " + subdomainEnum.getSubdomain() + " | " + subdomainEnum.getClassName());
+        }
     }
 
 }

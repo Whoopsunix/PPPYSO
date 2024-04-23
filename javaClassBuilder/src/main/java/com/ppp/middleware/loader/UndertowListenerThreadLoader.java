@@ -27,15 +27,11 @@ public class UndertowListenerThreadLoader {
     private static String CLASSNAME;
 
     public UndertowListenerThreadLoader() {
-    }
-
-    static {
         try {
             // 获取 ServletRequestContext
             Object servletRequestContext = getServletRequestContext();
 
             inject(servletRequestContext);
-
         } catch (Throwable e) {
 
         }

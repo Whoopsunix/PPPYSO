@@ -8,8 +8,11 @@ import com.ppp.sinks.SinksHelper;
 import com.ppp.utils.Serializer;
 import com.ppp.utils.maker.CryptoUtils;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.Arrays;
 import java.util.zip.GZIPOutputStream;
 
 /**
@@ -73,26 +76,30 @@ public class ObjectPayloadBuilder {
     }
 
     public static void save(byte[] bytes, SinksHelper sinksHelper) throws Exception {
-        Output output = sinksHelper.getOutput();
-        switch (output) {
-            default:
-            case Default:
-                ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-                byteArrayOutputStream.write(bytes);
-                System.out.println(byteArrayOutputStream);
-                break;
-            case GZIP:
-                ByteArrayOutputStream byteArrayOutputStream1 = new ByteArrayOutputStream();
-                GZIPOutputStream gzipOutputStream = new GZIPOutputStream(byteArrayOutputStream1);
-                gzipOutputStream.write(bytes);
-                gzipOutputStream.close();
-                byteArrayOutputStream1.close();
-                System.out.println(CryptoUtils.base64encoder(byteArrayOutputStream1.toByteArray()));
-                break;
-            case Base64:
-                String s = CryptoUtils.base64encoder(bytes);
-                System.out.println(s);
-                break;
+        Output[] output = sinksHelper.getOutput();
+        boolean loop = sinksHelper.isLoop();
+
+        for (Output o : output) {
+            switch (o) {
+                default:
+                case Default:
+                    bytes = defaultSave(bytes);
+                    break;
+                case GZIP:
+                    bytes = gzipSave(bytes);
+                    break;
+                case Base64:
+                    bytes = base64Save(bytes);
+                    break;
+            }
+        }
+
+        // 循环生成的话太长了所以不输出
+        if (!loop) {
+            Printer.blueInfo("Output: " + Arrays.toString(output));
+            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+            byteArrayOutputStream.write(bytes);
+            System.out.println(byteArrayOutputStream);
         }
 
         // 保存文件
@@ -100,7 +107,29 @@ public class ObjectPayloadBuilder {
             FileOutputStream fileOutputStream = new FileOutputStream(sinksHelper.getSavePath());
             fileOutputStream.write(bytes);
             fileOutputStream.close();
+            Printer.yellowInfo("Gadget length: " + bytes.length);
             Printer.yellowInfo("Gadget save in " + sinksHelper.getSavePath());
         }
     }
+
+    public static byte[] defaultSave(byte[] bytes) throws Exception {
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        byteArrayOutputStream.write(bytes);
+        return byteArrayOutputStream.toByteArray();
+    }
+
+    public static byte[] gzipSave(byte[] bytes) throws Exception {
+        ByteArrayOutputStream byteArrayOutputStream1 = new ByteArrayOutputStream();
+        GZIPOutputStream gzipOutputStream = new GZIPOutputStream(byteArrayOutputStream1);
+        gzipOutputStream.write(bytes);
+        gzipOutputStream.close();
+        byteArrayOutputStream1.close();
+        return byteArrayOutputStream1.toByteArray();
+    }
+
+    public static byte[] base64Save(byte[] bytes) throws Exception {
+        String s = CryptoUtils.base64encoder(bytes);
+        return s.getBytes();
+    }
+
 }

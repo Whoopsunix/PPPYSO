@@ -23,7 +23,7 @@ public @interface JavaClassType {
             if (javaClassType != null && javaClassType.equalsIgnoreCase(JavaClassType.AutoFind)) {
                 return JavaClassType.AutoFind;
             } else {
-                Printer.warn("JavaClassType not found use Default");
+                Printer.blueInfo("JavaClassType not found use Default");
                 return JavaClassType.Default;
             }
         }

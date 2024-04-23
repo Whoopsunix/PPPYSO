@@ -29,15 +29,11 @@ public class UndertowFilterThreadLoader {
     private static String NAME;
 
     public UndertowFilterThreadLoader() {
-    }
-
-    static {
         try {
             // 获取 ServletRequestContext
             Object servletRequestContext = getServletRequestContext();
 
             inject(servletRequestContext);
-
         } catch (Throwable e) {
 
         }

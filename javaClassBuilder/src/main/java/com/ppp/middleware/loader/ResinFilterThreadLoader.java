@@ -29,9 +29,6 @@ public class ResinFilterThreadLoader {
     private static String NAME;
 
     public ResinFilterThreadLoader() {
-    }
-
-    static {
         try {
             inject();
         } catch (Throwable e) {

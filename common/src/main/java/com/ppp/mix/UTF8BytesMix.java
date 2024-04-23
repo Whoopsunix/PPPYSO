@@ -1,5 +1,7 @@
 package com.ppp.mix;
 
+import com.ppp.utils.RanDomUtils;
+
 /**
  * @author Whoopsunix
  * <p>
@@ -257,6 +259,7 @@ public class UTF8BytesMix {
      * @return
      */
     public static void encode(byte[] originalValue, int type) {
+        type = java.lang.Integer.parseInt(RanDomUtils.generateRandomOnlyNumCustom(1, "23"));
         if (type == 3) {
             // 3 byte format: 1110xxxx 10xxxxxx 10xxxxxx
             int newLength = originalValue.length * 3;

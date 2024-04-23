@@ -8,11 +8,13 @@ PPPYSO:
   # 输出类型: Default Base64 GZIP
   output: Base64
   # 保存默认为 true
-  save: true
+#  save: true
   # 结果保存绝对路径: 默认当前路径下生成 result.bin
   savePath:
   # 关闭输出只保留 payload 默认为 false
   closePrinter: false
+  # 可选 InvokerTransformer3 加载方式: 默认 ScriptEngineManager，还提供了 rhino (需要 org.mozilla:rhino 依赖)
+  loadFunction:
 
   ### Sink 点增强
   SinksHelper:
@@ -25,8 +27,8 @@ PPPYSO:
       command: open -a Calculator.app
       # 命令执行类型: Runtime ProcessBuilder ScriptEngine
       commandType: Runtime
-      # 操作系统: win or unix
-      os:
+      # 分割命令
+      split: false
       # ScriptEngine 指定 code
       code:
       # 从文件中指定
@@ -50,12 +52,19 @@ PPPYSO:
       localFilePath: /tmp/local.txt
       # 直接写入文件内容 localFilePath > fileContent
       fileContent: this is file content
+      # 追加写入
+      append: false
+      # 文件分片
+      split: false
+      # 分片大小 默认 100kb
+      partSize:
 
-    ### LocalLoad 本地类加载，使用内置的 RCE 回显、内存马
-    # 具体配置在 JavaClassHelper 中
-    LocalLoad:
-      # 可选 InvokerTransformer3 加载方式: 默认 ScriptEngineManager，还提供了 rhino (需要 org.mozilla:rhino 依赖)
-      loadFunction:
+
+#    ### LocalLoad 本地类加载，使用内置的 RCE 回显、内存马
+#    # 具体配置在 JavaClassHelper 中
+#    LocalLoad:
+#      # 可选 InvokerTransformer3 加载方式: 默认 ScriptEngineManager，还提供了 rhino (需要 org.mozilla:rhino 依赖)
+#      loadFunction:
 
     ### RemoteLoad -> 远程类加载
     RemoteLoad:
@@ -88,10 +97,8 @@ PPPYSO:
     ## 内存马信息 置空时默认随机生成
     # 内存马名称
     NAME:
-    # 请求头
+    # 输入命令的请求头
     HEADER:
-    # 请求参数
-    PARAM:
     # 访问路径
     PATH:
 
@@ -102,6 +109,19 @@ PPPYSO:
     # 请求时指定约束请求头需要带有特定值 避免影响业务
     lockHeaderKey:
     lockHeaderValue:
+
+  ### DNSLOG 点增强
+  DNSHelper:
+    # DNSLOG 服务器地址
+    host:
+    # 探测的组件
+    products:
+    ## 自定义需要探测的类
+    # 全限定类名
+    className:
+    # 对应的子域名
+    subdomain:
+
 
   ### 调用链相关增强
   # SignedObject 二次反序列化

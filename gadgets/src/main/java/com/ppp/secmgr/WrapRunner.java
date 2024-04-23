@@ -52,7 +52,7 @@ public class WrapRunner {
             final Class<? extends ObjectPayload> cls = FastJson.class;
 
             SinksHelper sinksHelper = new SinksHelper();
-            sinksHelper.setOutput(Output.Base64);
+            sinksHelper.setOutput(new Output[]{Output.Base64});
             String[] sinks = (String[]) Reflections.invokeMethod(cls.getAnnotation(Sink.class), "value", new Class[]{}, new Object[]{});
             sinksHelper.setSink(sinks[0]);
 
@@ -82,7 +82,7 @@ public class WrapRunner {
             final Class<? extends ObjectPayload> cls = FastJson.class;
 
             SinksHelper sinksHelper = new SinksHelper();
-            sinksHelper.setOutput(Output.Base64);
+            sinksHelper.setOutput(new Output[]{Output.Base64});
             String[] sinks = (String[]) Reflections.invokeMethod(cls.getAnnotation(Sink.class), "value", new Class[]{}, new Object[]{});
             sinksHelper.setSink(sinks[0]);
 

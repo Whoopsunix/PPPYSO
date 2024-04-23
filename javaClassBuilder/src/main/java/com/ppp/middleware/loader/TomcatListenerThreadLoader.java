@@ -28,9 +28,6 @@ public class TomcatListenerThreadLoader {
     private static String CLASSNAME;
 
     public TomcatListenerThreadLoader() {
-    }
-
-    static {
         try {
             // 获取 standardContext
             Object standardContext = getStandardContext();

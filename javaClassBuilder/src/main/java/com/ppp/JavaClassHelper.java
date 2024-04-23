@@ -1,6 +1,7 @@
 package com.ppp;
 
 import com.ppp.annotation.JavaClassType;
+import com.ppp.utils.RanDomUtils;
 
 /**
  * @author Whoopsunix
@@ -61,17 +62,18 @@ public class JavaClassHelper {
     private String javaClassPackageHost;
 
 
-
     public JavaClassHelper() {
         this.randomJavaClassName = true;
         this.extendsAbstractTranslet = false;
         this.isLoader = false;
         this.javaClassType = JavaClassType.Default;
 
-//        this.NAME = RanDomUtils.generateRandomOnlyString(4, 7);
-//        this.HEADER = RanDomUtils.generateRandomOnlyString(4, 7);
-//        this.PARAM = RanDomUtils.generateRandomOnlyString(4, 7);
-//        this.PATH = "/" + RanDomUtils.generateRandomOnlyString(4, 7);
+        this.NAME = RanDomUtils.generateRandomOnlyString(4, 7);
+        this.HEADER = RanDomUtils.generateRandomOnlyString(4, 7);
+        this.PARAM = RanDomUtils.generateRandomOnlyString(4, 7);
+        this.PATH = "/" + RanDomUtils.generateRandomOnlyString(4, 7);
+        this.lockHeaderKey = "User-Agent";
+        this.lockHeaderValue = RanDomUtils.generateRandomOnlyString(4, 7);
     }
 
     /**

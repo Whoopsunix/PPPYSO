@@ -7,6 +7,8 @@ import com.ppp.enums.SerializationType;
 import com.ppp.sinks.annotation.EnchantEnums;
 import com.ppp.sinks.annotation.EnchantType;
 
+import java.util.List;
+
 /**
  * @author Whoopsunix
  * <p>
@@ -22,9 +24,13 @@ public class SinksHelper {
      */
     private String enchant;
     /**
+     * 代表本次为循环生成
+     */
+    private boolean loop;
+    /**
      * 输出类型
      */
-    private Output output;
+    private Output[] output;
     /**
      * 序列化类型
      */
@@ -58,9 +64,9 @@ public class SinksHelper {
      */
     private EnchantEnums commandType;
     /**
-     * 操作系统
+     * 是否分割  支持分割命令、分割文件
      */
-    private EnchantEnums os;
+    private boolean split;
     /**
      * 代码执行内容
      */
@@ -94,17 +100,33 @@ public class SinksHelper {
      */
     private String fileContent;
     /**
+     * 追加写入文件
+     */
+    private boolean append;
+    /**
+     * 文件分片数组
+     */
+    private List<byte[]> fileParts;
+    /**
+     * 直接传入数组
+     */
+    private byte[] fileBytes;
+    /**
+     * 分片大小 kb 为单位
+     */
+    private Integer partSize;
+    /**
      * 远程加载 url
      */
     private String url;
     /**
-     * 远程加载类名
+     * 类名
      */
-    private String remoteClassName;
+    private String className;
     /**
      * 远程加载构造方法参数
      */
-    private String constructor;
+    private Object constructor;
     /**
      * 本地加载方法
      */
@@ -120,14 +142,19 @@ public class SinksHelper {
     private DNSHelper dnsHelper;
 
     public SinksHelper() {
+        this.loop = false;
         this.enchant = EnchantType.DEFAULT;
         this.serializationType = SerializationType.Default;
         this.javaClassHelper = new JavaClassHelper();
-        this.output = Output.Default;
+        this.dnsHelper = new DNSHelper();
+        this.output = new Output[]{Output.Default};
         this.save = true;
         this.savePath = "./result.bin";
         this.CBVersion = "dafault";
         this.commandType = EnchantEnums.Default;
+        this.split = false;
+        this.append = false;
+        this.partSize = 100;
     }
 
     /**
@@ -149,11 +176,19 @@ public class SinksHelper {
         this.enchant = enchant;
     }
 
-    public Output getOutput() {
+    public boolean isLoop() {
+        return loop;
+    }
+
+    public void setLoop(boolean loop) {
+        this.loop = loop;
+    }
+
+    public Output[] getOutput() {
         return output;
     }
 
-    public void setOutput(Output output) {
+    public void setOutput(Output[] output) {
         this.output = output;
     }
 
@@ -161,8 +196,8 @@ public class SinksHelper {
         return serializationType;
     }
 
-    public void setSerializationType(SerializationType serialization) {
-        this.serializationType = serialization;
+    public void setSerializationType(SerializationType serializationType) {
+        this.serializationType = serializationType;
     }
 
     public boolean isSave() {
@@ -213,12 +248,12 @@ public class SinksHelper {
         this.commandType = commandType;
     }
 
-    public EnchantEnums getOs() {
-        return os;
+    public boolean isSplit() {
+        return split;
     }
 
-    public void setOs(EnchantEnums os) {
-        this.os = os;
+    public void setSplit(boolean split) {
+        this.split = split;
     }
 
     public String getCode() {
@@ -285,6 +320,38 @@ public class SinksHelper {
         this.fileContent = fileContent;
     }
 
+    public boolean isAppend() {
+        return append;
+    }
+
+    public void setAppend(boolean append) {
+        this.append = append;
+    }
+
+    public List<byte[]> getFileParts() {
+        return fileParts;
+    }
+
+    public void setFileParts(List<byte[]> fileParts) {
+        this.fileParts = fileParts;
+    }
+
+    public byte[] getFileBytes() {
+        return fileBytes;
+    }
+
+    public void setFileBytes(byte[] fileBytes) {
+        this.fileBytes = fileBytes;
+    }
+
+    public Integer getPartSize() {
+        return partSize;
+    }
+
+    public void setPartSize(Integer partSize) {
+        this.partSize = partSize;
+    }
+
     public String getUrl() {
         return url;
     }
@@ -293,19 +360,19 @@ public class SinksHelper {
         this.url = url;
     }
 
-    public String getRemoteClassName() {
-        return remoteClassName;
+    public String getClassName() {
+        return className;
     }
 
-    public void setRemoteClassName(String remoteClassName) {
-        this.remoteClassName = remoteClassName;
+    public void setClassName(String className) {
+        this.className = className;
     }
 
-    public String getConstructor() {
+    public Object getConstructor() {
         return constructor;
     }
 
-    public void setConstructor(String constructor) {
+    public void setConstructor(Object constructor) {
         this.constructor = constructor;
     }
 
@@ -331,36 +398,5 @@ public class SinksHelper {
 
     public void setDnsHelper(DNSHelper dnsHelper) {
         this.dnsHelper = dnsHelper;
-    }
-
-    @Override
-    public String toString() {
-        return "SinksHelper{" +
-                "sink='" + sink + '\'' +
-                ", enchant='" + enchant + '\'' +
-                ", output=" + output +
-                ", serializationType=" + serializationType +
-                ", save=" + save +
-                ", savePath='" + savePath + '\'' +
-                ", wrapSerialization=" + wrapSerialization +
-                ", CBVersion='" + CBVersion + '\'' +
-                ", command='" + command + '\'' +
-                ", commandType=" + commandType +
-                ", os=" + os +
-                ", code='" + code + '\'' +
-                ", codeFile='" + codeFile + '\'' +
-                ", host='" + host + '\'' +
-                ", delay=" + delay +
-                ", delayTime=" + delayTime +
-                ", serverFilePath='" + serverFilePath + '\'' +
-                ", localFilePath='" + localFilePath + '\'' +
-                ", fileContent='" + fileContent + '\'' +
-                ", url='" + url + '\'' +
-                ", remoteClassName='" + remoteClassName + '\'' +
-                ", constructor='" + constructor + '\'' +
-                ", loadFunction=" + loadFunction +
-                ", javaClassHelper=" + javaClassHelper +
-                ", dnsHelper=" + dnsHelper +
-                '}';
     }
 }

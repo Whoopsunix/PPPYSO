@@ -27,9 +27,6 @@ public class JettyAutoFindListenerThreadLoader {
     private static String CLASSNAME;
 
     public JettyAutoFindListenerThreadLoader() {
-    }
-
-    static {
         try {
             // 获取 servletContext
 //            Object servletContext = getServletContext();
@@ -42,6 +39,9 @@ public class JettyAutoFindListenerThreadLoader {
         }
     }
 
+    public JettyAutoFindListenerThreadLoader(Object o) {
+
+    }
 
 //    public static void inject(Object standardContext) throws Exception {
 //    }
@@ -205,7 +205,7 @@ public class JettyAutoFindListenerThreadLoader {
 
 
     public static Object getTargetObject(String className) throws Exception {
-        List<ClassLoader> activeClassLoaders = new JettyAutoFindListenerThreadLoader().getActiveClassLoaders();
+        List<ClassLoader> activeClassLoaders = new JettyAutoFindListenerThreadLoader(null).getActiveClassLoaders();
 
         Class cls = getTargetClass(className, activeClassLoaders);
 

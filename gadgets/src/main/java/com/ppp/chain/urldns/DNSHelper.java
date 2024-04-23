@@ -9,13 +9,17 @@ import java.util.ArrayList;
  */
 public class DNSHelper {
     private String host;
-    private ArrayList<String> products;
+    private Product[] products;
 
     /**
      * 自定义
      */
     private String className;
     private String subdomain;
+
+    public DNSHelper() {
+        this.products = new Product[]{};
+    }
 
     public String getHost() {
         return host;
@@ -25,11 +29,11 @@ public class DNSHelper {
         this.host = host;
     }
 
-    public ArrayList<String> getProducts() {
+    public Product[] getProducts() {
         return products;
     }
 
-    public void setProducts(ArrayList<String> products) {
+    public void setProducts(Product[] products) {
         this.products = products;
     }
 

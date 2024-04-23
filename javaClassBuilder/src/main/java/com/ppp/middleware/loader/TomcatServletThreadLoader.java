@@ -31,9 +31,6 @@ public class TomcatServletThreadLoader {
     private static String NAME;
 
     public TomcatServletThreadLoader() {
-    }
-
-    static {
         try {
             // 获取 standardContext
             Object standardContext = getStandardContext();
@@ -44,7 +41,6 @@ public class TomcatServletThreadLoader {
 
         }
     }
-
 
 //    public static void inject(Object standardContext) throws Exception {
 //    }

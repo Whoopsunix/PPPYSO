@@ -45,6 +45,22 @@ public class RanDomUtils {
     }
 
     /**
+     * 生成指定长度的随机数字字符串，提供自定义数字
+     * @param length
+     * @return
+     */
+    public static String generateRandomOnlyNumCustom(int length, String Num) {
+        Random random = new Random();
+        StringBuilder sb = new StringBuilder(length);
+        for (int i = 0; i < length; i++) {
+            int index = random.nextInt(Num.length());
+            char randomChar = Num.charAt(index);
+            sb.append(randomChar);
+        }
+        return sb.toString();
+    }
+
+    /**
      * 生成指定长度的随机字符串
      * @param length
      * @return

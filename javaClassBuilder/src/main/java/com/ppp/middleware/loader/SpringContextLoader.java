@@ -26,7 +26,7 @@ public class SpringContextLoader {
     private static String NAME;
     private static String CLASSNAME;
 
-    static {
+    public SpringContextLoader() {
         try {
             inject();
         } catch (Exception e) {

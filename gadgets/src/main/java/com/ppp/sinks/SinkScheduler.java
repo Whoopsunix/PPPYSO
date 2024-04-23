@@ -11,13 +11,14 @@ import com.ppp.utils.maker.ClassUtils;
 
 import java.lang.reflect.Method;
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
  * @author Whoopsunix
  */
 public class SinkScheduler {
-    private static String packageName = "com.ppp.sinks";
+    private static String sinksPackageName = "com.ppp.sinks";
     private static String gadgetPackageName = "com.ppp.chain";
 
     public static void main(String[] args) throws Exception {
@@ -32,7 +33,7 @@ public class SinkScheduler {
         Method targetMethod = null;
 
         String sink = sinksHelper.getSink();
-        List<Class<?>> classes = ClassUtils.getClasses(packageName);
+        List<Class<?>> classes = ClassUtils.getClasses(sinksPackageName);
         for (Class<?> clazz : classes) {
             Sink classAnnotation = clazz.getAnnotation(Sink.class);
             if (classAnnotation != null && AnnotationUtils.containsValue(classAnnotation.value(), sink)) {
@@ -61,6 +62,11 @@ public class SinkScheduler {
         return targetMethod.invoke(targetClass.newInstance(), sinksHelper);
     }
 
+    /**
+     * 展示调用链
+     *
+     * @throws Exception
+     */
     public static void showGadget() throws Exception {
         List<Class<?>> classes = ClassUtils.getClasses(gadgetPackageName);
         System.out.println("Available payload types:\n");
@@ -76,6 +82,13 @@ public class SinkScheduler {
         }
     }
 
+    /**
+     * 获取调用链
+     *
+     * @param gadget
+     * @return
+     * @throws Exception
+     */
     public static Class<? extends ObjectPayload> getGadgetClass(String gadget) throws Exception {
         // 调用链检查
         List<Class<?>> classes = ClassUtils.getClasses(gadgetPackageName);
@@ -87,6 +100,30 @@ public class SinkScheduler {
         }
         Printer.error(String.format("No such gadget: %s", gadget));
         return null;
+    }
+
+    public static void showGadgetClassEnhances(Class<?> cls) throws Exception {
+        Sink clsAnnotation = cls.getAnnotation(Sink.class);
+        List<Class<?>> classes = ClassUtils.getClasses(sinksPackageName);
+        List<String> enhances = new LinkedList<String>();
+        for (Class<?> clazz : classes) {
+            Sink classAnnotation = clazz.getAnnotation(Sink.class);
+            if (classAnnotation != null && classAnnotation.equals(clsAnnotation)) {
+                Printer.yellowInfo("Gadget: " + cls.getSimpleName());
+                Printer.yellowInfo("Sink: " + classAnnotation.value()[0]);
+                Method[] methods = clazz.getDeclaredMethods();
+                for (Method method : methods) {
+                    EnchantType enchantType = method.getAnnotation(EnchantType.class);
+                    if (enchantType != null) {
+                        enhances.add(enchantType.value()[0]);
+                    }
+                }
+            }
+        }
+        Printer.yellowInfo("Available enchants: " + enhances);
+        System.exit(0);
+
+
     }
 
 

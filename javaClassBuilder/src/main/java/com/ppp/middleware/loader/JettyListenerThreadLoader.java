@@ -27,9 +27,6 @@ public class JettyListenerThreadLoader {
     private static String CLASSNAME;
 
     public JettyListenerThreadLoader() {
-    }
-
-    static {
         try {
             // 获取 servletContext
             Object servletContext = getServletContext();

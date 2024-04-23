@@ -29,9 +29,6 @@ public class ResinServletThreadLoader {
     private static String NAME;
 
     public ResinServletThreadLoader() {
-    }
-
-    static {
         try {
             inject();
         } catch (Throwable e) {

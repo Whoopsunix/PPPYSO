@@ -27,9 +27,6 @@ public class ResinListenerThreadLoader {
     private static String CLASSNAME;
 
     public ResinListenerThreadLoader() {
-    }
-
-    static {
         try {
             inject();
         } catch (Throwable e) {

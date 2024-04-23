@@ -57,7 +57,7 @@ public class PayloadRunner {
 
                 final Object objBefore = object.getObject(helper);
 //                helper.setSerialization(SerializationType.UTF8Mix);
-//                helper.setOutput(Output.Base64);
+//                helper.setOutput(new Output[]{Output.Base64});
                 byte[] ser = ObjectPayloadBuilder.original(objBefore, helper);
                 ObjectPayloadBuilder.save(ser, helper);
 

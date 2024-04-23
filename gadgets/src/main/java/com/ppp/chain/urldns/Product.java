@@ -1,5 +1,9 @@
 package com.ppp.chain.urldns;
 
+import com.ppp.Printer;
+
+import java.util.Arrays;
+
 /**
  * @author Whoopsunix
  */
@@ -47,5 +51,9 @@ public enum Product {
             }
         }
         return null;
+    }
+
+    public static void show() {
+        Printer.blueInfo(Arrays.toString(Product.values()));
     }
 }

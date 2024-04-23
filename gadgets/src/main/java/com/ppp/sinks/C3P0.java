@@ -111,7 +111,7 @@ public class C3P0 {
     @EnchantType({EnchantType.RemoteLoad})
     public String remoteLoad(SinksHelper sinksHelper) {
         String url = sinksHelper.getUrl();
-        String remoteClassName = sinksHelper.getRemoteClassName();
+        String remoteClassName = sinksHelper.getClassName();
 
         Printer.yellowInfo("Remote url: " + url);
         Printer.yellowInfo("Remote class name: " + remoteClassName);

