@@ -62,6 +62,7 @@ public enum CliOptions {
     // JavaClass Field 修改
     FieldNAME("fname", "fieldName", "Modify the field NAME"),
     FieldHEADER("fheader", "filedHeader", "Modify the field HEADER"),
+    FieldRHEADER("frheader", "fieldRHEADER", "Modify the field RHEADER"),
     //    FieldPARAM("fparam", "filedParam", "Modify the field PARAM"),
     FieldPATH("fpath", "filedPath", "Modify the field PATH"),
     Fieldkey("fkey", "filedKey", "Modify the field key"),

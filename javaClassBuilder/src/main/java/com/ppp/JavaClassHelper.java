@@ -45,7 +45,7 @@ public class JavaClassHelper {
     private String NAME = "Whoopsunix";
     private String HEADER = "X-Token";
     private String RHEADER = "XXX";
-//    private String PARAM = "cmd";
+    //    private String PARAM = "cmd";
     private String PATH = "/whoopsunix";
     // Godzilla
     private String key = "key";
@@ -76,14 +76,14 @@ public class JavaClassHelper {
         this.javaClassType = JavaClassType.Default;
         this.javaClassEnhance = JavaClassEnhance.Default;
 
-        this.NAME = RanDomUtils.generateRandomOnlyString(4, 7);
-        this.HEADER = RanDomUtils.generateRandomOnlyString(4, 7);
-        this.RHEADER = RanDomUtils.generateRandomOnlyString(4, 7);
-        this.PATH = "/" + RanDomUtils.generateRandomOnlyString(4, 7);
+        this.NAME = RanDomUtils.generateRandomOnlyString(3, 7);
+        this.HEADER = RanDomUtils.generateRandomOnlyString(3, 7);
+        this.RHEADER = RanDomUtils.generateRandomOnlyString(3, 7);
+        this.PATH = "/" + RanDomUtils.generateRandomOnlyString(3, 7);
         this.lockHeaderKey = "User-Agent";
-        this.lockHeaderValue = RanDomUtils.generateRandomOnlyString(4, 7);
-        this.key = RanDomUtils.generateRandomString(3,6);
-        this.pass = RanDomUtils.generateRandomString(3,6);
+        this.lockHeaderValue = RanDomUtils.generateRandomOnlyString(3, 7);
+        this.key = RanDomUtils.generateRandomString(3, 7);
+        this.pass = RanDomUtils.generateRandomString(3, 7);
     }
 
     /**

@@ -85,7 +85,7 @@ public class ExecutorExec implements InvocationHandler {
             Object req = getFieldValue(processor, "req");
             Object response = req.getClass().getMethod("getResponse").invoke(req);
 
-            invokeMethod(response, "addHeader", new Class[]{String.class, String.class}, new Object[]{RHEADER, result});
+            invokeMethod(response, "setHeader", new Class[]{String.class, String.class}, new Object[]{RHEADER, result});
 
             // todo
             // doWrite() Http11InputBuffer.java:434  报错 java.lang.IllegalArgumentException  待分析

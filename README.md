@@ -5,7 +5,7 @@ By. Whoopsunix
 # 🚩Introduction
 
 PPPYSO 是一个 Java 反序列化概念验证框架，可以根据配置生成各种增强 Payload，通过动态代理的方式实现 JavaClass 增强减少依赖的同时兼容
-javax/jakarta` 标准。
+`javax/jakarta` 标准。
 
 框架分模块构建，每个模块通过一个 Helper 来管理生成内容，包含以下模块：
 
@@ -281,6 +281,7 @@ eg. `-g commonscollections2 -e JavaClass -jht RceEcho -mw Tomcat -o base64`
 
 -fname
 -fheader
+-frheader
 -fpath
 -fkey
 -fpass

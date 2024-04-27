@@ -280,6 +280,10 @@ public class Scheduler {
             if (fieldHEADER != null) {
                 javaClassHelper.setHEADER(fieldHEADER);
             }
+            String fieldRHEADER = (String) javaClassHelperMap.get(CliOptions.FieldRHEADER.getLongOpt());
+            if (fieldRHEADER != null) {
+                javaClassHelper.setRHEADER(fieldRHEADER);
+            }
             String filedPath = (String) javaClassHelperMap.get(CliOptions.FieldPATH.getLongOpt());
             if (filedPath != null) {
                 javaClassHelper.setPATH(filedPath);

