@@ -72,6 +72,7 @@ public enum CliOptions {
     // 二次反序列化
     WrapSerialization("wrap", "WrapSerialization", "Wrap Serialization"),
     CBVersion("cb", "cbVersion", "eg. [1.8.3 | 1.6 | 1.5]"),
+    GadgetDependency("gd", "gadgetDependency", "eg. [rome | rometools]"),
 
     // 随机类名的包名
 //    JavaClassPackageHost("jph", "javaClassPackageHost", "Java Class Package Host"),

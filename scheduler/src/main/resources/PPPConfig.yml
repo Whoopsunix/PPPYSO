@@ -130,3 +130,5 @@ PPPYSO:
   wrapSerialization: false
   # CB 链版本可选 [1.8.3 | 1.6 | 1.5]
   CBVersion: 1.8.3
+  # [rome | rometools]
+  gadgetDependency:

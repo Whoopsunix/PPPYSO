@@ -8,6 +8,7 @@ import com.ppp.sinks.SinkScheduler;
 import com.ppp.sinks.SinksHelper;
 import com.ppp.sinks.annotation.EnchantEnums;
 import com.ppp.sinks.annotation.EnchantType;
+import com.ppp.sinks.annotation.GadgetDependency;
 import com.ppp.sinks.annotation.Sink;
 import com.ppp.utils.Reflections;
 import org.apache.commons.cli.*;
@@ -80,6 +81,7 @@ public class CliScheduler {
 
         options.addOption(CliOptions.WrapSerialization.getOpt(), CliOptions.WrapSerialization.getLongOpt(), false, CliOptions.WrapSerialization.getDescription());
         options.addOption(CBVersion.getOpt(), CBVersion.getLongOpt(), true, CBVersion.getDescription());
+        options.addOption(CliOptions.GadgetDependency.getOpt(), CliOptions.GadgetDependency.getLongOpt(), true, CliOptions.GadgetDependency.getDescription());
 
 
         CommandLineParser parser = new DefaultParser();
@@ -97,6 +99,7 @@ public class CliScheduler {
         String output = commandLine.getOptionValue(CliOptions.Output.getLongOpt());
         Boolean closePrinter = commandLine.hasOption(CliOptions.ClosePrinter.getLongOpt());
         String savePath = commandLine.getOptionValue(CliOptions.SavePath.getLongOpt());
+
 
         if (serializationType != null) {
             sinksHelper.setSerializationType(SerializationType.getSerializationType(serializationType));
@@ -146,6 +149,7 @@ public class CliScheduler {
         String enchant = commandLine.getOptionValue(CliOptions.Enchant.getLongOpt());
         Boolean extendsAbstractTranslet = commandLine.hasOption(CliOptions.ExtendsAbstractTranslet.getLongOpt());
         String loadFunction = commandLine.getOptionValue(CliOptions.LoadFunction.getLongOpt());
+        String gadgetDependency = commandLine.getOptionValue(CliOptions.GadgetDependency.getLongOpt());
 
 
         Map helperMap = modifyCliArgs(commandLine);
@@ -166,6 +170,9 @@ public class CliScheduler {
         }
         if (loadFunction != null) {
             sinksHelper.setLoadFunction(EnchantEnums.getEnchantEnums(loadFunction));
+        }
+        if (gadgetDependency != null) {
+            sinksHelper.setGadgetDependency(GadgetDependency.getGadgetDependency(gadgetDependency));
         }
 
 

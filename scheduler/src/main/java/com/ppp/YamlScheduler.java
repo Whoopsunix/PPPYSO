@@ -8,6 +8,7 @@ import com.ppp.sinks.SinkScheduler;
 import com.ppp.sinks.SinksHelper;
 import com.ppp.sinks.annotation.EnchantEnums;
 import com.ppp.sinks.annotation.EnchantType;
+import com.ppp.sinks.annotation.GadgetDependency;
 import com.ppp.sinks.annotation.Sink;
 import com.ppp.utils.Reflections;
 import org.yaml.snakeyaml.Yaml;
@@ -94,12 +95,13 @@ public class YamlScheduler {
     }
 
     public static void commonGadget(Map PPPYSO, SinksHelper sinksHelper) throws Exception {
-        String serializationType = (String) PPPYSO.get("serializationType");
-        Boolean wrapSerialization = (Boolean) PPPYSO.get("wrapSerialization");
-        String CBVersion = (String) PPPYSO.get("CBVersion");
+        String serializationType = (String) PPPYSO.get(CliOptions.SerializationType.getLongOpt());
+        Boolean wrapSerialization = (Boolean) PPPYSO.get(CliOptions.WrapSerialization.getLongOpt());
+        String CBVersion = (String) PPPYSO.get(CliOptions.CBVersion.getLongOpt());
         Map sinksHelperMap = (Map) PPPYSO.get("SinksHelper");
         String enchant = (String) sinksHelperMap.get("enchant");
         Map javaClassHelperMap = (Map) PPPYSO.get("JavaClassHelper");
+        String gadgetDependency = (String) PPPYSO.get(CliOptions.GadgetDependency.getLongOpt());
 
         if (serializationType != null) {
             sinksHelper.setSerializationType(SerializationType.getSerializationType(serializationType));
@@ -109,6 +111,9 @@ public class YamlScheduler {
         }
         if (CBVersion != null) {
             sinksHelper.setCbVersion(CBVersionEnum.getCBVersion(CBVersion));
+        }
+        if (gadgetDependency != null) {
+            sinksHelper.setGadgetDependency(GadgetDependency.getGadgetDependency(gadgetDependency));
         }
 
         if (enchant == null) {

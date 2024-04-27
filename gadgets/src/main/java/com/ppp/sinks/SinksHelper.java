@@ -7,6 +7,7 @@ import com.ppp.enums.Output;
 import com.ppp.enums.SerializationType;
 import com.ppp.sinks.annotation.EnchantEnums;
 import com.ppp.sinks.annotation.EnchantType;
+import com.ppp.sinks.annotation.GadgetDependency;
 
 import java.util.List;
 
@@ -28,6 +29,7 @@ public class SinksHelper {
      * 代表本次为循环生成
      */
     private boolean loop;
+    ;
     /**
      * 输出类型
      */
@@ -51,7 +53,11 @@ public class SinksHelper {
     /**
      * CB 版本
      */
-    private CBVersionEnum cbVersionEnum;
+    private CBVersionEnum cbVersion;
+    /**
+     * Gadget 依赖
+     */
+    private GadgetDependency gadgetDependency;
 
     /**
      * 以下为增强功能的配置参数
@@ -146,12 +152,13 @@ public class SinksHelper {
         this.loop = false;
         this.enchant = EnchantType.DEFAULT;
         this.serializationType = SerializationType.Default;
+        this.gadgetDependency = GadgetDependency.Default;
         this.javaClassHelper = new JavaClassHelper();
         this.dnsHelper = new DNSHelper();
         this.output = new Output[]{Output.Default};
         this.save = true;
         this.savePath = "./result.bin";
-        this.cbVersionEnum = CBVersionEnum.Default;
+        this.cbVersion = CBVersionEnum.Default;
         this.commandType = EnchantEnums.Default;
         this.split = false;
         this.append = false;
@@ -226,11 +233,19 @@ public class SinksHelper {
     }
 
     public CBVersionEnum getCbVersion() {
-        return cbVersionEnum;
+        return cbVersion;
     }
 
     public void setCbVersion(CBVersionEnum cbVersionEnum) {
-        this.cbVersionEnum = cbVersionEnum;
+        this.cbVersion = cbVersionEnum;
+    }
+
+    public GadgetDependency getGadgetDependency() {
+        return gadgetDependency;
+    }
+
+    public void setGadgetDependency(GadgetDependency gadgetDependency) {
+        this.gadgetDependency = gadgetDependency;
     }
 
     public String getCommand() {

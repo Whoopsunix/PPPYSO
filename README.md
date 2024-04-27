@@ -18,8 +18,8 @@ chain 概念，将 [ysoserial](https://github.com/frohoff/ysoserial) 原先的�
 - [x] `InvokerTransformer` 功能增强
 - [x] `TemplatesImpl` JavaClass增强、AbstractTranslet 可选移除、_bytecodes 特征消除
 - [x] 二次反序列化增强
-- [ ] rome、rometools 兼容
-- [ ] CB 兼容
+- [x] rome、rometools
+- [x] CB serialVersionUID 兼容
 
 ### JavaClass 模块
 
@@ -374,8 +374,8 @@ eg. `-g CommonsBeanutils1 -cmd "open -a Calculator.app" -cb 1.8.3`
 
 ![image-20240427090522783](attachments/image-20240427090522783.png)
 
-| 指令  | CB 版本                           | serialVersionUID     |
-| ----- | --------------------------------- | -------------------- |
+| 指令    | CB 版本                             | serialVersionUID     |
+|-------|-----------------------------------|----------------------|
 |       | >= 1.9.0                          | -2044202215314119608 |
 | 1.8.3 | 1.7.0 <= <= 1.8.3                 | -3490850999041592962 |
 | 1.6   | >= 1.6 or = 20030211.134440       | 2573799559215537819  |
@@ -389,9 +389,15 @@ eg. `-g ROME -cmd "open -a Calculator.app" -wrap`
 
 ![image-20240427105643758](attachments/image-20240427105643758.png)
 
+## Rome Rometools
 
+```
+-gd [rome | rometools]
+```
 
+通过 -gd 指定 rome 的依赖包 eg. `-g ROME -cmd "open -a Calculator.app" -gd rometools`
 
+![image-20240427155050391](attachments/image-20240427155050391.png)
 
 # 调用链学习
 
