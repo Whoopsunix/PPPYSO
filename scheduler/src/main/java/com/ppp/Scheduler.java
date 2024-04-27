@@ -11,7 +11,6 @@ import com.ppp.sinks.annotation.EnchantType;
 import com.ppp.utils.RanDomUtils;
 
 import java.io.*;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -28,9 +27,9 @@ public class Scheduler {
         if (args.length == 0) {
             PPPYSOexit();
         } else if (args.length == 1 && !args[0].equalsIgnoreCase("-h") && !args[0].equalsIgnoreCase("-help")) {
-            String configPath = args[0];
-            if (!new File(configPath).exists() && new File(userDir).exists()) {
-                configPath = userDir;
+            String configPath = userDir;
+            if (new File(args[0]).exists()) {
+                configPath = args[0];
             } else {
                 PPPYSOexit();
             }
@@ -39,6 +38,28 @@ public class Scheduler {
         } else {
             cls = CliScheduler.run(args, sinksHelper);
         }
+
+        if (cls != null) {
+            serializationMaker(cls, sinksHelper);
+        } else {
+            javaClassMaker(sinksHelper.getJavaClassHelper());
+        }
+
+
+    }
+
+    public static void javaClassMaker(JavaClassHelper javaClassHelper) throws Exception {
+        JavaClassBuilder.build(javaClassHelper);
+    }
+
+    /**
+     * 序列化生成
+     *
+     * @param cls
+     * @param sinksHelper
+     * @throws Exception
+     */
+    public static void serializationMaker(Class cls, SinksHelper sinksHelper) throws Exception {
 
         // 默认生成
         Object gadget = ObjectPayloadBuilder.builder(cls, sinksHelper);
@@ -60,8 +81,6 @@ public class Scheduler {
                 }
             }
         }
-
-
     }
 
     public static void PPPYSOexit() throws Exception {
@@ -215,20 +234,6 @@ public class Scheduler {
     }
 
     /**
-     * 本地加载增强
-     */
-    public static void enchantLocalLoad(SinksHelper sinksHelper, Map sinksHelperMap) {
-        sinksHelper.setEnchant(EnchantType.LocalLoad);
-        String loadFunction = (String) sinksHelperMap.get(CliOptions.LoadFunction.getLongOpt());
-        if (loadFunction != null) {
-            sinksHelper.setLoadFunction(EnchantEnums.getEnchantEnums(loadFunction));
-        } else {
-            sinksHelper.setLoadFunction(EnchantEnums.ScriptEngine);
-            Printer.log("Use default load function: ScriptEngine");
-        }
-    }
-
-    /**
      * JavaClass 增强
      *
      * @param sinksHelper
@@ -238,13 +243,63 @@ public class Scheduler {
         sinksHelper.setEnchant(EnchantType.JavaClass);
 
         JavaClassHelper javaClassHelper = sinksHelper.getJavaClassHelper();
-        String javaClassHelperType = JavaClassHelperType.Utils.getJavaClassHelperType((String) javaClassHelperMap.get("javaClassHelperType"));
+        String javaClassHelperType = JavaClassHelperType.Utils.getJavaClassHelperType((String) javaClassHelperMap.get(CliOptions.JavaClassHelperType.getLongOpt()));
         javaClassHelper.setJavaClassHelperType(javaClassHelperType);
-        javaClassHelper.setJavaClassType(JavaClassType.Utils.getJavaClassType((String) javaClassHelperMap.get("javaClassType")));
-        javaClassHelper.setMiddleware(Middleware.Utils.getMiddleware((String) javaClassHelperMap.get("middleware")));
-        if (javaClassHelperType.equalsIgnoreCase(JavaClassHelperType.MemShell)) {
-            javaClassHelper.setMemShell(MemShell.Utils.getMemShell((String) javaClassHelperMap.get("memShell")));
-            javaClassHelper.setMemShellFunction(MemShellFunction.Utils.getMemShellFunction((String) javaClassHelperMap.get("memShellFunction")));
+
+        if (javaClassHelperType.equalsIgnoreCase(JavaClassHelperType.Custom)) {
+            String javaClassFilePath = (String) javaClassHelperMap.get(CliOptions.JavaClassFilePath.getLongOpt());
+            if (javaClassFilePath == null) {
+                Printer.error(String.format("Please use -%s to set JavaClass file path", CliOptions.JavaClassFilePath.getOpt()));
+            }
+            javaClassHelper.setJavaClassFilePath(javaClassFilePath);
+        } else {
+            javaClassHelper.setJavaClassType(JavaClassType.Utils.getJavaClassType((String) javaClassHelperMap.get(CliOptions.JavaClassType.getLongOpt())));
+            javaClassHelper.setMiddleware(Middleware.Utils.getMiddleware((String) javaClassHelperMap.get(CliOptions.Middleware.getLongOpt())));
+            javaClassHelper.setJavaClassEnhance(JavaClassEnhance.getJavaClassEnhanceEnums((String) javaClassHelperMap.get(CliOptions.JavaClassEnhance.getLongOpt())));
+
+            if (javaClassHelperType.equalsIgnoreCase(JavaClassHelperType.MemShell)) {
+                String memShell = MemShell.Utils.getMemShell((String) javaClassHelperMap.get(CliOptions.MemShell.getLongOpt()));
+                if (memShell == null) {
+                    Printer.blueInfo(MemShell.Utils.show());
+                    Printer.error(String.format("MemShell is null, use -%s to set", CliOptions.MemShell.getOpt()));
+                }
+                javaClassHelper.setMemShell(memShell);
+                String memShellFunction = MemShellFunction.Utils.getMemShellFunction((String) javaClassHelperMap.get(CliOptions.MemShellFunction.getLongOpt()));
+                if (memShellFunction == null) {
+                    Printer.blueInfo(MemShellFunction.Utils.show());
+                    Printer.error(String.format("MemShellFunction is null, use -%s to set", CliOptions.MemShellFunction.getOpt()));
+                }
+                javaClassHelper.setMemShellFunction(memShellFunction);
+            }
+
+            String fieldName = (String) javaClassHelperMap.get(CliOptions.FieldNAME.getLongOpt());
+            if (fieldName != null) {
+                javaClassHelper.setNAME(fieldName);
+            }
+            String fieldHEADER = (String) javaClassHelperMap.get(CliOptions.FieldHEADER.getLongOpt());
+            if (fieldHEADER != null) {
+                javaClassHelper.setHEADER(fieldHEADER);
+            }
+            String filedPath = (String) javaClassHelperMap.get(CliOptions.FieldPATH.getLongOpt());
+            if (filedPath != null) {
+                javaClassHelper.setPATH(filedPath);
+            }
+            String filedKey = (String) javaClassHelperMap.get(CliOptions.Fieldkey.getLongOpt());
+            if (filedKey != null) {
+                javaClassHelper.setKey(filedKey);
+            }
+            String filedPass = (String) javaClassHelperMap.get(CliOptions.Fieldpass.getLongOpt());
+            if (filedPass != null) {
+                javaClassHelper.setPass(filedPass);
+            }
+            String filedLockHeaderKey = (String) javaClassHelperMap.get(CliOptions.FieldLockHeaderKey.getLongOpt());
+            if (filedLockHeaderKey != null) {
+                javaClassHelper.setLockHeaderKey(filedLockHeaderKey);
+            }
+            String filedLockHeaderValue = (String) javaClassHelperMap.get(CliOptions.FieldLockHeaderValue.getLongOpt());
+            if (filedLockHeaderValue != null) {
+                javaClassHelper.setLockHeaderValue(filedLockHeaderValue);
+            }
         }
 
     }

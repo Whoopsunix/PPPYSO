@@ -30,14 +30,13 @@ public class WrapSerialization {
     public static Object scheduler(Object object, SinksHelper sinksHelper) throws Exception {
         EnchantEnums wrapSerialization = sinksHelper.getWrapSerialization();
 
-        Object result = null;
         if (wrapSerialization.equals(EnchantEnums.SignedObject)) {
-            result = signedObject(object);
+            object = signedObject(object);
             Printer.yellowInfo("Wrap Serialization by SignedObject");
         } else if (wrapSerialization.equals(EnchantEnums.RMIConnector)) {
-            result = rmiConnector(object);
+            object = rmiConnector(object);
         }
-        return result;
+        return object;
     }
 
     /**

@@ -64,7 +64,7 @@ public class C3P0 {
      * @return
      * @throws Exception
      */
-    @EnchantType({EnchantType.LocalLoad})
+    @EnchantType({EnchantType.JavaClass})
     public String localLoad(SinksHelper sinksHelper) throws Exception {
         /**
          * 字节码加载

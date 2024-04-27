@@ -50,10 +50,12 @@ public enum Product {
                 return p;
             }
         }
+        Printer.warn("Product not found: " + product);
+        Product.show();
         return null;
     }
 
     public static void show() {
-        Printer.blueInfo(Arrays.toString(Product.values()));
+        Printer.blueInfo("Current support products: " + Arrays.toString(Product.values()));
     }
 }

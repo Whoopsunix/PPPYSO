@@ -98,7 +98,7 @@ public class SinkScheduler {
                 return (Class<? extends ObjectPayload>) clazz;
             }
         }
-        Printer.error(String.format("No such gadget: %s", gadget));
+//        Printer.error(String.format("No such gadget: %s", gadget));
         return null;
     }
 

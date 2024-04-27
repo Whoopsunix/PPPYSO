@@ -1,5 +1,6 @@
 package com.ppp;
 
+import com.ppp.annotation.JavaClassEnhance;
 import com.ppp.annotation.JavaClassType;
 import com.ppp.utils.RanDomUtils;
 
@@ -25,6 +26,10 @@ public class JavaClassHelper {
      */
     private String javaClassType;
     /**
+     * 增强输出
+     */
+    private JavaClassEnhance javaClassEnhance;
+    /**
      * 内存马
      */
     // 组件
@@ -39,10 +44,11 @@ public class JavaClassHelper {
      */
     private String NAME = "Whoopsunix";
     private String HEADER = "X-Token";
-    private String PARAM = "cmd";
+    private String RHEADER = "XXX";
+//    private String PARAM = "cmd";
     private String PATH = "/whoopsunix";
     // Godzilla
-    private String key = "3c6e0b8a9c15224a";
+    private String key = "key";
     public String pass = "pass";
     // 内存马约束请求头
     private String lockHeaderKey = "User-Agent";
@@ -52,6 +58,7 @@ public class JavaClassHelper {
      * JavaClass 信息
      */
 
+    private String LoaderClassName;
     // 用于内存马时 代表真正注入请求上下文的类名，loader 不可控
     private String CLASSNAME;
     // 是否为注入器
@@ -67,13 +74,16 @@ public class JavaClassHelper {
         this.extendsAbstractTranslet = false;
         this.isLoader = false;
         this.javaClassType = JavaClassType.Default;
+        this.javaClassEnhance = JavaClassEnhance.Default;
 
         this.NAME = RanDomUtils.generateRandomOnlyString(4, 7);
         this.HEADER = RanDomUtils.generateRandomOnlyString(4, 7);
-        this.PARAM = RanDomUtils.generateRandomOnlyString(4, 7);
+        this.RHEADER = RanDomUtils.generateRandomOnlyString(4, 7);
         this.PATH = "/" + RanDomUtils.generateRandomOnlyString(4, 7);
         this.lockHeaderKey = "User-Agent";
         this.lockHeaderValue = RanDomUtils.generateRandomOnlyString(4, 7);
+        this.key = RanDomUtils.generateRandomString(3,6);
+        this.pass = RanDomUtils.generateRandomString(3,6);
     }
 
     /**
@@ -109,6 +119,14 @@ public class JavaClassHelper {
 
     public void setJavaClassType(String javaClassType) {
         this.javaClassType = javaClassType;
+    }
+
+    public JavaClassEnhance getJavaClassEnhance() {
+        return javaClassEnhance;
+    }
+
+    public void setJavaClassEnhance(JavaClassEnhance javaClassEnhance) {
+        this.javaClassEnhance = javaClassEnhance;
     }
 
     public String getMiddleware() {
@@ -151,12 +169,12 @@ public class JavaClassHelper {
         this.HEADER = HEADER;
     }
 
-    public String getPARAM() {
-        return PARAM;
+    public String getRHEADER() {
+        return RHEADER;
     }
 
-    public void setPARAM(String PARAM) {
-        this.PARAM = PARAM;
+    public void setRHEADER(String RHEADER) {
+        this.RHEADER = RHEADER;
     }
 
     public String getPATH() {
@@ -197,6 +215,14 @@ public class JavaClassHelper {
 
     public void setLockHeaderValue(String lockHeaderValue) {
         this.lockHeaderValue = lockHeaderValue;
+    }
+
+    public String getLoaderClassName() {
+        return LoaderClassName;
+    }
+
+    public void setLoaderClassName(String loaderClassName) {
+        LoaderClassName = loaderClassName;
     }
 
     public String getCLASSNAME() {

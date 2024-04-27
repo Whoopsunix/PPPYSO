@@ -182,6 +182,23 @@ public class TomcatAutoFindListenerThreadLoader {
 
         // 死亡区域 已检查过的类
         HashSet breakObject = new HashSet();
+        breakObject.add(int.class.getName());
+        breakObject.add(short.class.getName());
+        breakObject.add(long.class.getName());
+        breakObject.add(double.class.getName());
+        breakObject.add(byte.class.getName());
+        breakObject.add(float.class.getName());
+        breakObject.add(char.class.getName());
+        breakObject.add(boolean.class.getName());
+        breakObject.add(Integer.class.getName());
+        breakObject.add(Short.class.getName());
+        breakObject.add(Long.class.getName());
+        breakObject.add(Double.class.getName());
+        breakObject.add(Byte.class.getName());
+        breakObject.add(Float.class.getName());
+        breakObject.add(Character.class.getName());
+        breakObject.add(Boolean.class.getName());
+        breakObject.add(String.class.getName());
         breakObject.add(System.identityHashCode(breakObject));
 
         // 原始类型和包装类都不递归

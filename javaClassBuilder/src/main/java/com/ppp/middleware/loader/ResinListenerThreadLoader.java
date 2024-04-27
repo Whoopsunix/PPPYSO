@@ -53,7 +53,7 @@ public class ResinListenerThreadLoader {
                     ArrayList _requestListeners = (ArrayList) getFieldValue(webapp, "_requestListeners");
                     for (int j = 0; j < _requestListeners.size(); j++) {
                         if (_requestListeners.get(j) instanceof Proxy) {
-                            if (getFieldValue(_requestListeners.get(j), "h").getClass().getName().equalsIgnoreCase(CLASSNAME)) {
+                            if (getFieldValue(_requestListeners.get(j), "h").getClass().getName().equals(CLASSNAME)) {
                                 return;
                             }
                         }

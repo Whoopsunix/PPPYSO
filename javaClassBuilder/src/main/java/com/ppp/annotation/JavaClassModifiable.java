@@ -17,6 +17,8 @@ public @interface JavaClassModifiable {
     String NAME = "NAME";
     // 请求头 key
     String HEADER = "HEADER";
+    // 响应头 key
+    String RHEADER = "RHEADER";
     // 参数 key
     String PARAM = "PARAM";
     // 路径
@@ -27,5 +29,6 @@ public @interface JavaClassModifiable {
     String pass = "pass";
     String lockHeaderKey = "lockHeaderKey";
     String lockHeaderValue = "lockHeaderValue";
+
     String[] value() default {};
 }

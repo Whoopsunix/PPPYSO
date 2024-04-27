@@ -27,8 +27,6 @@ public @interface EnchantType {
     String FileWrite = "FileWrite";
     // 远程类加载
     String RemoteLoad = "RemoteLoad";
-    // 本地类加载
-    String LocalLoad = "LocalLoad";
     // JavaClass
     String JavaClass = "JavaClass";
 

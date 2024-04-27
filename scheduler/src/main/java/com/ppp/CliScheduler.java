@@ -1,5 +1,6 @@
 package com.ppp;
 
+import com.ppp.chain.commonsbeanutils.CBVersionEnum;
 import com.ppp.chain.urldns.URLDNS;
 import com.ppp.enums.Output;
 import com.ppp.enums.SerializationType;
@@ -13,6 +14,8 @@ import org.apache.commons.cli.*;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import static com.ppp.CliOptions.CBVersion;
 
 /**
  * @author Whoopsunix
@@ -55,6 +58,7 @@ public class CliScheduler {
         // JavaClass
         options.addOption(CliOptions.ExtendsAbstractTranslet.getOpt(), CliOptions.ExtendsAbstractTranslet.getLongOpt(), false, CliOptions.ExtendsAbstractTranslet.getDescription());
         options.addOption(CliOptions.JavaClassHelperType.getOpt(), CliOptions.JavaClassHelperType.getLongOpt(), true, CliOptions.JavaClassHelperType.getDescription());
+        options.addOption(CliOptions.JavaClassEnhance.getOpt(), CliOptions.JavaClassEnhance.getLongOpt(), true, CliOptions.JavaClassEnhance.getDescription());
         options.addOption(CliOptions.JavaClassFilePath.getOpt(), CliOptions.JavaClassFilePath.getLongOpt(), true, CliOptions.JavaClassFilePath.getDescription());
         options.addOption(CliOptions.JavaClassType.getOpt(), CliOptions.JavaClassType.getLongOpt(), true, CliOptions.JavaClassType.getDescription());
         options.addOption(CliOptions.Middleware.getOpt(), CliOptions.Middleware.getLongOpt(), true, CliOptions.Middleware.getDescription());
@@ -75,6 +79,7 @@ public class CliScheduler {
         options.addOption(CliOptions.DNSSubdomain.getOpt(), CliOptions.DNSSubdomain.getLongOpt(), true, CliOptions.DNSSubdomain.getDescription());
 
         options.addOption(CliOptions.WrapSerialization.getOpt(), CliOptions.WrapSerialization.getLongOpt(), false, CliOptions.WrapSerialization.getDescription());
+        options.addOption(CBVersion.getOpt(), CBVersion.getLongOpt(), true, CBVersion.getDescription());
 
 
         CommandLineParser parser = new DefaultParser();
@@ -88,42 +93,10 @@ public class CliScheduler {
         }
 
         String Gadget = commandLine.getOptionValue(CliOptions.Gadget.getLongOpt());
-
-        Class<? extends ObjectPayload> gadgetClass = SinkScheduler.getGadgetClass(Gadget);
-        String[] sinks = (String[]) Reflections.invokeMethod(gadgetClass.getAnnotation(Sink.class), "value", new Class[]{}, new Object[]{});
-        sinksHelper.setSink(sinks[0]);
-
-        if (gadgetClass.equals(URLDNS.class)) {
-            URLDNSGadget(commandLine, sinksHelper, gadgetClass);
-        } else {
-            commonGadget(commandLine, sinksHelper, gadgetClass);
-        }
-
-        return gadgetClass;
-    }
-
-    public static void URLDNSGadget(CommandLine commandLine, SinksHelper sinksHelper, Class<? extends ObjectPayload> gadgetClass) throws Exception {
-        Map helperMap = modifyCliArgs(commandLine);
-        Scheduler.enchantURLDNS(sinksHelper, helperMap);
-    }
-
-    public static void commonGadget(CommandLine commandLine, SinksHelper sinksHelper, Class<? extends ObjectPayload> gadgetClass) throws Exception {
         String serializationType = commandLine.getOptionValue(CliOptions.SerializationType.getLongOpt());
         String output = commandLine.getOptionValue(CliOptions.Output.getLongOpt());
         Boolean closePrinter = commandLine.hasOption(CliOptions.ClosePrinter.getLongOpt());
         String savePath = commandLine.getOptionValue(CliOptions.SavePath.getLongOpt());
-        Boolean wrapSerialization = commandLine.hasOption(CliOptions.WrapSerialization.getLongOpt());
-        String CBVersion = commandLine.getOptionValue(CliOptions.CBVersion.getLongOpt());
-        String enchant = commandLine.getOptionValue(CliOptions.Enchant.getLongOpt());
-        Boolean extendsAbstractTranslet = commandLine.hasOption(CliOptions.ExtendsAbstractTranslet.getLongOpt());
-        String loadFunction = commandLine.getOptionValue(CliOptions.LoadFunction.getLongOpt());
-
-
-        Map helperMap = modifyCliArgs(commandLine);
-        if (commandLine.hasOption(CliOptions.Show.getLongOpt())) {
-            Scheduler.PPPYSO();
-            SinkScheduler.showGadgetClassEnhances(gadgetClass);
-        }
 
         if (serializationType != null) {
             sinksHelper.setSerializationType(SerializationType.getSerializationType(serializationType));
@@ -139,11 +112,53 @@ public class CliScheduler {
             sinksHelper.setSave(true);
             sinksHelper.setSavePath(savePath);
         }
+
+        Class<? extends ObjectPayload> gadgetClass = SinkScheduler.getGadgetClass(Gadget);
+        if (Gadget != null) {
+            if (gadgetClass != null) {
+                String[] sinks = (String[]) Reflections.invokeMethod(gadgetClass.getAnnotation(Sink.class), "value", new Class[]{}, new Object[]{});
+                sinksHelper.setSink(sinks[0]);
+
+                if (gadgetClass.equals(URLDNS.class)) {
+                    URLDNSGadget(commandLine, sinksHelper);
+                } else {
+                    commonGadget(commandLine, sinksHelper, gadgetClass);
+                }
+            } else {
+                Printer.error(String.format("No such gadget: %s", Gadget));
+            }
+        } else {
+            sinksHelper.setEnchant(EnchantType.JavaClass);
+            commonGadget(commandLine, sinksHelper, gadgetClass);
+        }
+
+        return gadgetClass;
+    }
+
+    public static void URLDNSGadget(CommandLine commandLine, SinksHelper sinksHelper) throws Exception {
+        Map helperMap = modifyCliArgs(commandLine);
+        Scheduler.enchantURLDNS(sinksHelper, helperMap);
+    }
+
+    public static void commonGadget(CommandLine commandLine, SinksHelper sinksHelper, Class<? extends ObjectPayload> gadgetClass) throws Exception {
+        Boolean wrapSerialization = commandLine.hasOption(CliOptions.WrapSerialization.getLongOpt());
+        String CBVersion = commandLine.getOptionValue(CliOptions.CBVersion.getLongOpt());
+        String enchant = commandLine.getOptionValue(CliOptions.Enchant.getLongOpt());
+        Boolean extendsAbstractTranslet = commandLine.hasOption(CliOptions.ExtendsAbstractTranslet.getLongOpt());
+        String loadFunction = commandLine.getOptionValue(CliOptions.LoadFunction.getLongOpt());
+
+
+        Map helperMap = modifyCliArgs(commandLine);
+        if (commandLine.hasOption(CliOptions.Show.getLongOpt())) {
+            Scheduler.PPPYSO();
+            SinkScheduler.showGadgetClassEnhances(gadgetClass);
+        }
+
         if (wrapSerialization != null && wrapSerialization) {
             sinksHelper.setWrapSerialization(EnchantEnums.SignedObject);
         }
         if (CBVersion != null) {
-            sinksHelper.setCBVersion(CBVersion);
+            sinksHelper.setCbVersion(CBVersionEnum.getCBVersion(CBVersion));
         }
         if (extendsAbstractTranslet) {
             JavaClassHelper javaClassHelper = sinksHelper.getJavaClassHelper();

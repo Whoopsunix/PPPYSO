@@ -16,15 +16,9 @@ import javassist.ClassPool;
 import javassist.CtClass;
 import javassist.CtConstructor;
 import javassist.CtField;
-import org.apache.commons.collections.Transformer;
-import org.apache.commons.collections.functors.ConstantTransformer;
-import org.apache.commons.collections.functors.InstantiateTransformer;
-import org.apache.commons.collections.functors.InvokerTransformer;
 
-import javax.script.ScriptEngineManager;
 import java.io.FileInputStream;
 import java.io.Serializable;
-import java.util.Base64;
 
 /**
  * @author Whoopsunix
@@ -349,6 +343,7 @@ public class TemplatesImpl {
 
         byte[] classBytes = JavaClassBuilder.build(javaClassHelper);
 
+        // todo
         return createTemplatesImpl(classBytes);
     }
 

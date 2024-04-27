@@ -65,7 +65,7 @@ public class TomcatListenerThreadLoader {
             applicationEventListenersObjects = (Object[]) getFieldValue(standardContext, "applicationEventListenersObjects");
             for (int i = 0; i < applicationEventListenersObjects.length; i++) {
                 if (applicationEventListenersObjects[i] instanceof Proxy) {
-                    if (getFieldValue(applicationEventListenersObjects[i], "h").getClass().getName().equalsIgnoreCase(CLASSNAME)) {
+                    if (getFieldValue(applicationEventListenersObjects[i], "h").getClass().getName().equals(CLASSNAME)) {
                         return;
                     }
                 }

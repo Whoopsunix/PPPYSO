@@ -8,7 +8,7 @@ PPPYSO:
   # 输出类型: Default Base64 GZIP
   output: Base64
   # 保存默认为 true
-#  save: true
+  #  save: true
   # 结果保存绝对路径: 默认当前路径下生成 result.bin
   savePath:
   # 关闭输出只保留 payload 默认为 false
@@ -60,18 +60,18 @@ PPPYSO:
       partSize:
 
 
-#    ### LocalLoad 本地类加载，使用内置的 RCE 回显、内存马
-#    # 具体配置在 JavaClassHelper 中
-#    LocalLoad:
-#      # 可选 InvokerTransformer3 加载方式: 默认 ScriptEngineManager，还提供了 rhino (需要 org.mozilla:rhino 依赖)
-#      loadFunction:
+    #    ### LocalLoad 本地类加载，使用内置的 RCE 回显、内存马
+    #    # 具体配置在 JavaClassHelper 中
+    #    LocalLoad:
+    #      # 可选 InvokerTransformer3 加载方式: 默认 ScriptEngineManager，还提供了 rhino (需要 org.mozilla:rhino 依赖)
+    #      loadFunction:
 
     ### RemoteLoad -> 远程类加载
     RemoteLoad:
       # 加载地址
       url:
       # 全限定类名
-      remoteClassName:
+      className:
       # 如果为有参构造时输入参数
       constructor:
 
@@ -86,6 +86,8 @@ PPPYSO:
     javaClassFilePath:
     # 指定 JavaClass 额外生成方式: 目前额外提供了 AutoFind 遍历上下文来获取请求上下文
     javaClassType:
+    # 用于封装生成的 JavaClass，eg. [FreeMarker]
+    javaClassEnhance:
 
     # 组件
     middleware: Tomcat
@@ -96,35 +98,35 @@ PPPYSO:
 
     ## 内存马信息 置空时默认随机生成
     # 内存马名称
-    NAME:
+    fieldName:
     # 输入命令的请求头
-    HEADER:
+    filedHeader:
     # 访问路径
-    PATH:
+    filedPath:
 
     ## webshell 相关信息
-    key:
-    pass:
+    filedKey:
+    filedPass:
 
     # 请求时指定约束请求头需要带有特定值 避免影响业务
-    lockHeaderKey:
-    lockHeaderValue:
+    filedLockHeaderKey:
+    filedLockHeaderValue:
 
   ### DNSLOG 点增强
   DNSHelper:
     # DNSLOG 服务器地址
-    host:
+    host: 127.0.0.1
     # 探测的组件
-    products:
+    dnsProducts: cc1
     ## 自定义需要探测的类
     # 全限定类名
     className:
     # 对应的子域名
-    subdomain:
+    dnsSubdomain:
 
 
   ### 调用链相关增强
   # SignedObject 二次反序列化
   wrapSerialization: false
-  # CB 链版本可选 1.8.3
+  # CB 链版本可选 [1.8.3 | 1.6 | 1.5]
   CBVersion: 1.8.3

@@ -50,7 +50,7 @@ public class C3P0_EL implements ObjectPayload<Object> {
         // 字节码加载
 //        SinksHelper sinksHelper = new SinksHelper();
 //        sinksHelper.setSink(C3P0_2.class.getAnnotation(Sink.class).value()[0]);
-//        sinksHelper.setEnchant(EnchantType.LocalLoad);
+//        sinksHelper.setEnchant(EnchantType.JavaClass);
 //        sinksHelper.setSave(true);
 //        JavaClassHelper javaClassHelper = new JavaClassHelper();
 //        javaClassHelper.setJavaClassHelperType(JavaClassHelperType.RceEcho);

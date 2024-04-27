@@ -41,6 +41,9 @@ public class JavaClassModifier {
             // 修改类名
             ctClass.setName(randomJavaClassName);
         }
+        if (javaClassHelper.isLoader()) {
+            javaClassHelper.setLoaderClassName(ctClass.getName());
+        }
 
         // 根据随机类名赋予字段值
         if (localCls != null)
@@ -129,11 +132,16 @@ public class JavaClassModifier {
             Printer.yellowInfo(String.format("Exec Header: %s", header));
             JavaClassUtils.fieldChangeIfExist(ctClass, JavaClassModifiable.HEADER, String.format("private static String %s = \"%s\";", JavaClassModifiable.HEADER, header));
         }
-        if (AnnotationUtils.containsValue(cls, JavaClassModifiable.class, JavaClassModifiable.PARAM)) {
-            String param = javaClassHelper.getPARAM();
-            Printer.yellowInfo(String.format("Exec Param: %s", param));
-            JavaClassUtils.fieldChangeIfExist(ctClass, JavaClassModifiable.PARAM, String.format("private static String %s = \"%s\";", JavaClassModifiable.PARAM, param));
+        if (AnnotationUtils.containsValue(cls, JavaClassModifiable.class, JavaClassModifiable.RHEADER)) {
+            String rheader = javaClassHelper.getRHEADER();
+            Printer.yellowInfo(String.format("Exec Response Header: %s", rheader));
+            JavaClassUtils.fieldChangeIfExist(ctClass, JavaClassModifiable.RHEADER, String.format("private static String %s = \"%s\";", JavaClassModifiable.RHEADER, rheader));
         }
+//        if (AnnotationUtils.containsValue(cls, JavaClassModifiable.class, JavaClassModifiable.PARAM)) {
+//            String param = javaClassHelper.getPARAM();
+//            Printer.yellowInfo(String.format("Exec Param: %s", param));
+//            JavaClassUtils.fieldChangeIfExist(ctClass, JavaClassModifiable.PARAM, String.format("private static String %s = \"%s\";", JavaClassModifiable.PARAM, param));
+//        }
         if (AnnotationUtils.containsValue(cls, JavaClassModifiable.class, JavaClassModifiable.PATH)) {
             String path = javaClassHelper.getPATH();
             Printer.yellowInfo(String.format("Path: %s", path));
@@ -142,12 +150,12 @@ public class JavaClassModifier {
 
         if (AnnotationUtils.containsValue(cls, JavaClassModifiable.class, JavaClassModifiable.pass)) {
             String pass = javaClassHelper.getPass();
-            Printer.yellowInfo(String.format("pass: %s", pass));
+//            Printer.yellowInfo(String.format("pass: %s", pass));
             JavaClassUtils.fieldChangeIfExist(ctClass, JavaClassModifiable.pass, String.format("private static String %s = \"%s\";", JavaClassModifiable.pass, pass));
         }
         if (AnnotationUtils.containsValue(cls, JavaClassModifiable.class, JavaClassModifiable.key)) {
             String key = javaClassHelper.getKey();
-            Printer.yellowInfo(String.format("key: %s", key));
+//            Printer.yellowInfo(String.format("key: %s", key));
             JavaClassUtils.fieldChangeIfExist(ctClass, JavaClassModifiable.key, String.format("private static String %s = \"%s\";", JavaClassModifiable.key, key));
         }
     }
@@ -215,7 +223,14 @@ public class JavaClassModifier {
             resources = classLoader.getResources(packageName);
             while (resources.hasMoreElements()) {
                 URL resource = resources.nextElement();
-                classNames.addAll(getClassNamesFromResource(resource, packageName));
+                Set<String> classNamesFromResource = getClassNamesFromResource(resource, packageName);
+                for (String className : classNamesFromResource) {
+                    if (className.split("\\.").length < 5) {
+                        continue;
+                    }
+                    classNames.add(className);
+                }
+//                classNames.addAll(getClassNamesFromResource(resource, packageName));
             }
         } catch (Exception e) {
 

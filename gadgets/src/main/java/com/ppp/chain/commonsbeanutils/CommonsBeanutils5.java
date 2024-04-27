@@ -8,9 +8,9 @@ import com.ppp.sinks.SinkScheduler;
 import com.ppp.sinks.SinksHelper;
 import com.ppp.sinks.annotation.Sink;
 import com.ppp.utils.Reflections;
-import org.apache.commons.beanutils.BeanComparator;
 import org.apache.commons.collections.bidimap.DualTreeBidiMap;
 
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -32,13 +32,13 @@ public class CommonsBeanutils5 implements ObjectPayload<Object> {
         // sink
         Object sinkObject = SinkScheduler.builder(sinksHelper);
 
-        Object kickOffObject = getChain(sinkObject);
+        Object kickOffObject = getChain(sinkObject, sinksHelper.getCbVersion());
 
         return kickOffObject;
     }
 
-    public Object getChain(Object templates) throws Exception {
-        final BeanComparator comparator = new BeanComparator(null, String.CASE_INSENSITIVE_ORDER);
+    public Object getChain(Object templates, CBVersionEnum version) throws Exception {
+        Comparator comparator = BeanComparatorBuilder.scheduler(BeanComparatorBuilder.CompareEnum.CaseInsensitiveComparator, version);
 
         DualTreeBidiMap dualTreeBidiMap = new DualTreeBidiMap();
         HashMap<Object, Object> map = new HashMap<Object, Object>();

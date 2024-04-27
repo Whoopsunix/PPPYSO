@@ -1,6 +1,7 @@
 package com.ppp.sinks;
 
 import com.ppp.JavaClassHelper;
+import com.ppp.chain.commonsbeanutils.CBVersionEnum;
 import com.ppp.chain.urldns.DNSHelper;
 import com.ppp.enums.Output;
 import com.ppp.enums.SerializationType;
@@ -50,7 +51,7 @@ public class SinksHelper {
     /**
      * CB 版本
      */
-    private String CBVersion;
+    private CBVersionEnum cbVersionEnum;
 
     /**
      * 以下为增强功能的配置参数
@@ -150,7 +151,7 @@ public class SinksHelper {
         this.output = new Output[]{Output.Default};
         this.save = true;
         this.savePath = "./result.bin";
-        this.CBVersion = "dafault";
+        this.cbVersionEnum = CBVersionEnum.Default;
         this.commandType = EnchantEnums.Default;
         this.split = false;
         this.append = false;
@@ -224,12 +225,12 @@ public class SinksHelper {
         this.wrapSerialization = wrapSerialization;
     }
 
-    public String getCBVersion() {
-        return CBVersion;
+    public CBVersionEnum getCbVersion() {
+        return cbVersionEnum;
     }
 
-    public void setCBVersion(String CBVersion) {
-        this.CBVersion = CBVersion;
+    public void setCbVersion(CBVersionEnum cbVersionEnum) {
+        this.cbVersionEnum = cbVersionEnum;
     }
 
     public String getCommand() {

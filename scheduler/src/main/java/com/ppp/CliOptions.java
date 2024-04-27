@@ -39,7 +39,7 @@ public enum CliOptions {
 
     // 远程加载 url
     URL("u", "url", "URL"),
-    // 远程加载类名
+    // 类名
     ClassName("cn", "className", "Class Name"),
     // 远程加载构造方法参数
     Constructor("ctor", "constructor", "Constructor param"),
@@ -53,6 +53,7 @@ public enum CliOptions {
     ExtendsAbstractTranslet("ext", "extendsAbstractTranslet", "Extends AbstractTranslet"),
     JavaClassHelperType("jht", "javaClassHelperType", "eg. [MemShell | RceEcho | Custom]"),
     JavaClassFilePath("jfp", "javaClassFilePath", "Local JavaClass from local file path"),
+    JavaClassEnhance("je", "javaClassEnhance", "eg. [FreeMarker]"),
     JavaClassType("jt", "javaClassType", "[AutoFind | Default]"),
     Middleware("mw", "middleware", "eg. [Tomcat | Jetty ...]"),
     MemShell("ms", "memShell", "eg. [Servlet | Listener | Filter ...]"),
@@ -61,7 +62,7 @@ public enum CliOptions {
     // JavaClass Field 修改
     FieldNAME("fname", "fieldName", "Modify the field NAME"),
     FieldHEADER("fheader", "filedHeader", "Modify the field HEADER"),
-//    FieldPARAM("fparam", "filedParam", "Modify the field PARAM"),
+    //    FieldPARAM("fparam", "filedParam", "Modify the field PARAM"),
     FieldPATH("fpath", "filedPath", "Modify the field PATH"),
     Fieldkey("fkey", "filedKey", "Modify the field key"),
     Fieldpass("fpass", "filedPass", "Modify the field pass"),
@@ -70,7 +71,7 @@ public enum CliOptions {
 
     // 二次反序列化
     WrapSerialization("wrap", "WrapSerialization", "Wrap Serialization"),
-    CBVersion("cb", "cbVersion", "CB Version [1.8.3]"),
+    CBVersion("cb", "cbVersion", "eg. [1.8.3 | 1.6 | 1.5]"),
 
     // 随机类名的包名
 //    JavaClassPackageHost("jph", "javaClassPackageHost", "Java Class Package Host"),

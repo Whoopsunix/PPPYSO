@@ -52,7 +52,7 @@ public class JettyListenerThreadLoader {
             if (_eventListeners != null) {
                 for (int i = 0; i < _eventListeners.length; i++) {
                     if (_eventListeners[i] instanceof Proxy) {
-                        if (getFieldValue(_eventListeners[i], "h").getClass().getName().equalsIgnoreCase(CLASSNAME)) {
+                        if (getFieldValue(_eventListeners[i], "h").getClass().getName().equals(CLASSNAME)) {
                             return;
                         }
                     }
@@ -68,7 +68,7 @@ public class JettyListenerThreadLoader {
             if (_eventListeners != null) {
                 for (int i = 0; i < _eventListeners.size(); i++) {
                     if (_eventListeners.get(i) instanceof Proxy) {
-                        if (getFieldValue(_eventListeners.get(i), "h").getClass().getName().equalsIgnoreCase(CLASSNAME)) {
+                        if (getFieldValue(_eventListeners.get(i), "h").getClass().getName().equals(CLASSNAME)) {
                             return;
                         }
                     }

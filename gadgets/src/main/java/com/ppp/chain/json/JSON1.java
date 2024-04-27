@@ -66,12 +66,6 @@ public class JSON1 implements ObjectPayload<Object> {
         // sink
         Object sinkObject = SinkScheduler.builder(sinksHelper);
 
-        // wrap
-        if (sinksHelper.getWrapSerialization() != null) {
-            Object o = WrapSerialization.scheduler(sinkObject, sinksHelper);
-            sinkObject = (o != null) ? o : sinkObject;
-        }
-
         Object kickOffObject = getChain(sinkObject);
 
         return kickOffObject;

@@ -2,6 +2,9 @@ package com.ppp.utils.maker;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.math.BigInteger;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.zip.GZIPOutputStream;
 
 /**
@@ -33,6 +36,17 @@ public class CryptoUtils {
         gzipOutputStream.write(data);
         gzipOutputStream.close();
         return baos.toByteArray();
+    }
+
+    public static String md5(String s) throws NoSuchAlgorithmException {
+        MessageDigest m = MessageDigest.getInstance("MD5");
+        m.update(s.getBytes(), 0, s.length());
+        String ret = new BigInteger(1, m.digest()).toString(16).toLowerCase().substring(0, 16);
+        return ret;
+    }
+
+    public static String md5Half(String s) throws NoSuchAlgorithmException {
+        return md5(s).substring(0, 16);
     }
 
 }

