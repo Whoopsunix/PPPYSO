@@ -404,7 +404,7 @@ eg. `-g ROME -cmd "open -a Calculator.app" -wrap`
 
 附上一张 gadget chain 图
 
-![Gadget ChainBy. Whoopsunix](attachments/Gadget ChainBy. Whoopsunix.png)
+![Gadget ChainBy. Whoopsunix](attachments/Gadget-ChainBy-Whoopsunix.png)
 
 # Thanks
 
