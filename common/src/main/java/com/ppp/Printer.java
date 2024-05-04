@@ -33,10 +33,20 @@ public class Printer {
     }
 
     /**
+     * 结果输出
+     * @param msg
+     */
+    public static void result(Object msg) {
+        System.out.println(msg);
+        System.out.flush();
+    }
+
+    /**
      * 标题
      * @param msg
      */
     public static void title(Object msg) {
+        msg = " " + msg + " ";
         if (!isPrintEnabled())
             return;
         int totalLength = 50;

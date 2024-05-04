@@ -60,11 +60,13 @@ public class CliScheduler {
         options.addOption(CliOptions.ExtendsAbstractTranslet.getOpt(), CliOptions.ExtendsAbstractTranslet.getLongOpt(), false, CliOptions.ExtendsAbstractTranslet.getDescription());
         options.addOption(CliOptions.JavaClassHelperType.getOpt(), CliOptions.JavaClassHelperType.getLongOpt(), true, CliOptions.JavaClassHelperType.getDescription());
         options.addOption(CliOptions.JavaClassEnhance.getOpt(), CliOptions.JavaClassEnhance.getLongOpt(), true, CliOptions.JavaClassEnhance.getDescription());
+        options.addOption(CliOptions.JavaClassMakerEnhance.getOpt(), CliOptions.JavaClassMakerEnhance.getLongOpt(), true, CliOptions.JavaClassMakerEnhance.getDescription());
         options.addOption(CliOptions.JavaClassFilePath.getOpt(), CliOptions.JavaClassFilePath.getLongOpt(), true, CliOptions.JavaClassFilePath.getDescription());
         options.addOption(CliOptions.JavaClassType.getOpt(), CliOptions.JavaClassType.getLongOpt(), true, CliOptions.JavaClassType.getDescription());
         options.addOption(CliOptions.Middleware.getOpt(), CliOptions.Middleware.getLongOpt(), true, CliOptions.Middleware.getDescription());
         options.addOption(CliOptions.MemShell.getOpt(), CliOptions.MemShell.getLongOpt(), true, CliOptions.MemShell.getDescription());
         options.addOption(CliOptions.MemShellFunction.getOpt(), CliOptions.MemShellFunction.getLongOpt(), true, CliOptions.MemShellFunction.getDescription());
+        options.addOption(CliOptions.MemShellType.getOpt(), CliOptions.MemShellType.getLongOpt(), true, CliOptions.MemShellType.getDescription());
         // JavaClass 自定义字段
         options.addOption(CliOptions.FieldNAME.getOpt(), CliOptions.FieldNAME.getLongOpt(), true, CliOptions.FieldNAME.getDescription());
         options.addOption(CliOptions.FieldHEADER.getOpt(), CliOptions.FieldHEADER.getLongOpt(), true, CliOptions.FieldHEADER.getDescription());

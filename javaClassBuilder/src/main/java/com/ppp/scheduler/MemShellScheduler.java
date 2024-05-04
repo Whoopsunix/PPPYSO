@@ -38,6 +38,7 @@ public class MemShellScheduler {
         String memShell = javaClassHelper.getMemShell();
         String memShellFunction = javaClassHelper.getMemShellFunction();
         String javaClassType = javaClassHelper.getJavaClassType();
+        String memShellType = javaClassHelper.getMemShellType();
 
         // 用于打印信息
 
@@ -157,12 +158,16 @@ public class MemShellScheduler {
             MemShellFunction memShellFunctionAnnotation = clazz.getAnnotation(MemShellFunction.class);
             if (memShellFunctionAnnotation == null) continue;
 
+            MemShellType memShellTypeAnnotation = clazz.getAnnotation(MemShellType.class);
+            if (memShellTypeAnnotation == null) continue;
+
             if (
                     memShellAnnotation.value().equalsIgnoreCase(memShell)
                             && memShellFunctionAnnotation.value().equalsIgnoreCase(memShellFunction)
+                            && memShellTypeAnnotation.value().equalsIgnoreCase(memShellType)
             ) {
                 msClass = clazz;
-                Printer.log("MemShell Class: " + clazz.getName() + ", Annotation Value: " + memShellAnnotation.value());
+                Printer.log("MemShell Class: " + clazz.getName() + ", Annotation Value: " + memShellAnnotation.value() + " , MemShellFunction: " + memShellFunctionAnnotation.value() + " , MemShellType: " + memShellTypeAnnotation.value());
                 break;
             }
 

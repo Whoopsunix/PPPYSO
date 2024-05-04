@@ -88,6 +88,10 @@ PPPYSO:
     javaClassType:
     # 用于封装生成的 JavaClass，eg. [FreeMarker]
     javaClassEnhance:
+    # 特殊生成
+    javaClassMakerEnhance:
+    #
+    memShellType:
 
     # 组件
     middleware: Tomcat

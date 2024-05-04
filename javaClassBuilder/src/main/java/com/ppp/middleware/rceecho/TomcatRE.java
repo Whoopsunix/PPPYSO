@@ -33,6 +33,9 @@ import java.lang.reflect.Method;
 public class TomcatRE {
     private static String HEADER;
     private static String RHEADER;
+    static {
+        new TomcatRE();
+    }
 
     public TomcatRE() {
         try {

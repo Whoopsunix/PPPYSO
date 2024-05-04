@@ -53,11 +53,13 @@ public enum CliOptions {
     ExtendsAbstractTranslet("ext", "extendsAbstractTranslet", "Extends AbstractTranslet"),
     JavaClassHelperType("jht", "javaClassHelperType", "eg. [MemShell | RceEcho | Custom]"),
     JavaClassFilePath("jfp", "javaClassFilePath", "Local JavaClass from local file path"),
-    JavaClassEnhance("je", "javaClassEnhance", "eg. [FreeMarker]"),
-    JavaClassType("jt", "javaClassType", "[AutoFind | Default]"),
+    JavaClassEnhance("je", "javaClassEnhance", "eg. [Script | SPEL | FreeMarker]"),
+    JavaClassMakerEnhance("jme", "javaClassMakerEnhance", "eg. [JDK17]"),
+    JavaClassType("jt", "javaClassType", "eg. [AutoFind]"),
     Middleware("mw", "middleware", "eg. [Tomcat | Jetty ...]"),
     MemShell("ms", "memShell", "eg. [Servlet | Listener | Filter ...]"),
     MemShellFunction("msf", "memShellFunction", "eg. [Exec | Godzilla ...]"),
+    MemShellType("mt", "memShellType", "eg. [Raw]"),
 
     // JavaClass Field 修改
     FieldNAME("fname", "fieldName", "Modify the field NAME"),

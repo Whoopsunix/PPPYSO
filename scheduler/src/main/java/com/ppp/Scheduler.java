@@ -255,7 +255,16 @@ public class Scheduler {
         } else {
             javaClassHelper.setJavaClassType(JavaClassType.Utils.getJavaClassType((String) javaClassHelperMap.get(CliOptions.JavaClassType.getLongOpt())));
             javaClassHelper.setMiddleware(Middleware.Utils.getMiddleware((String) javaClassHelperMap.get(CliOptions.Middleware.getLongOpt())));
-            javaClassHelper.setJavaClassEnhance(JavaClassEnhance.getJavaClassEnhanceEnums((String) javaClassHelperMap.get(CliOptions.JavaClassEnhance.getLongOpt())));
+            Object javaClassEnhance = javaClassHelperMap.get(CliOptions.JavaClassEnhance.getLongOpt());
+            if (javaClassEnhance != null) {
+                javaClassHelper.setJavaClassEnhances(JavaClassEnhance.splitJavaClassEnhance((String) javaClassEnhance));
+            }
+
+            Object javaClassMakerEnhance = javaClassHelperMap.get(CliOptions.JavaClassMakerEnhance.getLongOpt());
+            if (javaClassMakerEnhance != null) {
+                javaClassHelper.setJavaClassMakerEnhances(JavaClassMakerEnhance.splitJavaClassMakerEnhance((String) javaClassMakerEnhance));
+            }
+
 
             if (javaClassHelperType.equalsIgnoreCase(JavaClassHelperType.MemShell)) {
                 String memShell = MemShell.Utils.getMemShell((String) javaClassHelperMap.get(CliOptions.MemShell.getLongOpt()));
@@ -270,6 +279,7 @@ public class Scheduler {
                     Printer.error(String.format("MemShellFunction is null, use -%s to set", CliOptions.MemShellFunction.getOpt()));
                 }
                 javaClassHelper.setMemShellFunction(memShellFunction);
+                javaClassHelper.setMemShellType(MemShellType.Utils.getJavaClassType((String) javaClassHelperMap.get(CliOptions.MemShellType.getLongOpt())));
             }
 
             String fieldName = (String) javaClassHelperMap.get(CliOptions.FieldNAME.getLongOpt());

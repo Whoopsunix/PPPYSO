@@ -20,6 +20,9 @@ public class TomcatAutoRE {
     private static String HEADER;
     private static String RHEADER;
 
+    static {
+        new TomcatAutoRE();
+    }
     public TomcatAutoRE(Object o) {
 
     }

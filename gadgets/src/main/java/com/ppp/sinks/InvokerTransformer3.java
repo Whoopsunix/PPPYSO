@@ -403,7 +403,7 @@ public class InvokerTransformer3 {
 //                    "clazz.newInstance();" +
 //                    "}};", b64, className, loaderClassName);
 
-            String code = PayloadUtils.loadByScriptEngine(b64, loaderClassName);
+            String code = PayloadUtils.script(b64, loaderClassName);
 
             transformers = new Transformer[]{
                     new ConstantTransformer(ScriptEngineManager.class),

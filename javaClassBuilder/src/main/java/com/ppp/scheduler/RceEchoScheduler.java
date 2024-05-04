@@ -40,7 +40,7 @@ public class RceEchoScheduler {
             // 获取 RceEcho Builder
             if (builder.value().equalsIgnoreCase(Builder.RceEcho)) {
                 rceEchoClass = clazz;
-                Printer.log("RceEcho builder Class: " + clazz.getName() + ", Annotation Value: " + builder.value());
+//                Printer.log("RceEcho builder Class: " + clazz.getName() + ", Annotation Value: " + builder.value());
                 break;
             }
         }
@@ -64,7 +64,7 @@ public class RceEchoScheduler {
 
             if (middlewareAnnotation.value().equalsIgnoreCase(middleware) && javaClassTypeAnnotation.value().equalsIgnoreCase(javaClassType)) {
                 recEchoJavaClass = clazz;
-                Printer.blueInfo("RceEcho Class: " + clazz.getName() + " , Annotation Value: " + middlewareAnnotation.value() + " , JavaClassType: " + javaClassTypeAnnotation.value());
+                Printer.log("RceEcho Class: " + clazz.getName() + " , Annotation Value: " + middlewareAnnotation.value() + " , JavaClassType: " + javaClassTypeAnnotation.value());
                 break;
             }
         }

@@ -89,6 +89,7 @@ public class MSLoaderBuilder {
     @Middleware(Middleware.Spring)
     @MemShell(MemShell.Interceptor)
     public byte[] interceptor(Class cls, String MSGzipBase64, JavaClassHelper javaClassHelper) throws Exception {
+
         return defaultLoader(cls, MSGzipBase64, javaClassHelper);
     }
 

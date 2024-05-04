@@ -12,12 +12,12 @@ import java.lang.annotation.Target;
  */
 @Target({ElementType.METHOD, ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface JavaClassType {
+public @interface MemShellType {
     String Default = "Default";
     /**
-     * Loader
+     * MS
      */
-    String AutoFind = "AutoFind";
+    String Raw = "Raw";
 
     String value();
 
@@ -35,11 +35,11 @@ public @interface JavaClassType {
 //        }
 
         public static String getJavaClassType(String javaClassType) {
-            if (javaClassType != null && javaClassType.equalsIgnoreCase(JavaClassType.AutoFind)) {
-                return JavaClassType.AutoFind;
+            if (javaClassType != null && javaClassType.equalsIgnoreCase(MemShellType.Raw)) {
+                return MemShellType.Raw;
             } else {
-                Printer.blueInfo("JavaClassType not found use Default");
-                return JavaClassType.Default;
+                Printer.blueInfo("MemShellType not found use Default");
+                return MemShellType.Default;
             }
         }
     }

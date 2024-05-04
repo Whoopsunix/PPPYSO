@@ -20,6 +20,8 @@ public class RceEchoBuilder {
 
         CtClass ctClass = classPool.getCtClass(cls.getName());
 
+        JavaClassModifier.javaClassHelperInit(javaClassHelper);
+
         JavaClassModifier.ctClassBuilderNew(cls, ctClass, javaClassHelper);
 
         return JavaClassModifier.toBytes(ctClass);

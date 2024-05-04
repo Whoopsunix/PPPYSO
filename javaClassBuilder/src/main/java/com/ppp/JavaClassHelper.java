@@ -1,8 +1,9 @@
 package com.ppp;
 
 import com.ppp.annotation.JavaClassEnhance;
+import com.ppp.annotation.JavaClassMakerEnhance;
 import com.ppp.annotation.JavaClassType;
-import com.ppp.utils.RanDomUtils;
+import com.ppp.annotation.MemShellType;
 
 /**
  * @author Whoopsunix
@@ -28,7 +29,12 @@ public class JavaClassHelper {
     /**
      * 增强输出
      */
-    private JavaClassEnhance javaClassEnhance;
+    private JavaClassEnhance[] javaClassEnhances;
+    /**
+     * 创建增强
+     */
+    private JavaClassMakerEnhance[] javaClassMakerEnhances;
+
     /**
      * 内存马
      */
@@ -38,21 +44,22 @@ public class JavaClassHelper {
     private String memShell;
     // 内存马功能
     private String memShellFunction;
+    private String memShellType;
 
     /**
      * 以下为内存马可自定义信息
      */
-    private String NAME = "Whoopsunix";
-    private String HEADER = "X-Token";
-    private String RHEADER = "XXX";
+    private String NAME;
+    private String HEADER;
+    private String RHEADER;
     //    private String PARAM = "cmd";
-    private String PATH = "/whoopsunix";
+    private String PATH;
     // Godzilla
-    private String key = "key";
-    public String pass = "pass";
+    private String key;
+    public String pass;
     // 内存马约束请求头
-    private String lockHeaderKey = "User-Agent";
-    private String lockHeaderValue = "Whoopsunix";
+    private String lockHeaderKey;
+    private String lockHeaderValue;
 
     /**
      * JavaClass 信息
@@ -66,7 +73,8 @@ public class JavaClassHelper {
     // javaClassName 是最外层的类名
     private String javaClassName;
     private boolean randomJavaClassName;
-    private String javaClassPackageHost;
+    // 包名
+    private String javaClassPackageName;
 
 
     public JavaClassHelper() {
@@ -74,16 +82,9 @@ public class JavaClassHelper {
         this.extendsAbstractTranslet = false;
         this.isLoader = false;
         this.javaClassType = JavaClassType.Default;
-        this.javaClassEnhance = JavaClassEnhance.Default;
-
-        this.NAME = RanDomUtils.generateRandomOnlyString(3, 7);
-        this.HEADER = RanDomUtils.generateRandomOnlyString(3, 7);
-        this.RHEADER = RanDomUtils.generateRandomOnlyString(3, 7);
-        this.PATH = "/" + RanDomUtils.generateRandomOnlyString(3, 7);
-        this.lockHeaderKey = "User-Agent";
-        this.lockHeaderValue = RanDomUtils.generateRandomOnlyString(3, 7);
-        this.key = RanDomUtils.generateRandomString(3, 7);
-        this.pass = RanDomUtils.generateRandomString(3, 7);
+        this.javaClassEnhances = new JavaClassEnhance[]{JavaClassEnhance.Default};
+        this.javaClassMakerEnhances = new JavaClassMakerEnhance[]{JavaClassMakerEnhance.Default};
+        this.memShellType = MemShellType.Default;
     }
 
     /**
@@ -121,12 +122,20 @@ public class JavaClassHelper {
         this.javaClassType = javaClassType;
     }
 
-    public JavaClassEnhance getJavaClassEnhance() {
-        return javaClassEnhance;
+    public JavaClassEnhance[] getJavaClassEnhances() {
+        return javaClassEnhances;
     }
 
-    public void setJavaClassEnhance(JavaClassEnhance javaClassEnhance) {
-        this.javaClassEnhance = javaClassEnhance;
+    public void setJavaClassEnhances(JavaClassEnhance[] javaClassEnhances) {
+        this.javaClassEnhances = javaClassEnhances;
+    }
+
+    public JavaClassMakerEnhance[] getJavaClassMakerEnhances() {
+        return javaClassMakerEnhances;
+    }
+
+    public void setJavaClassMakerEnhances(JavaClassMakerEnhance[] javaClassMakerEnhances) {
+        this.javaClassMakerEnhances = javaClassMakerEnhances;
     }
 
     public String getMiddleware() {
@@ -151,6 +160,14 @@ public class JavaClassHelper {
 
     public void setMemShellFunction(String memShellFunction) {
         this.memShellFunction = memShellFunction;
+    }
+
+    public String getMemShellType() {
+        return memShellType;
+    }
+
+    public void setMemShellType(String memShellType) {
+        this.memShellType = memShellType;
     }
 
     public String getNAME() {
@@ -257,11 +274,11 @@ public class JavaClassHelper {
         this.randomJavaClassName = randomJavaClassName;
     }
 
-    public String getJavaClassPackageHost() {
-        return javaClassPackageHost;
+    public String getJavaClassPackageName() {
+        return javaClassPackageName;
     }
 
-    public void setJavaClassPackageHost(String javaClassPackageHost) {
-        this.javaClassPackageHost = javaClassPackageHost;
+    public void setJavaClassPackageName(String javaClassPackageName) {
+        this.javaClassPackageName = javaClassPackageName;
     }
 }

