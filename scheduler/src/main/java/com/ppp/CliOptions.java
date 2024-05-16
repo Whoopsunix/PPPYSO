@@ -19,7 +19,7 @@ public enum CliOptions {
     // 命令执行
     Command("cmd", "command", "Command"),
     CommandType("cmdt", "commandType", "Command Type"),
-    Split("split", "commandSplitsplit", ""),
+    Split("split", "split", ""),
     // 代码执行
     Code("code", "code", "Code execution content"),
     CodeFile("cf", "codeFile", "Read code execution content from local file"),
@@ -28,6 +28,7 @@ public enum CliOptions {
     // 线程延时时间
     DelayTime("dt", "delayTime", "Delay time (in seconds)"),
     Host("host", "host", "Host"),
+    Port("port", "port", "Port"),
     // 服务器文件路径
     ServerFilePath("sfp", "serverFilePath", "Server file path"),
     // 本地文件路径
@@ -85,6 +86,9 @@ public enum CliOptions {
      */
     DNSProducts("dp", "dnsProducts", "choose the products detected by dns"),
     DNSSubdomain("ds", "dnsSubdomain", "the dns subdomain bound with the class name"),
+
+    EXPHost("ehost", "expHost", "Exploit host"),
+    EXPPort("eport", "expPort", "Exploit port"),
     ;
 
 

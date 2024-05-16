@@ -116,6 +116,8 @@ public class YamlScheduler {
             sinksHelper.setGadgetDependency(GadgetDependency.getGadgetDependency(gadgetDependency));
         }
 
+        Scheduler.setSinksHelper(sinksHelper, sinksHelperMap);
+
         if (enchant == null) {
             sinksHelper.setEnchant(EnchantType.DEFAULT);
         } else if (enchant.equalsIgnoreCase(EnchantType.Command)) {

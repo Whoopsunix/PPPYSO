@@ -83,9 +83,13 @@ public class SinksHelper {
      */
     private String codeFile;
     /**
-     * Socket 探测域名
+     * 域名
      */
     private String host;
+    /**
+     * 端口
+     */
+    private Integer port;
     /**
      * 线程延时类型
      */
@@ -236,8 +240,8 @@ public class SinksHelper {
         return cbVersion;
     }
 
-    public void setCbVersion(CBVersionEnum cbVersionEnum) {
-        this.cbVersion = cbVersionEnum;
+    public void setCbVersion(CBVersionEnum cbVersion) {
+        this.cbVersion = cbVersion;
     }
 
     public GadgetDependency getGadgetDependency() {
@@ -294,6 +298,14 @@ public class SinksHelper {
 
     public void setHost(String host) {
         this.host = host;
+    }
+
+    public Integer getPort() {
+        return port;
+    }
+
+    public void setPort(Integer port) {
+        this.port = port;
     }
 
     public EnchantEnums getDelay() {

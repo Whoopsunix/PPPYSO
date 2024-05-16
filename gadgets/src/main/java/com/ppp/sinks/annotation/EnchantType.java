@@ -29,6 +29,7 @@ public @interface EnchantType {
     String RemoteLoad = "RemoteLoad";
     // JavaClass
     String JavaClass = "JavaClass";
+    String JRMP = "JRMP";
 
     String[] value() default {};
 

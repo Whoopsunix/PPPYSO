@@ -4,7 +4,7 @@
 
     <groupId>com.ppp</groupId>
     <artifactId>scheduler</artifactId>
-    <version>1.2.0</version>
+    <version>1.2.1</version>
     <packaging>jar</packaging>
 
     <name>scheduler</name>
@@ -19,14 +19,9 @@
     <dependencies>
         <dependency>
             <groupId>com.ppp</groupId>
-            <artifactId>gadgets</artifactId>
-            <version>1.0.2</version>
+            <artifactId>exploit</artifactId>
+            <version>1.0</version>
         </dependency>
-<!--        <dependency>-->
-<!--            <groupId>com.ppp</groupId>-->
-<!--            <artifactId>javaClassBuilder</artifactId>-->
-<!--            <version>1.0.1</version>-->
-<!--        </dependency>-->
 
         <dependency>
             <groupId>commons-cli</groupId>

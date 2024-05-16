@@ -89,7 +89,7 @@ public enum Subdomain {
 
     public static void show() {
         for (Subdomain subdomainEnum : Subdomain.values()) {
-            Printer.blueInfo(subdomainEnum.getProduct() + " | " + subdomainEnum.getSubdomain() + " | " + subdomainEnum.getClassName());
+            Printer.log(subdomainEnum.getProduct() + " | " + subdomainEnum.getSubdomain() + " | " + subdomainEnum.getClassName());
         }
     }
 

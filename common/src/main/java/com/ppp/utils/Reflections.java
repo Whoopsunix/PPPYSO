@@ -49,6 +49,12 @@ public class Reflections {
         return getFirstCtor(className).newInstance(args);
     }
 
+    public static Object newInstance(Class cls, Class[] argsClass, Object[] args) throws Exception {
+        Constructor<?> constructor = cls.getDeclaredConstructor(argsClass);
+        constructor.setAccessible(true);
+        return constructor.newInstance(args);
+    }
+
     public static <T> T createWithoutConstructor(Class<T> classToInstantiate)
             throws NoSuchMethodException, InstantiationException, IllegalAccessException, InvocationTargetException {
         return createWithConstructor(classToInstantiate, Object.class, new Class[0], new Object[0]);

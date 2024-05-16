@@ -8,10 +8,8 @@ import com.ppp.sinks.SinksHelper;
 import com.ppp.utils.Serializer;
 import com.ppp.utils.maker.CryptoUtils;
 
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.zip.GZIPOutputStream;
 
@@ -20,17 +18,17 @@ import java.util.zip.GZIPOutputStream;
  */
 public class ObjectPayloadBuilder {
 
-    public static Object builder(Class<? extends ObjectPayload> cls, SinksHelper sinksHelper) throws Exception {
+    public static Object builder(Class<? extends ObjectPayload> gadgetClass, SinksHelper sinksHelper) throws Exception {
         // 生成 Gadget
-        ObjectPayload payload = cls.newInstance();
-        Printer.blueInfo("Gadget: " + payload.getClass().getSimpleName());
+        ObjectPayload payload = gadgetClass.newInstance();
+//        Printer.log("Gadget: " + payload.getClass().getSimpleName());
+        Printer.title(payload.getClass().getSimpleName());
         Object gadget = payload.getObject(sinksHelper);
 
         byte[] bytes = original(gadget, sinksHelper);
         save(bytes, sinksHelper);
 
-        // todo 似乎没用
-        return bytes;
+        return gadget;
     }
 
     /**
@@ -96,7 +94,7 @@ public class ObjectPayloadBuilder {
 
         // 循环生成的话太长了所以不输出
         if (!loop) {
-            Printer.blueInfo("Output: " + Arrays.toString(output));
+            Printer.log("Output: " + Arrays.toString(output));
             ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
             byteArrayOutputStream.write(bytes);
             Printer.result(byteArrayOutputStream);
@@ -107,8 +105,8 @@ public class ObjectPayloadBuilder {
             FileOutputStream fileOutputStream = new FileOutputStream(sinksHelper.getSavePath());
             fileOutputStream.write(bytes);
             fileOutputStream.close();
-            Printer.yellowInfo("Gadget length: " + bytes.length);
-            Printer.yellowInfo("Gadget save in " + sinksHelper.getSavePath());
+            Printer.log("Gadget length: " + bytes.length);
+            Printer.log("Gadget save in " + sinksHelper.getSavePath());
         }
     }
 

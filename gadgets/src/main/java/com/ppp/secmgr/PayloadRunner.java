@@ -52,8 +52,10 @@ public class PayloadRunner {
                 // 增强功能
                 if (!sink.equals(Sink.TemplatesImpl)
                         && !sink.equals(Sink.InvokerTransformer3)
-                        && !sink.equals(Sink.C3P0))
+                        && !sink.equals(Sink.C3P0)
+                        && !sink.equals(Sink.JNDI)) {
                     SinkScheduler.builder(helper);
+                }
 
                 final Object objBefore = object.getObject(helper);
 //                helper.setSerialization(SerializationType.UTF8Mix);

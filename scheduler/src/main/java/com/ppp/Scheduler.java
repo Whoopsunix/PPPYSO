@@ -4,13 +4,16 @@ import com.ppp.annotation.*;
 import com.ppp.chain.urldns.DNSHelper;
 import com.ppp.chain.urldns.Product;
 import com.ppp.chain.urldns.Subdomain;
+import com.ppp.exploit.ExploitPayload;
 import com.ppp.sinks.SinkScheduler;
 import com.ppp.sinks.SinksHelper;
 import com.ppp.sinks.annotation.EnchantEnums;
 import com.ppp.sinks.annotation.EnchantType;
 import com.ppp.utils.RanDomUtils;
+import com.ppp.utils.Reflections;
 
 import java.io.*;
+import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Map;
 
@@ -18,29 +21,52 @@ import java.util.Map;
  * @author Whoopsunix
  */
 public class Scheduler {
+    private static String VERSION = "1.2.0";
     private static String gadgetPackageName = "com.ppp.chain";
     private static String userDir = System.getProperty("user.dir") + "/PPPConfig.yml";
 
     public static void main(String[] args) throws Exception {
         SinksHelper sinksHelper = new SinksHelper();
-        Class cls = null;
+        ExploitHelper exploitHelper = null;
+        Class<? extends ExploitPayload> exploitClass = null;
+
         if (args.length == 0) {
             PPPYSOexit();
-        } else if (args.length == 1 && !args[0].equalsIgnoreCase("-h") && !args[0].equalsIgnoreCase("-help")) {
+        }
+
+        if (args[0].equalsIgnoreCase("exp") || args[0].equalsIgnoreCase("exploit")) {
+            exploitHelper = new ExploitHelper();
+            if (args.length < 2) {
+                Printer.error("Missing set exploit class");
+            }
+            String exp = args[1];
+            if (exp.equalsIgnoreCase("-show")) {
+                ExploitBuilder.showGadgetClass();
+            } else {
+                exploitClass = ExploitBuilder.getExploitClass(args[1]);
+            }
+        }
+
+
+        Class cls = null;
+        if (args.length == 1 && !args[0].equalsIgnoreCase("-h") && !args[0].equalsIgnoreCase("-help")) {
             String configPath = userDir;
             if (new File(args[0]).exists()) {
                 configPath = args[0];
             } else {
                 PPPYSOexit();
             }
-
             cls = YamlScheduler.run(configPath, sinksHelper);
         } else {
-            cls = CliScheduler.run(args, sinksHelper);
+            cls = CliScheduler.run(args, sinksHelper, exploitHelper);
         }
 
         if (cls != null) {
-            serializationMaker(cls, sinksHelper);
+            Object gadget = serializationMaker(cls, sinksHelper);
+            if (args[0].equalsIgnoreCase("exp") || args[0].equalsIgnoreCase("exploit")) {
+                ExploitBuilder.run(exploitClass, gadget, exploitHelper);
+            }
+
         } else {
             javaClassMaker(sinksHelper.getJavaClassHelper());
         }
@@ -59,7 +85,7 @@ public class Scheduler {
      * @param sinksHelper
      * @throws Exception
      */
-    public static void serializationMaker(Class cls, SinksHelper sinksHelper) throws Exception {
+    public static Object serializationMaker(Class cls, SinksHelper sinksHelper) throws Exception {
 
         // 默认生成
         Object gadget = ObjectPayloadBuilder.builder(cls, sinksHelper);
@@ -81,6 +107,7 @@ public class Scheduler {
                 }
             }
         }
+        return gadget;
     }
 
     public static void PPPYSOexit() throws Exception {
@@ -93,11 +120,11 @@ public class Scheduler {
     }
 
     public static void PPPYSO() {
-        String banner = " __ ___ ___ __  __ __  _  \n" +
+        String banner = String.format(" __ ___ ___ __  __ __  _  \n" +
                 "| o \\ o \\ o \\\\ V // _|/ \\ \n" +
                 "|  _/  _/  _/ \\ / \\_ ( o )\n" +
                 "|_| |_| |_|   |_| |__/\\_/ \n" +
-                "    1.1.0   By. Whoopsunix \n";
+                "    %s   By. Whoopsunix \n", VERSION);
         Printer.print(banner);
     }
 
@@ -140,7 +167,6 @@ public class Scheduler {
             sinksHelper.setCommandType(EnchantEnums.getEnchantEnums(commandType));
         } else {
             sinksHelper.setCommandType(EnchantEnums.Runtime);
-            Printer.log("Use default command type: Runtime");
         }
         if (split != null) {
             sinksHelper.setSplit(split);
@@ -338,9 +364,6 @@ public class Scheduler {
         if (products != null) {
             if (products.equalsIgnoreCase("all")) {
                 dnsHelper.setProducts(Product.values());
-            } else if (products.equalsIgnoreCase("show")) {
-                Product.show();
-                Subdomain.show();
             } else {
                 String[] productArray = products.split(",");
                 Product[] productList = new Product[productArray.length];
@@ -352,6 +375,42 @@ public class Scheduler {
         }
 
         sinksHelper.setDnsHelper(dnsHelper);
+    }
+
+    public static void enchantEXP(ExploitHelper expHelper, Map helperMap) {
+        String host = (String) helperMap.get(CliOptions.EXPHost.getLongOpt());
+        String port = (String) helperMap.get(CliOptions.EXPPort.getLongOpt());
+        expHelper.setHost(host);
+        expHelper.setPort(Integer.parseInt(port));
+    }
+
+    /**
+     * 不经过处理的插入参数
+     *
+     * @param sinksHelper
+     * @param helperMap
+     */
+    public static void setSinksHelper(SinksHelper sinksHelper, Map helperMap) {
+        for (Object key : helperMap.keySet()) {
+            Object value = helperMap.get(key);
+            if (value == null) {
+                continue;
+            }
+            try {
+                Field field = SinksHelper.class.getDeclaredField(key.toString());
+                field.setAccessible(true);
+                Class<?> type = field.getType();
+                if (type == Integer.class) {
+                    field.set(sinksHelper, Integer.parseInt(value.toString()));
+                } else if (type == Boolean.class) {
+                    field.set(sinksHelper, Boolean.parseBoolean(value.toString()));
+                } else {
+                    field.set(sinksHelper, value);
+                }
+            } catch (Exception e) {
+
+            }
+        }
     }
 
 

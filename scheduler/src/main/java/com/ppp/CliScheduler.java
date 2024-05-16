@@ -1,6 +1,8 @@
 package com.ppp;
 
 import com.ppp.chain.commonsbeanutils.CBVersionEnum;
+import com.ppp.chain.urldns.Product;
+import com.ppp.chain.urldns.Subdomain;
 import com.ppp.chain.urldns.URLDNS;
 import com.ppp.enums.Output;
 import com.ppp.enums.SerializationType;
@@ -16,15 +18,13 @@ import org.apache.commons.cli.*;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.ppp.CliOptions.CBVersion;
-
 /**
  * @author Whoopsunix
  * <p>
  * Cli
  */
 public class CliScheduler {
-    public static Class run(String[] args, SinksHelper sinksHelper) throws Exception {
+    public static Class run(String[] args, SinksHelper sinksHelper, ExploitHelper exploitHelper) throws Exception {
         Options options = new Options();
         options.addOption(CliOptions.Help.getOpt(), CliOptions.Help.getLongOpt(), false, CliOptions.Help.getDescription());
 
@@ -45,6 +45,7 @@ public class CliScheduler {
         options.addOption(CliOptions.CodeFile.getOpt(), CliOptions.CodeFile.getLongOpt(), true, CliOptions.CodeFile.getDescription());
         options.addOption(CliOptions.DelayTime.getOpt(), CliOptions.DelayTime.getLongOpt(), true, CliOptions.DelayTime.getDescription());
         options.addOption(CliOptions.Host.getOpt(), CliOptions.Host.getLongOpt(), true, CliOptions.Host.getDescription());
+        options.addOption(CliOptions.Port.getOpt(), CliOptions.Port.getLongOpt(), true, CliOptions.Port.getDescription());
         options.addOption(CliOptions.ServerFilePath.getOpt(), CliOptions.ServerFilePath.getLongOpt(), true, CliOptions.ServerFilePath.getDescription());
         options.addOption(CliOptions.LocalFilePath.getOpt(), CliOptions.LocalFilePath.getLongOpt(), true, CliOptions.LocalFilePath.getDescription());
         options.addOption(CliOptions.FileContent.getOpt(), CliOptions.FileContent.getLongOpt(), true, CliOptions.FileContent.getDescription());
@@ -83,8 +84,13 @@ public class CliScheduler {
         options.addOption(CliOptions.DNSSubdomain.getOpt(), CliOptions.DNSSubdomain.getLongOpt(), true, CliOptions.DNSSubdomain.getDescription());
 
         options.addOption(CliOptions.WrapSerialization.getOpt(), CliOptions.WrapSerialization.getLongOpt(), false, CliOptions.WrapSerialization.getDescription());
-        options.addOption(CBVersion.getOpt(), CBVersion.getLongOpt(), true, CBVersion.getDescription());
+        options.addOption(CliOptions.CBVersion.getOpt(), CliOptions.CBVersion.getLongOpt(), true, CliOptions.CBVersion.getDescription());
         options.addOption(CliOptions.GadgetDependency.getOpt(), CliOptions.GadgetDependency.getLongOpt(), true, CliOptions.GadgetDependency.getDescription());
+
+        // Exploit
+        options.addOption(CliOptions.EXPHost.getOpt(), CliOptions.EXPHost.getLongOpt(), true, CliOptions.EXPHost.getDescription());
+        options.addOption(CliOptions.EXPPort.getOpt(), CliOptions.EXPPort.getLongOpt(), true, CliOptions.EXPPort.getDescription());
+
 
 
         CommandLineParser parser = new DefaultParser();
@@ -95,6 +101,7 @@ public class CliScheduler {
             HelpFormatter helpFormatter = new HelpFormatter();
 //            helpFormatter.printHelp("java -jar PPPYSO-jar-with-dependencies.jar", options, true);
             helpFormatter.printHelp("java -jar PPPYSO-jar-with-dependencies.jar", options, false);
+            System.exit(0);
         }
 
         String Gadget = commandLine.getOptionValue(CliOptions.Gadget.getLongOpt());
@@ -133,6 +140,14 @@ public class CliScheduler {
             } else {
                 Printer.error(String.format("No such gadget: %s", Gadget));
             }
+
+            // EXP
+            if (exploitHelper != null) {
+                Map helperMap = modifyCliArgs(commandLine);
+                Scheduler.enchantEXP(exploitHelper, helperMap);
+            }
+
+
         } else {
             sinksHelper.setEnchant(EnchantType.JavaClass);
             commonGadget(commandLine, sinksHelper, gadgetClass);
@@ -141,7 +156,13 @@ public class CliScheduler {
         return gadgetClass;
     }
 
-    public static void URLDNSGadget(CommandLine commandLine, SinksHelper sinksHelper) throws Exception {
+    public static void URLDNSGadget(CommandLine commandLine, SinksHelper sinksHelper)  {
+        if (commandLine.hasOption(CliOptions.Show.getLongOpt())) {
+            Product.show();
+            Subdomain.show();
+            System.exit(0);
+        }
+
         Map helperMap = modifyCliArgs(commandLine);
         Scheduler.enchantURLDNS(sinksHelper, helperMap);
     }
@@ -179,10 +200,15 @@ public class CliScheduler {
         }
 
 
+        Scheduler.setSinksHelper(sinksHelper, helperMap);
+
         if (enchant == null) {
-            sinksHelper.setEnchant(EnchantType.DEFAULT);
-            String command = (String) helperMap.get(CliOptions.Command.getLongOpt());
-            sinksHelper.setCommand(command);
+            EnchantType annotation = gadgetClass.getAnnotation(EnchantType.class);
+            if (annotation != null) {
+                sinksHelper.setEnchant(annotation.value()[0]);
+            } else {
+                sinksHelper.setEnchant(EnchantType.DEFAULT);
+            }
         } else if (enchant.equalsIgnoreCase(EnchantType.Command)) {
             Scheduler.enchantCommand(sinksHelper, helperMap);
         } else if (enchant.equalsIgnoreCase(EnchantType.Delay)) {
