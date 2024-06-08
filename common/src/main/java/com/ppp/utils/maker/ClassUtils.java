@@ -29,7 +29,9 @@ public class ClassUtils {
      * 获取指定 Jar 包下的所有类
      */
     public static List<Class<?>> getJarClasses(String packageName) throws Exception {
-        String path = packageName.replace('.', File.separatorChar);
+//        String path = packageName.replace('.', File.separatorChar);
+        // fix windows not found
+        String path = packageName.replace('.', '/');
         List<Class<?>> classes = listClassesInPackage(path);
         return classes;
     }

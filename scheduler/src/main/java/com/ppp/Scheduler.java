@@ -3,14 +3,12 @@ package com.ppp;
 import com.ppp.annotation.*;
 import com.ppp.chain.urldns.DNSHelper;
 import com.ppp.chain.urldns.Product;
-import com.ppp.chain.urldns.Subdomain;
 import com.ppp.exploit.ExploitPayload;
 import com.ppp.sinks.SinkScheduler;
 import com.ppp.sinks.SinksHelper;
 import com.ppp.sinks.annotation.EnchantEnums;
 import com.ppp.sinks.annotation.EnchantType;
 import com.ppp.utils.RanDomUtils;
-import com.ppp.utils.Reflections;
 
 import java.io.*;
 import java.lang.reflect.Field;
@@ -21,11 +19,11 @@ import java.util.Map;
  * @author Whoopsunix
  */
 public class Scheduler {
-    private static String VERSION = "1.2.0";
-    private static String gadgetPackageName = "com.ppp.chain";
+    private static String VERSION = "1.2.2";
     private static String userDir = System.getProperty("user.dir") + "/PPPConfig.yml";
 
     public static void main(String[] args) throws Exception {
+//        System.out.println(Arrays.toString(args));
         SinksHelper sinksHelper = new SinksHelper();
         ExploitHelper exploitHelper = null;
         Class<? extends ExploitPayload> exploitClass = null;
@@ -112,6 +110,7 @@ public class Scheduler {
 
     public static void PPPYSOexit() throws Exception {
         PPPYSO();
+        Printer.yellowInfo("Input [-h|-help] to start");
         if (!new File(userDir).exists()) {
             generateDefaultConfigYaml();
         }

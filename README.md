@@ -51,7 +51,7 @@ By. Whoopsunix
 
 目前支持 CLI、Yaml 配置，通过
 
-直接运行生成模板配置文件，并展示支持的调用链
+直接运行生成模板~~配置文件(写了就放着了不准备维护)~~，并展示支持的调用链
 
 ![image-20240416174431675](attachments/image-20240416174431675.png)
 
@@ -69,9 +69,10 @@ Cli 通过 `java -jar PPPYSO-{version}-jar-with-dependencies.jar -g Coherence1 {
 
 ```
 # 安装依赖
-mvn clean 
+mvn clean
 # 打包
 mvn clean package -Dmaven.test.skip
+mvn clean package -DskipTests
 ```
 
 # 0x01 URLDNS 增强
